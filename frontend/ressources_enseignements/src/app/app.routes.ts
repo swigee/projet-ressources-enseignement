@@ -21,5 +21,9 @@ export const routes: Routes = [
     {
         path:'service-sheet',
         component: Dashboard
+    },
+    {
+        path:'training-manager',
+        component: Dashboard
     }
 ];

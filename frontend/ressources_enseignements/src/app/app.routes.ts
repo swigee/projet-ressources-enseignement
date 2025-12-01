@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
+import { TrainingManager } from './training-manager/training-manager';
 import { Dashboard } from './components/dashboard/dashboard';
 import { Login } from './components/login/login'
 import { PedagogicalScheduleComponent } from './components/pedagogical-schedule/pedagogical-schedule';
 
 export const routes: Routes = [
-   /* {
+   {
         path:'',
         redirectTo:'login',
         pathMatch:'full',
@@ -13,11 +14,6 @@ export const routes: Routes = [
     {
       path:'login',
       component: Login
-    },*/
-    {
-      path: '',
-      component: Dashboard,
-
     },
     {
         path:'dashboard',
@@ -29,7 +25,7 @@ export const routes: Routes = [
     },
     {
         path:'educational-model',
-        component: PedagogicalScheduleComponent
+        component: Dashboard
     },
     {
         path:'service-sheet',
@@ -37,6 +33,6 @@ export const routes: Routes = [
     },
     {
         path:'training-manager',
-        component: Dashboard
+        component: TrainingManager
     }
 ];

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { Dashboard } from './dashboard/dashboard';
+import { TrainingManager } from './training-manager/training-manager';
 
 export const routes: Routes = [
     {
@@ -21,5 +22,9 @@ export const routes: Routes = [
     {
         path:'service-sheet',
         component: Dashboard
+    },
+    {
+        path:'training-manager',
+        component: TrainingManager
     }
 ];

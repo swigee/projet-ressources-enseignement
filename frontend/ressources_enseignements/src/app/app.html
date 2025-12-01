@@ -1,9 +1,24 @@
 
 <main>
   <!-- Bar on the side with buttons of the navigations to different pages-->
-  <aside class="bg-blue-500">
-    <p class="font-display"> NEXUS Portail </p>
-    <p> Ressources Enseignement </p>
+  <aside class="bg-[#111827] fixed left-0 h-full w-70 text-white">
+    <p class="font-display font-bold italic text-[25px] pl-9 pt-3" > NEXUS Portail </p>
+    <p class="pl-11 text-[12px]"> Ressources Enseignement </p>
+    <div class="flex flex-col gap-2 pt-15 italic">
+
+      <a routerLink="/dashboard" routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]" 
+      class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Tableau de bord </a>
+
+      <a routerLink="/syllabus" routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]" 
+      class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Syllabus </a>
+
+      <a routerLink="/educational-model" routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]" 
+      class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Maquette pédagogique </a>
+
+      <a routerLink="/service-sheet" routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]" 
+      class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Fiches de service </a>
+
+    </div>
   </aside>
 </main>
 <router-outlet />

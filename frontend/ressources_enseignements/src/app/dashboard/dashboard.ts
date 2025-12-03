@@ -1,5 +1,4 @@
-import {Component} from '@angular/core';
-import {PageTitle} from '../services/page-title';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,10 +7,5 @@ import {PageTitle} from '../services/page-title';
   styleUrl: './dashboard.css',
 })
 export class Dashboard {
-  constructor(private pageTitle: PageTitle) {
-  }
 
-  ngOnInit() {
-    this.pageTitle.title.set("Dashboard");
-  }
 }

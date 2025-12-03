@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {TopBar} from './components/top-bar/top-bar';
+import { PedagogicalScheduleComponent } from "./components/pedagogical-schedule/pedagogical-schedule";
 import { RouterModule} from '@angular/router';
 import { Navbar } from './navbar/navbar';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, TopBar, RouterModule, Navbar],
+  imports: [RouterOutlet, RouterModule, Navbar, PedagogicalScheduleComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
+  protected readonly title = signal('ressources_enseignement');
 }

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { Dashboard } from './dashboard/dashboard';
+import { Dashboard } from './components/dashboard/dashboard';
 import { PedagogicalScheduleComponent } from './components/pedagogical-schedule/pedagogical-schedule';
 
 export const routes: Routes = [
@@ -27,5 +27,5 @@ export const routes: Routes = [
         path:'training-manager',
         component: Dashboard
     }
-    
+
 ];

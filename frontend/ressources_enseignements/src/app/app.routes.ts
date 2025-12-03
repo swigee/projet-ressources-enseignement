@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
-import { Dashboard } from './dashboard/dashboard';
-import { TrainingManager } from './training-manager/training-manager';
+import { Dashboard } from './components/dashboard/dashboard';
+import { TrainingManager } from './components/training-manager/training-manager';
+import { PedagogicalScheduleComponent } from './components/pedagogical-schedule/pedagogical-schedule';
 
 export const routes: Routes = [
     {
@@ -17,7 +18,7 @@ export const routes: Routes = [
     },
     {
         path:'educational-model',
-        component: Dashboard
+        component: PedagogicalScheduleComponent
     },
     {
         path:'service-sheet',
@@ -27,4 +28,5 @@ export const routes: Routes = [
         path:'training-manager',
         component: TrainingManager
     }
+    
 ];

@@ -1,7 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { PedagogicalScheduleComponent } from "./components/pedagogical-schedule/pedagogical-schedule";
 import { RouterModule} from '@angular/router';
-import { Navbar } from './navbar/navbar';
+import { Navbar } from './components/navbar/navbar';
 
 @Component({
   selector: 'app-root',

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence           http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+  <persistence-unit name="sae_project_war_0.0.1-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>sae.project.model.Role</class>
+    <class>sae.project.model.Tickets</class>
+    <class>sae.project.model.Ressources</class>
+    <class>sae.project.model.Formation</class>
+    <class>sae.project.model.Users</class>
+    <class>sae.project.model.Assignment</class>
+    <class>sae.project.model.Syllabus</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/RessourcesEnseignements"/>
+      <property name="javax.persistence.jdbc.user" value="admin1"/>
+      <property name="javax.persistence.jdbc.driver" value="org.apache.derby.client.ClientAutoloadedDriver"/>
+      <property name="javax.persistence.jdbc.password" value="admin1"/>
+    </properties>
+  </persistence-unit>
+</persistence>

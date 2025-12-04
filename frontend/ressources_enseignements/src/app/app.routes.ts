@@ -28,5 +28,5 @@ export const routes: Routes = [
         path:'training-manager',
         component: TrainingManager
     }
-    
+
 ];

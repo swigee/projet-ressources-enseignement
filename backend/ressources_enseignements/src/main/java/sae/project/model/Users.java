@@ -4,15 +4,8 @@
  */
 package sae.project.model;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -36,6 +29,7 @@ public class Users implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "IDUSER")
     private Integer iduser;
@@ -43,6 +37,8 @@ public class Users implements Serializable {
     private String firstname;
     @Column(name = "LASTNAME")
     private String lastname;
+    @Column(unique = true, nullable = false)
+    private String username;
     @Column(name = "PASSWORD")
     private String password;
     @Column(name = "ADDRESS")
@@ -92,6 +88,10 @@ public class Users implements Serializable {
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
+
+    public String getUsername() {return username;}
+
+    public void setUsername(String username) {this.username = username;}
 
     public String getPassword() {
         return password;

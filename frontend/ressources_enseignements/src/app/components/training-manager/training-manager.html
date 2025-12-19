@@ -14,6 +14,7 @@
           [&>tr:nth-child(n+3)>td]:text-center
           [&>tr:nth-child(n+3)>td:nth-child(n+2)]:text-[10px]
         ">
+
             <tr>
                 <th class="italic text-3xl pb-1.5 pt-1.5" colspan="3"> Formations existantes </th>
             </tr> 
@@ -48,25 +49,10 @@
                 <td> <div class="pt-3 pb-3"> Exploitation et Sécurité des Systèmes Informatiques et Réseaux </div> </td>
                 <td> <div class="pt-3 pb-3"> <button class="bg-black w-6 h-6 rounded-sm"> <i class="fa-solid fa-trash text-white text-xs pt-0.5"></i> </button></div></td>
             </tr>
-                <td> </td>
-                <td> d</td>
-                <td> d</td>
-            <tr>
-                <td> d</td>
-                <td> d</td>
-                <td> d</td>
-            </tr>
-            <tr>
-                <td> d</td>
-                <td> d</td>
-                <td> d</td>
-            </tr>
-            <tr>
-            </tr>
-            <tr>
-            </tr>
-            <tr>
-            </tr>
+            
         </tbody>
     </table>
+    @for(ed of edManager.educationList(); track ed.id){
+            <p> {{ed.nom}} </p>
+     }
 </div>

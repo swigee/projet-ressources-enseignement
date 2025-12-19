@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { EducationalManager } from '../../services/educational-manager';
 
 @Component({
   selector: 'app-training-manager',
@@ -7,5 +8,7 @@ import { Component } from '@angular/core';
   styleUrl: './training-manager.css',
 })
 export class TrainingManager {
+  edManager = inject(EducationalManager)
 
+  
 }

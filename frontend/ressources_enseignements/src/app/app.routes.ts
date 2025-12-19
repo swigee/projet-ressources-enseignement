@@ -3,6 +3,7 @@ import { TrainingManager } from './training-manager/training-manager';
 import { Dashboard } from './components/dashboard/dashboard';
 import { Login } from './components/login/login'
 import { PedagogicalScheduleComponent } from './components/pedagogical-schedule/pedagogical-schedule';
+import { EducationManagerCreation } from './components/education-manager-creation/education-manager-creation';
 
 export const routes: Routes = [
    {
@@ -34,5 +35,9 @@ export const routes: Routes = [
     {
         path:'training-manager',
         component: TrainingManager
+    },
+    {
+        path:'education-manager/create',
+        component: EducationManagerCreation
     }
 ];

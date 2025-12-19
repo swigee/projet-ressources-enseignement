@@ -6,67 +6,45 @@
             <col class="w-1/8">
         </colgroup>
         <tbody class="
-        [&>tr:nth-child(n+3):nth-child(odd)]:bg-white 
+        [&>tr:nth-child(n+3):nth-child(odd)]:bg-white
         [&>tr:nth-child(n+3):nth-child(even)]:bg-blue-300
           [&>tr>td]:border-b
-          [&>tr>td:first-child]:font-bold 
+          [&>tr>td:first-child]:font-bold
           [&>tr:nth-child(n+3)>td:first-child]:text-xl
           [&>tr:nth-child(n+3)>td]:text-center
           [&>tr:nth-child(n+3)>td:nth-child(n+2)]:text-[10px]
         ">
+
             <tr>
                 <th class="italic text-3xl pb-1.5 pt-1.5" colspan="3"> Formations existantes </th>
-            </tr> 
+            </tr>
             <tr>
-                <td class="" colspan="2"> 
+                <td class="" colspan="2">
                     <div class="p-3">
-                         <button class="bg-gray-300 rounded-full p-1 pr-2.5 pl-3 pb-2 font-bold cursor-pointer text-sm">
+                         <button class="bg-gray-300 rounded-full p-1 pr-2.5 pl-3 pb-1.0 font-bold cursor-pointer text-sm"
+                         routerLink="/education-manager/create">
                             Créer une formation <i class="fa-light fa-plus font-bold"></i>
-                        </button> 
+                        </button>
                     </div>
                  </td>
-                <td class="text-center"> 
-                    <div class="pt-3 pb-3"> 
-                        <button class="bg-gray-300 rounded-full p-1 pr-4 pl-6 font-bold cursor-pointer text-sm"> 
+                <td class="text-center">
+                    <div class="pt-3 pb-3">
+                        <button class="bg-gray-300 rounded-full p-1 pr-4 pl-6 font-bold cursor-pointer text-sm">
                             Filtrer <i class="fa-light fa-filter font-bold pl-3"></i>
-                        </button> 
-                    </div> 
+                        </button>
+                    </div>
                 </td>
             </tr>
-            <tr>
-                <td> <div class="pt-3 pb-3"> Bachelor universitaire de technologie </div> </td>
-                <td> <div class="pt-3 pb-3"> Formation initiale et en alternance </div> </td>
-                <td> <div class="pt-3 pb-3"> <button class="bg-black w-6 h-6 rounded-sm"> <i class="fa-solid fa-trash text-white text-xs pt-0.5"></i> </button></div> </td>
-            </tr>
-            <tr>
-                <td onclick=""> <div class="pt-3 pb-3"> Licence profesionnelle DEVOPS </div></td>
-                <td> <div class="pt-3 pb-3"> Développeur d'Applications d'Entreprise, Administrateur de Systèmes d'Information </div></td>
-                <td> <div class="pt-3 pb-3"> <button class="bg-black w-6 h-6 rounded-sm"> <i class="fa-solid fa-trash text-white text-xs pt-0.5"></i> </button></div></td>
-            </tr>
-            <tr>
-                <td> <div class="pt-3 pb-3"> Licence profesionnelle ESSIR </div> </td>
-                <td> <div class="pt-3 pb-3"> Exploitation et Sécurité des Systèmes Informatiques et Réseaux </div> </td>
-                <td> <div class="pt-3 pb-3"> <button class="bg-black w-6 h-6 rounded-sm"> <i class="fa-solid fa-trash text-white text-xs pt-0.5"></i> </button></div></td>
-            </tr>
-                <td> </td>
-                <td> d</td>
-                <td> d</td>
-            <tr>
-                <td> d</td>
-                <td> d</td>
-                <td> d</td>
-            </tr>
-            <tr>
-                <td> d</td>
-                <td> d</td>
-                <td> d</td>
-            </tr>
-            <tr>
-            </tr>
-            <tr>
-            </tr>
-            <tr>
-            </tr>
+            @for(ed of edManager.educationList(); track ed.idformation){
+                <tr>
+                    <td> <div class="pt-3 pb-3"> {{ ed.name }} </div> </td>
+                    <td> <div class="pt-3 pb-3"> {{ ed.description }} </div> </td>
+                    <td> <div class="pt-3 pb-3"> <button class="bg-black w-6 h-6 rounded-sm" (click)="clickDelete(ed.idformation)"> <i class="fa-solid fa-trash text-white text-xs pt-0.5"></i> </button></div> </td>
+                </tr>
+             }
         </tbody>
     </table>
+    @for(ed of edManager.educationList(); track ed.id){
+            <p> {{ed.nom}} </p>
+     }
 </div>

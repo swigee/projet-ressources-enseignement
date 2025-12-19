@@ -23,4 +23,10 @@ export class EducationalManager {
     .get<Education[]>(`${this.api}/list`)
     .subscribe(t => this.educationListDatabase.set(t));
   }
+
+  deleteEducation(id: number){
+     this.http
+    .delete<Education[]>(`${this.api}/${id}`)
+    .subscribe(() => this.loadEducations());
+  }
 }

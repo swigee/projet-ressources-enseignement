@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import {NavigationEnd, Router, RouterOutlet} from '@angular/router';
 import { RouterModule} from '@angular/router';
-import { Navbar } from './navbar/navbar';
-import { TopBar } from './components/top-bar/top-bar';
+import { Navbar } from './components/navbar/navbar';
+import { TopBar } from "./components/top-bar/top-bar";
 import {filter} from 'rxjs';
 
 @Component({

@@ -4,6 +4,7 @@
  */
 package sae.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -18,7 +19,7 @@ import java.util.List;
 @NamedQueries({
     @NamedQuery(name = "Formation.findAll", query = "SELECT f FROM Formation f"),
     @NamedQuery(name = "Formation.findByIdformation", query = "SELECT f FROM Formation f WHERE f.idformation = :idformation"),
-    @NamedQuery(name = "Formation.findByNom", query = "SELECT f FROM Formation f WHERE f.nom = :nom")})
+    @NamedQuery(name = "Formation.findByName", query = "SELECT f FROM Formation f WHERE f.name = :name")})
 public class Formation implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -27,16 +28,18 @@ public class Formation implements Serializable {
     @Basic(optional = false)
     @Column(name = "IDFORMATION")
     private Integer idformation;
-    @Column(name = "NOM")
-    private String nom;
+    @Column(name = "NAME")
+    private String name;
     @JoinTable(name = "USERFORMATION", joinColumns = {
         @JoinColumn(name = "IDFORMATION", referencedColumnName = "IDFORMATION")}, inverseJoinColumns = {
         @JoinColumn(name = "IDUSER", referencedColumnName = "IDUSER")})
+    @JsonIgnore
     @ManyToMany
     private List<Users> usersList;
     @JoinTable(name = "FORMATIONRESSOURCES", joinColumns = {
         @JoinColumn(name = "IDFORMATION", referencedColumnName = "IDFORMATION")}, inverseJoinColumns = {
         @JoinColumn(name = "IDRESSOURCE", referencedColumnName = "IDRESSOURCE")})
+    @JsonIgnore
     @ManyToMany
     private List<Ressources> ressourcesList;
 
@@ -55,12 +58,12 @@ public class Formation implements Serializable {
         this.idformation = idformation;
     }
 
-    public String getNom() {
-        return nom;
+    public String getName() {
+        return name;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<Users> getUsersList() {

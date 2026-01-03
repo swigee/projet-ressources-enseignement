@@ -4,23 +4,9 @@ import { TrainingManager } from './components/training-manager/training-manager'
 import { Login } from './components/login/login'
 import { PedagogicalScheduleComponent } from './components/pedagogical-schedule/pedagogical-schedule';
 import { EducationManagerCreation } from './components/education-manager-creation/education-manager-creation';
+import {TeacherAssignmentComponent} from './components/teacher-assignment/teacher-assignment';
 
 export const routes: Routes = [
-   /* {
-        path:'',
-        redirectTo:'login',
-        pathMatch:'full',
-
-    },
-    {
-      path:'login',
-      component: Login
-    },*/
-    {
-      path: '',
-      component: Dashboard,
-
-    },
     {
         path:'dashboard',
         component: Dashboard
@@ -36,6 +22,10 @@ export const routes: Routes = [
     {
         path:'service-sheet',
         component: Dashboard
+    },
+    {
+      path:'teacher-assignment',
+      component: TeacherAssignmentComponent
     },
     {
         path:'education-manager',

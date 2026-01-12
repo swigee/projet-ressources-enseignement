@@ -4,7 +4,8 @@ export interface CourseRow {
   category?: string;
   isHighlighted: boolean;
   hoursPerWeek: { [key: string]: number };
-  hoursPerHalfGroup?: { [key: string]: number };
+  hoursPerHalfGroup: { [key: string]: number };
+
 }
 
 export interface Week {

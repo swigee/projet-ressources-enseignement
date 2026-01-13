@@ -1,0 +1,85 @@
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# --- IDE (IntelliJ / VSCode) ---
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.iml
+.vscode/
+
+# --- JAVA / SPRING BOOT ---
+target/
+*.class
+.mvn/
+mvnw
+mvnw.cmd
+
+# --- ANGULAR / NODE ---
+node_modules/
+dist/
+.angular/
+connect.lock
+coverage/
+lib/
+.cache
+npm-debug.log
+yarn-error.log
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+__screenshots__/
+
+
+#backend
+backend/ressources_enseignements/HELP.md
+backend/ressources_enseignements/target/
+backend/ressources_enseignements/.mvn/wrapper/maven-wrapper.jar
+backend/ressources_enseignements/!**/src/main/**/target/
+backend/ressources_enseignements/!**/src/test/**/target/
+backend/ressources_enseignements/nbactions.xml
+
+### STS ###
+backend/ressources_enseignements/.apt_generated
+backend/ressources_enseignements/.classpath
+backend/ressources_enseignements/.factorypath
+backend/ressources_enseignements/.project
+backend/ressources_enseignements/.settings
+backend/ressources_enseignements/.springBeans
+backend/ressources_enseignements/.sts4-cache
+
+### IntelliJ IDEA ###
+backend/ressources_enseignements/.idea
+backend/ressources_enseignements/*.iws
+backend/ressources_enseignements/*.iml
+backend/ressources_enseignements/*.ipr
+
+### NetBeans ###
+backend/ressources_enseignements/nbproject/private/
+backend/ressources_enseignements/nbbuild/
+backend/ressources_enseignements/dist/
+backend/ressources_enseignements/nbdist/
+backend/ressources_enseignements/.nb-gradle/
+backend/ressources_enseignements/build/
+backend/ressources_enseignements/!**/src/main/**/build/
+backend/ressources_enseignements/!**/src/test/**/build/
+
+
+

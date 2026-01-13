@@ -4,10 +4,17 @@
  */
 package sae.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -25,167 +32,136 @@ import java.util.List;
     @NamedQuery(name = "Ressources.findByHeureTpIut", query = "SELECT r FROM Ressources r WHERE r.heureTpIut = :heureTpIut"),
     @NamedQuery(name = "Ressources.findByHeureCmEtat", query = "SELECT r FROM Ressources r WHERE r.heureCmEtat = :heureCmEtat"),
     @NamedQuery(name = "Ressources.findByHeureCmIut", query = "SELECT r FROM Ressources r WHERE r.heureCmIut = :heureCmIut")})
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Ressources implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
     @Column(name = "IDRESSOURCE")
     private Integer idressource;
-    @Column(name = "TITLE")
+
+    @Column(name = "TITLE", nullable = false, length = 255)
     private String title;
+
     @Lob
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", columnDefinition = "TEXT")
     private String description;
+
+    @Column(name = "CATEGORY", length = 100)
+    private String category;
+
+    @Column(name = "IS_HIGHLIGHTED")
+    private Boolean isHighlighted = false;
+
+    // Heures TD (Travaux Dirigés)
     @Column(name = "HEURE_TD_ETAT")
-    private String heureTdEtat;
+    private Integer heureTdEtat;
+
     @Column(name = "HEURE_TD_IUT")
-    private String heureTdIut;
+    private Integer heureTdIut;
+
+    // Heures TP (Travaux Pratiques)
     @Column(name = "HEURE_TP_ETAT")
-    private String heureTpEtat;
+    private Integer heureTpEtat;
+
     @Column(name = "HEURE_TP_IUT")
-    private String heureTpIut;
+    private Integer heureTpIut;
+
+    // Heures CM (Cours Magistral)
     @Column(name = "HEURE_CM_ETAT")
-    private String heureCmEtat;
+    private Integer heureCmEtat;
+
     @Column(name = "HEURE_CM_IUT")
-    private String heureCmIut;
-    @ManyToMany(mappedBy = "ressourcesList")
+    private Integer heureCmIut;
+
+    // Stockage des heures par semaine (JSON)
+    @Column(name = "HOURS_PER_WEEK", columnDefinition = "TEXT")
+    private String hoursPerWeekJson;
+
+    // Heures par demi-groupe
+    @Column(name = "HOURS_PER_HALF_GROUP")
+    private Integer hoursPerHalfGroup;
+
+    // Relations
+    @ManyToMany(mappedBy = "ressourcesList", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("ressourcesList")
     private List<Formation> formationList;
-    @JoinTable(name = "RESSOURCESSYLLABUS", joinColumns = {
-        @JoinColumn(name = "IDRESSOURCE", referencedColumnName = "IDRESSOURCE")}, inverseJoinColumns = {
-        @JoinColumn(name = "IDSYLLABUS", referencedColumnName = "IDSYLLABUS")})
-    @ManyToMany
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "RESSOURCESSYLLABUS",
+            joinColumns = @JoinColumn(name = "IDRESSOURCE"),
+            inverseJoinColumns = @JoinColumn(name = "IDSYLLABUS")
+    )
+    @JsonIgnoreProperties("ressourcesList")
     private List<Syllabus> syllabusList;
-    @OneToMany(mappedBy = "idressource")
+
+    @OneToMany(mappedBy = "idressource", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("idressource")
     private List<Assignment> assignmentList;
 
-    public Ressources() {
+    // Méthodes utilitaires pour gérer hoursPerWeek comme Map
+    @Transient
+    public Map<String, Integer> getHoursPerWeek() {
+        if (hoursPerWeekJson == null || hoursPerWeekJson.isEmpty()) {
+            return new HashMap<>();
+        }
+        try {
+            // Conversion JSON vers Map (nécessite Jackson ObjectMapper)
+            com.fasterxml.jackson.databind.ObjectMapper mapper =
+                    new com.fasterxml.jackson.databind.ObjectMapper();
+            return mapper.readValue(hoursPerWeekJson,
+                    new com.fasterxml.jackson.core.type.TypeReference<Map<String, Integer>>() {
+                    });
+        } catch (Exception e) {
+            return new HashMap<>();
+        }
     }
 
-    public Ressources(Integer idressource) {
-        this.idressource = idressource;
+    @Transient
+    public void setHoursPerWeek(Map<String, Integer> hoursPerWeek) {
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper =
+                    new com.fasterxml.jackson.databind.ObjectMapper();
+            this.hoursPerWeekJson = mapper.writeValueAsString(hoursPerWeek);
+        } catch (Exception e) {
+            this.hoursPerWeekJson = "{}";
+        }
     }
 
-    public Integer getIdressource() {
-        return idressource;
+    // Calcul du total des heures
+    @Transient
+    public Integer getTotalHours() {
+        return getHoursPerWeek().values().stream()
+                .mapToInt(Integer::intValue)
+                .sum();
     }
 
-    public void setIdressource(Integer idressource) {
-        this.idressource = idressource;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getHeureTdEtat() {
-        return heureTdEtat;
-    }
-
-    public void setHeureTdEtat(String heureTdEtat) {
-        this.heureTdEtat = heureTdEtat;
-    }
-
-    public String getHeureTdIut() {
-        return heureTdIut;
-    }
-
-    public void setHeureTdIut(String heureTdIut) {
-        this.heureTdIut = heureTdIut;
-    }
-
-    public String getHeureTpEtat() {
-        return heureTpEtat;
-    }
-
-    public void setHeureTpEtat(String heureTpEtat) {
-        this.heureTpEtat = heureTpEtat;
-    }
-
-    public String getHeureTpIut() {
-        return heureTpIut;
-    }
-
-    public void setHeureTpIut(String heureTpIut) {
-        this.heureTpIut = heureTpIut;
-    }
-
-    public String getHeureCmEtat() {
-        return heureCmEtat;
-    }
-
-    public void setHeureCmEtat(String heureCmEtat) {
-        this.heureCmEtat = heureCmEtat;
-    }
-
-    public String getHeureCmIut() {
-        return heureCmIut;
-    }
-
-    public void setHeureCmIut(String heureCmIut) {
-        this.heureCmIut = heureCmIut;
-    }
-
-    public List<Formation> getFormationList() {
-        return formationList;
-    }
-
-    public void setFormationList(List<Formation> formationList) {
-        this.formationList = formationList;
-    }
-
-    public List<Syllabus> getSyllabusList() {
-        return syllabusList;
-    }
-
-    public void setSyllabusList(List<Syllabus> syllabusList) {
-        this.syllabusList = syllabusList;
-    }
-
-    public List<Assignment> getAssignmentList() {
-        return assignmentList;
-    }
-
-    public void setAssignmentList(List<Assignment> assignmentList) {
-        this.assignmentList = assignmentList;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Ressources)) return false;
+        Ressources that = (Ressources) o;
+        return idressource != null && idressource.equals(that.idressource);
     }
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (idressource != null ? idressource.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Ressources)) {
-            return false;
-        }
-        Ressources other = (Ressources) object;
-        if ((this.idressource == null && other.idressource != null) || (this.idressource != null && !this.idressource.equals(other.idressource))) {
-            return false;
-        }
-        return true;
+        return getClass().hashCode();
     }
 
     @Override
     public String toString() {
-        return "sae.project.model.Ressources[ idressource=" + idressource + " ]";
+        return "Ressources{" +
+                "idressource=" + idressource +
+                ", title='" + title + '\'' +
+                ", category='" + category + '\'' +
+                '}';
     }
-    
 }

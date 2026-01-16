@@ -4,9 +4,10 @@ import { TrainingManager } from './components/training-manager/training-manager'
 import { Login } from './components/login/login'
 import { PedagogicalScheduleComponent } from './components/pedagogical-schedule/pedagogical-schedule';
 import { EducationManagerCreation } from './components/education-manager-creation/education-manager-creation';
+import { ServiceSheet } from "./components/service-sheet/service-sheet";
 
 export const routes: Routes = [
-   /* {
+    {
         path:'',
         redirectTo:'login',
         pathMatch:'full',
@@ -15,11 +16,6 @@ export const routes: Routes = [
     {
       path:'login',
       component: Login
-    },*/
-    {
-      path: '',
-      component: Dashboard,
-
     },
     {
         path:'dashboard',
@@ -34,15 +30,15 @@ export const routes: Routes = [
         component: PedagogicalScheduleComponent
     },
     {
-        path:'service-sheet',
-        component: Dashboard
-    },
-    {
         path:'education-manager',
         component: TrainingManager
     },
     {
         path:'education-manager/create',
         component: EducationManagerCreation
+    },
+    {
+      path: 'service-sheet',
+      component: ServiceSheet
     }
 ];

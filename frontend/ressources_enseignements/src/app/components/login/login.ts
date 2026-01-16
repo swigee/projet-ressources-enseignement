@@ -7,9 +7,11 @@ import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
+
 })
 export class Login {
   loginForm: FormGroup
@@ -26,19 +28,24 @@ export class Login {
   }
   onSubmit(){
 
-        if (this.loginForm.valid) {
-          const { username, password } = this.loginForm.value;
+    if (this.loginForm.valid) {
+      const { username, password } = this.loginForm.value;
 
-          this.authService.login(username, password).subscribe({
-            next: (user:any) => {
-              console.log('Connexion réussie !', user);
-              this.router.navigate(['/dashboard']); // Redirection vers l'accueil
-            },
-            error: (err:any) => {
-              console.error('Erreur de connexion', err);
-              alert('identifiant ou mot de passe incorrect');
-            }
-          });
+      this.authService.login(username, password).subscribe({
+        next: (user:any) => {
+          console.log('Connexion réussie !', user);
+
+          if (user && user.iduser) {
+            localStorage.setItem('userId', user.iduser.toString());
+          }
+
+          this.router.navigate(['/dashboard']); // Redirection vers l'accueil
+        },
+        error: (err:any) => {
+          console.error('Erreur de connexion', err);
+          alert('identifiant ou mot de passe incorrect');
         }
+      });
+    }
   }
 }

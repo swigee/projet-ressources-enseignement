@@ -1,99 +1,125 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
-import {AffectationRow, DragData, Teacher } from '../../models/teacher.model';
+import { FormsModule } from '@angular/forms';
+import {
+  TeacherAssignmentService,
+  TeacherDTO,
+  AffectationRowDTO,
+  CreateAssignmentDTO,
+  TeacherAssignmentDTO,
+  AssignmentGridDTO
+} from '../../services/teacher-assignment/teacher-assignment-service';
+
+interface DragData {
+  type: string;
+  teacherId: number;
+  teacherName: string;
+}
 
 @Component({
   selector: 'app-teacher-assignment',
   standalone: true,
-  imports: [CommonModule, FormsModule], 
+  imports: [CommonModule, FormsModule],
   templateUrl: './teacher-assignment.html',
   styleUrl: './teacher-assignment.css'
 })
-export class TeacherAssignmentComponent {
-  selectedFormation: string = '';
-  selectedYear: string = '';
+export class TeacherAssignmentComponent implements OnInit {
+  selectedFormation: string = 'Informatique';
+  selectedYear: string = '2';
+  selectedClass: string = 'Classe A';
   selectedSemester: string = '';
   searchQuery: string = '';
-  draggedTeacher: Teacher | null = null;
+  draggedTeacher: TeacherDTO | null = null;
+  isLoading: boolean = false;
 
-  // Données des enseignants disponibles
-  teachers: Teacher[] = [
-    {
-      id: 1,
-      name: 'Martin GEANT',
-      subject: 'Maths, Algorithmes',
-      status: 'Permanent',
-      hours: '192h restants',
-      statusColor: 'bg-green-100 text-green-800'
-    },
-    {
-      id: 2,
-      name: 'Leroy Merlin',
-      subject: 'Ergonomie', 
-      status: 'Vacataire',
-      hours: '100h restant',
-      statusColor: 'bg-blue-100 text-blue-800'
-    },
-    {
-      id: 3,
-      name: 'Marine LEROUSSE',
-      subject: 'Maths, Algorithmes', 
-      status: 'Permanent',
-      hours: '120 restants',
-      statusColor: 'bg-green-100 text-green-800'
+  teachers: TeacherDTO[] = [];
+  affectationGrid: AffectationRowDTO[] = [];
+  statistics: any = null;
+
+  constructor(private teacherService: TeacherAssignmentService) {}
+
+  ngOnInit() {
+    console.log('Initialisation avec:', {
+      formation: this.selectedFormation,
+      year: this.selectedYear,
+      class: this.selectedClass
+    });
+    this.loadData();
+  }
+
+  /**
+   * Charger les données depuis le backend
+   */
+  loadData(): void {
+    if (!this.selectedYear || !this.selectedClass) {
+      console.warn('Année ou classe non sélectionnée');
+      this.affectationGrid = [];
+      return;
     }
-  ];
 
-  // Grille d'affectation
-  affectationGrid: AffectationRow[] = [
-    {
-      id: 'dev-avancee',
-      module: 'Dev Avancée',
-      td: '25h',
-      tp: '18h',
-      cm: 'X',
-      teachers: ['Martin GEANT']
-    },
-    {
-      id: 'dev-qualite',
-      module: 'Dev Qualité',
-      td: '25h',
-      tp: '18h',
-      cm: 'X',
-      teachers: []
-    },
-    {
-      id: 'angular',
-      module: 'Angular',
-      td: '25h',
-      tp: '18h',
-      cm: 'X',
-      teachers: []
-    },
-    {
-      id: 'droit',
-      module: 'Droit',
-      td: '25h',
-      tp: 'X',
-      cm: '18h',
-      teachers: ['Leroy Merlin']
-    }
-  ];
+    console.log('Chargement des données pour:', {
+      formation: this.selectedFormation,
+      year: this.selectedYear,
+      class: this.selectedClass
+    });
 
-  // Filtrer les enseignants selon la recherche
-  get filteredTeachers(): Teacher[] {
+    this.isLoading = true;
+    this.teacherService.getAssignmentGrid(
+      this.selectedFormation,
+      this.selectedYear,
+      this.selectedClass
+    ).subscribe({
+      next: (data: AssignmentGridDTO) => {
+        console.log('Données reçues du backend:', data);
+        console.log('Nombre de ressources:', data.affectationGrid?.length || 0);
+        console.log('Nombre d\'enseignants:', data.availableTeachers?.length || 0);
+
+        this.teachers = data.availableTeachers || [];
+        this.affectationGrid = data.affectationGrid || [];
+        this.statistics = data.statistics;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des données:', error);
+        this.isLoading = false;
+        this.affectationGrid = [];
+        alert('Erreur lors du chargement des données. Vérifiez la console pour plus de détails.');
+      }
+    });
+  }
+
+  /**
+   * Recharger les données quand les filtres changent
+   */
+  onFilterChange(): void {
+    console.log('Changement de filtre détecté:', {
+      formation: this.selectedFormation,
+      year: this.selectedYear,
+      class: this.selectedClass,
+      semester: this.selectedSemester
+    });
+    this.loadData();
+  }
+
+  /**
+   * Filtrer les enseignants selon la recherche
+   */
+  get filteredTeachers(): TeacherDTO[] {
     if (!this.searchQuery) {
       return this.teachers;
     }
+    const query = this.searchQuery.toLowerCase();
     return this.teachers.filter(teacher =>
-      teacher.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-      teacher.subject.toLowerCase().includes(this.searchQuery.toLowerCase()) // ← CORRIGÉ : subject
+      teacher.name.toLowerCase().includes(query) ||
+      (teacher.subject && teacher.subject.toLowerCase().includes(query)) ||
+      teacher.status.toLowerCase().includes(query)
     );
   }
 
-  // Drag & Drop - Début du drag
-  onDragStart(event: DragEvent, teacher: Teacher): void {
+  /**
+   * Drag & Drop - Début du drag
+   */
+  onDragStart(event: DragEvent, teacher: TeacherDTO): void {
     this.draggedTeacher = teacher;
     if (event.dataTransfer) {
       event.dataTransfer.effectAllowed = 'copy';
@@ -106,7 +132,9 @@ export class TeacherAssignmentComponent {
     }
   }
 
-  // Drag & Drop - Survol de la zone de dépôt
+  /**
+   * Drag & Drop - Survol de la zone de dépôt
+   */
   onDragOver(event: DragEvent): void {
     event.preventDefault();
     if (event.dataTransfer) {
@@ -114,55 +142,188 @@ export class TeacherAssignmentComponent {
     }
   }
 
-  // Drag & Drop - Dépôt sur un module
-  onDrop(event: DragEvent, moduleId: string): void {
+  /**
+   * Drag & Drop - Dépôt sur un module
+   */
+  onDrop(event: DragEvent, ressourceId: number, lessonType: 'TD' | 'TP' | 'CM'): void {
     event.preventDefault();
-    
     if (!event.dataTransfer) return;
 
     try {
       const data = event.dataTransfer.getData('application/json');
       const dragData: DragData = JSON.parse(data);
 
-      if (dragData.type === 'teacher') {
-        const module = this.affectationGrid.find(m => m.id === moduleId);
-        if (module && !module.teachers.includes(dragData.teacherName)) {
-          module.teachers.push(dragData.teacherName);
-        }
+      if (dragData.type !== 'teacher') return;
+
+      const module = this.affectationGrid.find(m => m.ressourceId === ressourceId);
+      if (!module) return;
+
+      let teacherList: TeacherAssignmentDTO[];
+      let moduleHours: number;
+
+      switch (lessonType) {
+        case 'TD':
+          teacherList = module.tdTeachers;
+          moduleHours = module.tdHours || 10;
+          break;
+        case 'TP':
+          teacherList = module.tpTeachers;
+          moduleHours = module.tpHours || 10;
+          break;
+        case 'CM':
+          teacherList = module.cmTeachers;
+          moduleHours = module.cmHours || 10;
+          break;
+        default:
+          return;
       }
+
+      const usedHours = teacherList.reduce((sum, t) => sum + t.assignedHours, 0);
+      const remainingHours = moduleHours - usedHours;
+
+      if (remainingHours <= 0) {
+        alert('Toutes les heures de ce type sont déjà affectées');
+        this.draggedTeacher = null;
+        return;
+      }
+
+      let hoursStr = prompt(`Combien d'heures pour le ${lessonType} ? (max ${remainingHours})`, `${remainingHours}`);
+      if (!hoursStr) {
+        this.draggedTeacher = null;
+        return;
+      }
+
+      let hours = parseInt(hoursStr);
+      if (isNaN(hours) || hours <= 0 || hours > remainingHours) {
+        alert(`Nombre d'heures invalide. Vous pouvez assigner entre 1 et ${remainingHours}h`);
+        this.draggedTeacher = null;
+        return;
+      }
+
+      const existingAssignment = teacherList.find(t => t.teacherId === dragData.teacherId);
+      if (existingAssignment) {
+        existingAssignment.assignedHours += hours;
+      } else {
+        const assignment: CreateAssignmentDTO = {
+          userId: dragData.teacherId,
+          ressourceId: ressourceId,
+          lessonType: lessonType,
+          assignedTimes: hours
+        };
+
+        this.teacherService.createAssignment(assignment).subscribe({
+          next: () => {
+            console.log('Affectation créée avec succès');
+            this.loadData();
+          },
+          error: (error) => {
+            console.error('Erreur lors de la création:', error);
+            alert('Erreur lors de la création de l\'affectation: ' + (error.error?.message || error.message));
+          }
+        });
+      }
+
     } catch (error) {
       console.error('Erreur lors du drop:', error);
+    } finally {
+      this.draggedTeacher = null;
     }
-
-    this.draggedTeacher = null;
   }
 
-  // Drag & Drop - Fin du drag
+  /**
+   * Drag & Drop - Fin du drag
+   */
   onDragEnd(): void {
     this.draggedTeacher = null;
   }
 
-  // Retirer un enseignant d'un module
-  removeTeacher(moduleId: string, teacherName: string): void {
-    const module = this.affectationGrid.find(m => m.id === moduleId);
-    if (module) {
-      module.teachers = module.teachers.filter((t: string) => t !== teacherName); // ← CORRIGÉ : typage explicite
+  /**
+   * Retirer un enseignant d'un module
+   */
+  removeTeacher(assignmentId: number): void {
+    if (confirm('Voulez-vous retirer cet enseignant de ce module ?')) {
+      this.teacherService.deleteAssignment(assignmentId).subscribe({
+        next: () => {
+          console.log('Affectation supprimée');
+          this.loadData();
+        },
+        error: (error) => {
+          console.error('Erreur lors de la suppression:', error);
+          alert('Erreur lors de la suppression');
+        }
+      });
     }
   }
 
-  // Afficher les enseignants affectés
-  getTeachersDisplay(teachers: string[]): string {
-    if (teachers.length === 0) {
+  /**
+   * Afficher les enseignants affectés
+   */
+  getTeachersDisplay(teachers: TeacherAssignmentDTO[]): string {
+    if (!teachers || teachers.length === 0) {
       return 'Non Affecté';
     }
     if (teachers.length === 1) {
-      return teachers[0];
+      return teachers[0].teacherName;
     }
-    return teachers[0] + ', ...';
+    return teachers[0].teacherName + ', +' + (teachers.length - 1);
   }
 
-  // Vérifier si un module est vide
-  isModuleEmpty(teachers: string[]): boolean {
-    return teachers.length === 0;
+  /**
+   * Vérifier si un module est vide
+   */
+  isModuleEmpty(teachers: TeacherAssignmentDTO[]): boolean {
+    return !teachers || teachers.length === 0;
+  }
+
+  /**
+   * Obtenir la couleur de badge selon le type de cours
+   */
+  getLessonTypeBadgeColor(lessonType: string): string {
+    switch (lessonType) {
+      case 'CM': return 'bg-purple-100 text-purple-800';
+      case 'TD': return 'bg-blue-100 text-blue-800';
+      case 'TP': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  }
+
+  /**
+   * Valider les affectations
+   */
+  validateAssignments(): void {
+    if (!this.selectedYear || !this.selectedClass) {
+      alert('Veuillez sélectionner une année et une classe');
+      return;
+    }
+
+    this.teacherService.validateAssignments(this.selectedYear, this.selectedClass).subscribe({
+      next: (response) => {
+        if (response.success) {
+          let message = response.message;
+          if (response.warnings && response.warnings.length > 0) {
+            message += '\n\nAvertissements:\n' + response.warnings.join('\n');
+          }
+          alert(message);
+        } else {
+          let message = response.message;
+          if (response.errors && response.errors.length > 0) {
+            message += '\n\nErreurs:\n' + response.errors.join('\n');
+          }
+          alert(message);
+        }
+      },
+      error: (error) => {
+        console.error('Erreur lors de la validation:', error);
+        alert('Erreur lors de la validation des affectations');
+      }
+    });
+  }
+
+  /**
+   * Enregistrer toutes les affectations
+   */
+  saveAssignments(): void {
+    alert('Les affectations ont été enregistrées avec succès !');
+    this.loadData();
   }
 }

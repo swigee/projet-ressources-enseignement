@@ -82,6 +82,7 @@ public class Formation implements Serializable {
         return idformation != null && idformation.equals(formation.idformation);
     }
 
+
     @Override
     public int hashCode() {
         return getClass().hashCode();
@@ -96,4 +97,5 @@ public class Formation implements Serializable {
                 ", className='" + className + '\'' +
                 '}';
     }
+    
 }

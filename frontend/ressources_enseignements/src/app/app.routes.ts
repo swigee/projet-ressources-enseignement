@@ -4,7 +4,7 @@ import { Login } from './components/login/login'
 import { PedagogicalScheduleComponent } from './components/pedagogical-schedule/pedagogical-schedule';
 import { ServiceSheet } from './components/service-sheet/service-sheet';
 export const routes: Routes = [
-    {
+   /* {
         path:'',
         redirectTo:'login',
         pathMatch:'full',
@@ -13,6 +13,11 @@ export const routes: Routes = [
     {
       path:'login',
       component: Login
+    },*/
+    {
+      path: '',
+      component: Dashboard,
+
     },
     {
         path:'dashboard',

@@ -7,7 +7,7 @@ DELETE FROM tickets;
 DELETE FROM ressourcessyllabus;
 DELETE FROM formationressources;
 DELETE FROM userformation;
-DELETE FROM userrole;
+DELETE FROM users_roles;
 
 DELETE FROM ressources;
 DELETE FROM syllabus;
@@ -45,7 +45,7 @@ INSERT INTO users (iduser, address, email, firstname, lastname, password, phonen
 -- =========================
 -- USER ROLE
 -- =========================
-INSERT INTO userrole (idrole, iduser) VALUES
+INSERT INTO users_roles (idrole, iduser) VALUES
 (1, 1),
 (2, 2),
 (3, 3);

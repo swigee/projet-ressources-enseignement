@@ -53,10 +53,10 @@ INSERT INTO userrole (idrole, iduser) VALUES
 -- =========================
 -- FORMATIONS
 -- =========================
-INSERT INTO formation (idformation, nom) VALUES
-(1, 'Informatique'),
-(2, 'Mathématiques'),
-(3, 'Physique');
+INSERT INTO formation (idformation, name, description) VALUES
+(1, 'Informatique', 'Informatique est cool!'),
+(2, 'Mathématiques', 'Maths sont cool!'),
+(3, 'Physique', 'Physique est intéressant!');
 
 -- =========================
 -- USER FORMATION

@@ -28,17 +28,32 @@ public class Formation implements Serializable {
     @Basic(optional = false)
     @Column(name = "IDFORMATION")
     private Integer idformation;
+    
     @Column(name = "NAME")
     private String name;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    @Column(name = "DESCRIPTION")
+    private String description;
+    
     @JoinTable(name = "USERFORMATION", joinColumns = {
         @JoinColumn(name = "IDFORMATION", referencedColumnName = "IDFORMATION")}, inverseJoinColumns = {
         @JoinColumn(name = "IDUSER", referencedColumnName = "IDUSER")})
+    
     @JsonIgnore
     @ManyToMany
     private List<Users> usersList;
     @JoinTable(name = "FORMATIONRESSOURCES", joinColumns = {
         @JoinColumn(name = "IDFORMATION", referencedColumnName = "IDFORMATION")}, inverseJoinColumns = {
         @JoinColumn(name = "IDRESSOURCE", referencedColumnName = "IDRESSOURCE")})
+    
     @JsonIgnore
     @ManyToMany
     private List<Ressources> ressourcesList;

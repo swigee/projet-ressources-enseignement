@@ -9,5 +9,5 @@ import { PageTitle } from '../../services/page-title';
 })
 export class TopBar {
   pageTitleService = inject(PageTitle);
-  title = signal(this.pageTitleService.title());
+  title = this.pageTitleService.title;
 }

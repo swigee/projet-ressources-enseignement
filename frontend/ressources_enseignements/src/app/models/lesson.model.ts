@@ -1,5 +1,5 @@
 export interface Lesson{
-  id: string;
+  idressource: number;
   title: string;
   description: string;
   cm_hours_gouv: number;

@@ -1,7 +1,7 @@
 import { Lesson } from "./lesson.model";
 
 export interface Education {
-  idformation: number;
+  idformation?: number;
   name: string;
   description: string;
   lessons: Lesson[];

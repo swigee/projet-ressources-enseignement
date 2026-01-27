@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 import { Dashboard } from './components/dashboard/dashboard';
+import { TrainingManager } from './components/training-manager/training-manager';
 import { Login } from './components/login/login'
 import { PedagogicalScheduleComponent } from './components/pedagogical-schedule/pedagogical-schedule';
+import { EducationManagerCreation } from './components/education-manager-creation/education-manager-creation';
 import {UserManager} from './components/user-manager/user-manager';
 
 export const routes: Routes = [
@@ -32,11 +34,16 @@ export const routes: Routes = [
         component: Dashboard
     },
     {
-        path:'training-manager',
-        component: Dashboard
+        path:'education-manager',
+        component: EducationalManager
+    },
+    {
+        path:'education-manager/create',
+        component: EducationManagerCreation
     },
     {
       path:'user-manager',
       component: UserManager
     }
+
 ];

@@ -38,7 +38,7 @@ public class UserController {
                 user.getUsername(),
                 user.getAddress(),
                 user.getEmail(),
-                user.getServicevalidation(),
+                Boolean.TRUE.equals(user.getServicevalidation()),
                 roleJsons,
                 user.getFormationList() != null ? user.getFormationList().stream().map(f -> f.toString()).toList() : List.of(),
                 user.getTicketsList() != null ? user.getTicketsList().stream().map(t -> t.toString()).toList() : List.of(),

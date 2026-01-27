@@ -4,9 +4,10 @@ import { EducationalManager } from './components/educational-manager/educational
 import { Login } from './components/login/login'
 import { PedagogicalScheduleComponent } from './components/pedagogical-schedule/pedagogical-schedule';
 import { EducationManagerCreation } from './components/education-manager-creation/education-manager-creation';
+import {UserManager} from './components/user-manager/user-manager';
 
 export const routes: Routes = [
-   /* {
+   /*{
         path:'',
         redirectTo:'login',
         pathMatch:'full',
@@ -17,12 +18,7 @@ export const routes: Routes = [
       component: Login
     },*/
     {
-      path: '',
-      component: Dashboard,
-
-    },
-    {
-        path:'dashboard',
+        path:'',
         component: Dashboard
     },
     {

@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-gray-50 p-6">
   <div class="max-w-7xl mx-auto bg-white rounded-lg shadow-lg">
-    
+
     <!-- En-tête -->
     <div class="border-b border-gray-200 p-6">
       <h1 class="text-2xl font-semibold text-gray-800">
@@ -12,24 +12,24 @@
     <div class="flex border-b border-gray-300">
       <button
         (click)="setActiveTab('ressources')"
-        [class]="activeTab === 'ressources' 
-          ? 'px-6 py-3 font-medium bg-gray-500 text-white' 
+        [class]="activeTab === 'ressources'
+          ? 'px-6 py-3 font-medium bg-gray-500 text-white'
           : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'"
       >
         Ressources
       </button>
       <button
         (click)="setActiveTab('maquette')"
-        [class]="activeTab === 'maquette' 
-          ? 'px-6 py-3 font-medium bg-gray-500 text-white' 
+        [class]="activeTab === 'maquette'
+          ? 'px-6 py-3 font-medium bg-gray-500 text-white'
           : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'"
       >
         Maquette
       </button>
       <button
         (click)="setActiveTab('validation')"
-        [class]="activeTab === 'validation' 
-          ? 'px-6 py-3 font-medium bg-gray-500 text-white' 
+        [class]="activeTab === 'validation'
+          ? 'px-6 py-3 font-medium bg-gray-500 text-white'
           : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'"
       >
         Validation services
@@ -96,7 +96,7 @@
     <div class="p-6">
       <div class="overflow-x-auto border border-gray-300 rounded-lg">
         <table class="w-full border-collapse text-sm">
-          
+
           <!-- En-tête des mois -->
           <thead>
             <tr class="bg-white border-b border-gray-300">
@@ -110,7 +110,7 @@
                 </th>
               }
             </tr>
-            
+
             <!-- Dates -->
             <tr class="bg-white border-b border-gray-300">
               <th class="sticky left-0 bg-white z-10 border-r border-gray-300 p-2"></th>
@@ -144,7 +144,7 @@
           <tbody>
             @for (row of scheduleData; track row.id) {
               <tr [class]="(row.isHighlighted ? 'bg-blue-100' : 'bg-white') + ' border-b border-gray-300 hover:bg-blue-50'">
-                
+
                 <!-- Nom du cours - colonne fixe -->
                 <td [class]="'sticky left-0 z-10 border-r border-gray-300 p-2 font-medium ' + (row.isHighlighted ? 'bg-blue-100' : 'bg-white')">
                   {{ row.courseName }}
@@ -174,8 +174,8 @@
 
                 <!-- Colonnes des semaines - SAISIE -->
                 @for (week of getAllWeeks(); track $index) {
-                  <td [class]="'border-r border-gray-300 p-1 text-center ' + 
-                        (week.type === 'S' ? 'bg-gray-200' : 
+                  <td [class]="'border-r border-gray-300 p-1 text-center ' +
+                        (week.type === 'S' ? 'bg-gray-200' :
                           (row.isHighlighted ? 'bg-blue-100' : 'bg-white'))">
                     @if (week.type === 'E') {
                       <input
@@ -204,13 +204,13 @@
                 <input
                   type="number"
                   min="0"
-                  [(ngModel)]="projectData.hoursPerHalfGroup![projectData.id]"
+                  [(ngModel)]="projectData.hoursPerHalfGroup![projectData.id!]"
                   class="w-full px-1 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs"
                   placeholder="0"
                 />
               </td>
               @for (week of getAllWeeks(); track $index) {
-                <td [class]="'border-r border-gray-300 p-1 text-center ' + 
+                <td [class]="'border-r border-gray-300 p-1 text-center ' +
                       (week.type === 'S' ? 'bg-gray-200' : 'bg-green-100')">
                   @if (week.type === 'E') {
                     <input
@@ -237,7 +237,7 @@
                 Total hors projet
               </td>
               @for (week of getAllWeeks(); track $index) {
-                <td [class]="'border-r border-gray-300 p-2 text-center font-semibold ' + 
+                <td [class]="'border-r border-gray-300 p-2 text-center font-semibold ' +
                       (week.type === 'S' ? 'bg-gray-200' : 'bg-blue-50')">
                   @if (week.type === 'E') {
                     {{ calculateWeekTotal(week.num) }}
@@ -256,7 +256,7 @@
               </td>
               <td class="border-r border-gray-300 p-2 text-center text-xs font-semibold">Total</td>
               @for (week of getAllWeeks(); track $index) {
-                <td [class]="'border-r border-gray-300 p-2 text-center font-semibold ' + 
+                <td [class]="'border-r border-gray-300 p-2 text-center font-semibold ' +
                       (week.type === 'S' ? 'bg-gray-200' : 'bg-green-50')">
                   @if (week.type === 'E') {
                     {{ calculateWeekTotalWithProject(week.num) }}

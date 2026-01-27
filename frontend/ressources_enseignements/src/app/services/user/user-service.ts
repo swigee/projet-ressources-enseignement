@@ -1,0 +1,36 @@
+import {inject, Injectable, signal} from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import {catchError, Observable, of, tap} from 'rxjs';
+import {UserModel} from '../../models/user/user-model';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UserService {
+  private apiUrl = 'http://localhost:8080/api/users';
+  private readonly http = inject(HttpClient);
+
+  constructor() {}
+
+  getAllUsers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/list`);
+  }
+
+  getUserById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  updateUserRole(iduser: number, roles: string[]): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${iduser}/roles`, { roles });
+  }
+
+  deleteUserRole(iduser: number, idrole: number): Observable<any> {
+    return this.http.delete<void>(`${this.apiUrl}/${iduser}/roles`, { body: { idrole } });
+  }
+}
+
+export default UserService

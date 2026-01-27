@@ -4,6 +4,7 @@
  */
 package sae.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -29,6 +30,7 @@ public class Syllabus implements Serializable {
     private Integer idsyllabus;
     @Column(name = "DESCRIPTIONS")
     private String descriptions;
+    @JsonIgnore
     @ManyToMany(mappedBy = "syllabusList")
     private List<Ressources> ressourcesList;
 

@@ -52,7 +52,6 @@ public class Formation implements Serializable {
     )
     @JsonIgnore
     private List<Users> usersList;
-
     @ManyToMany
     @JoinTable(
             name = "FORMATIONRESSOURCES",

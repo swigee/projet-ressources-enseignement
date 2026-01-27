@@ -43,14 +43,14 @@ public class Ressources implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "IDRESSOURCE")
     private Integer idressource;
-
-    @Column(name = "TITLE", nullable = false, length = 255)
+    @Column(name = "TITLE")
     private String title;
 
     @Lob
-    @Column(name = "DESCRIPTION", columnDefinition = "TEXT")
+    @Column(name = "DESCRIPTION")
     private String description;
 
     @Column(name = "CATEGORY", length = 100)
@@ -164,4 +164,5 @@ public class Ressources implements Serializable {
                 ", category='" + category + '\'' +
                 '}';
     }
+    
 }

@@ -4,6 +4,7 @@
  */
 package sae.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,9 +41,11 @@ public class Assignment implements Serializable {
     private Integer assignedtimes;
     @Column(name = "LESSONTYPE")
     private String lessontype;
+    @JsonIgnore
     @JoinColumn(name = "IDRESSOURCE", referencedColumnName = "IDRESSOURCE")
     @ManyToOne
     private Ressources idressource;
+    @JsonIgnore
     @JoinColumn(name = "IDUSER", referencedColumnName = "IDUSER")
     @ManyToOne
     private Users iduser;

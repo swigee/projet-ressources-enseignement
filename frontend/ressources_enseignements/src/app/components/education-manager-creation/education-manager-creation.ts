@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
-import { LessonService } from '../../services/lesson-service';
+import { LessonService } from '../../services/lesson/lesson-service';
 import { Lesson } from '../../models/lesson.model';
 import { Education } from '../../models/education.model';
-import { EducationalManagerService } from '../../services/educational-manager';
+import { EducationalManagerService } from '../../services/educational-manager/educational-manager';
 
 @Component({
   selector: 'app-education-manager-creation',

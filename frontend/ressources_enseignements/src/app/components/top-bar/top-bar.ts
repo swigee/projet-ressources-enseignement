@@ -1,5 +1,5 @@
 import {Component, inject, signal} from '@angular/core';
-import { PageTitle } from '../../services/page-title';
+import { PageTitle } from '../../services/page-title/page-title';
 
 @Component({
   selector: 'app-top-bar',

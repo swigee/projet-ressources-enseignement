@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Education } from '../models/education.model';
+import { Education } from '../../models/education.model';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -44,8 +44,7 @@ export class EducationalManagerService {
     this.http
     .get<Education>(`${this.api}/${id}`)
     .subscribe(() => {
-      this.router.navigate(['/education-manager/create']);
-      
+      this.router.navigate(['/education-manager/edit', id]);
       this.loadEducations();
     })
     }

@@ -4,9 +4,10 @@ stages:
   - sonarqube-check
   - deploy
 
-# Job de build pour le backend Java
+# Job Backend : On utilise une image avec Maven et Java pré-installés
 build-backend:
   stage: build
+  image: maven:3.9-eclipse-temurin-17 
   script:
     - echo "Compiling backend Java code..."
     - mvn -f backend/ressources_enseignements/pom.xml clean compile
@@ -14,12 +15,15 @@ build-backend:
     - merge_requests
     - main
 
-# Job de build pour le frontend (si besoin)
+# Job Frontend : On utilise une image avec Node.js pré-installé
 build-frontend:
   stage: build
+  image: node:20
   script:
     - echo "Building frontend..."
-    - cd frontend/ressources_enseignements && npm install && npm run build || echo "No frontend build configured"
+    - cd frontend/ressources_enseignements
+    - npm install
+    - npm run build
   only:
     - merge_requests
     - main

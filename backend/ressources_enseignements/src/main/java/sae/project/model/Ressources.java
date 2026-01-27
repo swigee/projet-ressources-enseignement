@@ -4,6 +4,7 @@
  */
 package sae.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -50,8 +51,10 @@ public class Ressources implements Serializable {
     private String heureCmEtat;
     @Column(name = "HEURE_CM_IUT")
     private String heureCmIut;
+    @JsonIgnore
     @ManyToMany(mappedBy = "ressourcesList")
     private List<Formation> formationList;
+    @JsonIgnore
     @JoinTable(name = "RESSOURCESSYLLABUS", joinColumns = {
         @JoinColumn(name = "IDRESSOURCE", referencedColumnName = "IDRESSOURCE")}, inverseJoinColumns = {
         @JoinColumn(name = "IDSYLLABUS", referencedColumnName = "IDSYLLABUS")})

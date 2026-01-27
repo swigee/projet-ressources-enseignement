@@ -51,7 +51,12 @@ public class Users implements Serializable {
     private Boolean servicevalidation;
     @ManyToMany(mappedBy = "usersList")
     private List<Formation> formationList;
-    @ManyToMany(mappedBy = "usersList")
+    @ManyToMany
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "iduser"),
+            inverseJoinColumns = @JoinColumn(name = "idrole")
+    )
     private List<Role> roleList;
     @OneToMany(mappedBy = "iduser")
     private List<Tickets> ticketsList;

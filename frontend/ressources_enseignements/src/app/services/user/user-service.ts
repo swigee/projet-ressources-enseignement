@@ -23,6 +23,14 @@ export class UserService {
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  updateUserRole(iduser: number, roles: string[]): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${iduser}/roles`, { roles });
+  }
+
+  deleteUserRole(iduser: number, idrole: number): Observable<any> {
+    return this.http.delete<void>(`${this.apiUrl}/${iduser}/roles`, { body: { idrole } });
+  }
 }
 
 export default UserService

@@ -1,15 +1,19 @@
+export interface RoleModel {
+  idrole: number;
+  title: string;
+  rights: string;
+}
+
 export interface UserModel {
-  iduser?: number;
+  iduser: number;
   firstname?: string;
   lastname?: string;
   username: string;
   address?: string;
   email?: string;
   servicevalidation?: boolean;
-
-  formationList?: any[];
-  roleList?: any[];
-  ticketsList?: any[];
-  assignmentList?: any[];
+  roles?: RoleModel[];
+  formations?: any[];
+  tickets?: any[];
+  assignments?: any[];
 }
-

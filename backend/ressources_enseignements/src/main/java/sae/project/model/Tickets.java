@@ -4,6 +4,7 @@
  */
 package sae.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -39,6 +40,7 @@ public class Tickets implements Serializable {
     private Date date;
     @Column(name = "STATUE")
     private String statue;
+    @JsonIgnore
     @JoinColumn(name = "IDUSER", referencedColumnName = "IDUSER")
     @ManyToOne
     private Users iduser;

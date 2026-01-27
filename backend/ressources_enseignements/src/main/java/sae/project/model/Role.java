@@ -4,6 +4,7 @@
  */
 package sae.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -32,10 +33,8 @@ public class Role implements Serializable {
     private Boolean title;
     @Column(name = "RIGHTS")
     private String rights;
-    @JoinTable(name = "USERROLE", joinColumns = {
-        @JoinColumn(name = "IDROLE", referencedColumnName = "IDROLE")}, inverseJoinColumns = {
-        @JoinColumn(name = "IDUSER", referencedColumnName = "IDUSER")})
-    @ManyToMany
+    @JsonIgnore
+    @ManyToMany(mappedBy = "roleList")
     private List<Users> usersList;
 
     public Role() {

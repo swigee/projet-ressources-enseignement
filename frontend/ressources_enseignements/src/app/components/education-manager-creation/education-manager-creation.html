@@ -1,55 +1,59 @@
 
 <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden w-250 h-150">
                
-
+    <button class="bg-black w-7 h-7 rounded-sm cursor-pointer" (click)="goBack()">
+        <i class="fa-solid fa-arrow-left text-white text-sm pt-0.5"></i>
+    </button>
     <div class="px-8 py-6 border-b border-gray-200">
         <h2 class="text-xl font-semibold text-gray-900">Création d'une formation</h2>
     </div>
 
     <div class="px-8 py-6">
-        <div class="relative">
-            <label for="training-name" class="block text-sm font-medium text-gray-700 mb-2">
-                Nom de la formation <span class="text-red-500">*</span>
-            </label>
-            <input type="text" #name
-            class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2
-            focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="">
-        </div>
+        <form [formGroup]="form">
+            <div class="relative">
+                <label for="training-name" class="block text-sm font-medium text-gray-700 mb-2">
+                    Nom de la formation <span class="text-red-500">*</span>
+                </label>
+                <input type="text" #name formControlName="name"
+                class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2
+                focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="">
+            </div>
 
-        <div class="relative mt-4">
-            <label for="training-description" class="block text-sm font-medium text-gray-700 mb-2">
-                Description de la formation <span class="text-red-500">*</span>
-            </label>
-            <textarea #description rows="6" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 
-                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none" 
-                placeholder="Décrivez les objectifs, le contenu et les compétences que les participants acquerront...">
-            </textarea>
-        </div>
+            <div class="relative mt-4">
+                <label for="training-description" class="block text-sm font-medium text-gray-700 mb-2">
+                    Description de la formation <span class="text-red-500">*</span>
+                </label>
+                <textarea #description formControlName="description" rows="6" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none" 
+                    placeholder="Décrivez les objectifs, le contenu et les compétences que les participants acquerront...">
+                </textarea>
+            </div>
 
-        <div class="flex justify-between items-center mt-2">
-            <span class="text-xs text-gray-400">0/500</span>
-        </div>
+            <div class="flex justify-between items-center mt-2">
+                <span class="text-xs text-gray-400">0/500</span>
+            </div>
 
-        <div class="mt-4">
-            <label for="resources" class="block text-sm font-medium text-gray-700 mb-2">
-                Ressources associées <span class="text-red-500">*</span>
-            </label>
-            
-                @for(l of lessonsService.lessonsList(); track l.idressource){
-                   <button
-                        type="button"
-                        (click)="toggleLesson(l)"
-                        [class.bg-blue-600]="selectedLessons.includes(l)"
-                        [class.text-white]="selectedLessons.includes(l)"
-                        class="ml-1 px-4 py-2 rounded-full border text-sm
-                            hover:bg-blue-300 transition">
-                        {{ l.title }}
-                    </button>
-                }
-        </div>
-        <button type="submit" class="mt-5.5 px-6 py-3 bg-blue-600 
-        text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-sm" (click)="clickCreate({ name: name.value, description: description.value, lessons: selectedLessons})">
-            Créer la formation <i class="fa-light fa-plus font-bold"></i>
-        </button>
+            <div class="mt-4">
+                <label for="resources" class="block text-sm font-medium text-gray-700 mb-2">
+                    Ressources associées <span class="text-red-500">*</span>
+                </label>
+                
+                    @for(l of lessonsService.lessonsList(); track l.idressource){
+                    <button
+                            type="button"
+                            (click)="toggleLesson(l)"
+                            [class.bg-blue-600]="selectedLessons.includes(l)"
+                            [class.text-white]="selectedLessons.includes(l)"
+                            class="ml-1 px-4 py-2 rounded-full border text-sm
+                                hover:bg-blue-300 transition">
+                            {{ l.title }}
+                        </button>
+                    }
+            </div>
+            <button type="submit" class="mt-5.5 px-6 py-3 bg-blue-600 
+            text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-sm" (click)="clickCreate({ name: name.value, description: description.value, lessons: selectedLessons})">
+                {{ form.value.id ? 'Modifier la formation' : 'Créer la formation' }} <i class="fa-light fa-plus font-bold"></i>
+            </button>
+        </form>
     </div>
 </div>

@@ -1,14 +1,13 @@
 import { Component, inject } from '@angular/core';
-import { LessonService } from '../../services/lesson-service';
-import { Lesson } from '../../models/lesson.model';
-import { Education } from '../../models/education.model';
-import { EducationalManagerService } from '../../services/educational-manager';
+import { LessonService } from '../../services/lesson/lesson-service';
+import { Lesson } from '../../models/lesson/lesson.model';
+import { Education } from '../../models/education/education.model';
+import { EducationalManagerService } from '../../services/educational-manager/educational-manager';
 
 @Component({
   selector: 'app-education-manager-creation',
   imports: [],
   templateUrl: './education-manager-creation.html',
-  styleUrl: './education-manager-creation.css',
 })
 export class EducationManagerCreation {
   lessonsService = inject(LessonService)
@@ -23,7 +22,7 @@ export class EducationManagerCreation {
   toggleLesson(l: Lesson) {
     if (this.selectedLessons.includes(l)) {
       this.selectedLessons = this.selectedLessons.filter(r => r !== l);
-    } 
+    }
     else {
       this.selectedLessons.push(l);
     }

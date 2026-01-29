@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { Lesson } from '../models/lesson.model';
+import { Lesson } from '../../models/lesson/lesson.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LessonService {
-  
+
   private readonly http = inject(HttpClient)
 
   api = "http://localhost:8080/api/education-manager"

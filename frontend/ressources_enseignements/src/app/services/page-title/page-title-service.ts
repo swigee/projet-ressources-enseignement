@@ -5,8 +5,6 @@ import { Injectable,signal } from '@angular/core';
 })
 export class PageTitle {
   title = signal('');
-
-
 }
 
 

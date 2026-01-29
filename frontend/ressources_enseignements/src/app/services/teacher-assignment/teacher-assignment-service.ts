@@ -78,18 +78,15 @@ export class TeacherAssignmentService {
 
   constructor(private http: HttpClient) {}
 
-  // Récupérer tous les enseignants
   getAllTeachers(): Observable<TeacherDTO[]> {
     return this.http.get<TeacherDTO[]>(`${this.apiUrl}/teachers`);
   }
 
-  // Rechercher des enseignants
   searchTeachers(keyword: string): Observable<TeacherDTO[]> {
     const params = new HttpParams().set('keyword', keyword);
     return this.http.get<TeacherDTO[]>(`${this.apiUrl}/teachers/search`, { params });
   }
 
-  // Récupérer la grille d'affectation
   getAssignmentGrid(formation: string, year: string, className: string): Observable<AssignmentGridDTO> {
     const params = new HttpParams()
       .set('formation', formation)
@@ -99,27 +96,22 @@ export class TeacherAssignmentService {
     return this.http.get<AssignmentGridDTO>(`${this.apiUrl}/grid`, { params });
   }
 
-  // Créer une affectation
   createAssignment(dto: CreateAssignmentDTO): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/assignments`, dto);
   }
 
-  // Mettre à jour une affectation
   updateAssignment(id: number, dto: CreateAssignmentDTO): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/assignments/${id}`, dto);
   }
 
-  // Supprimer une affectation
   deleteAssignment(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/assignments/${id}`);
   }
 
-  // Supprimer une affectation par enseignant et ressource
   deleteAssignmentByTeacherAndRessource(userId: number, ressourceId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/assignments/teacher/${userId}/ressource/${ressourceId}`);
   }
 
-  // Valider les affectations
   validateAssignments(year: string, className: string): Observable<AssignmentValidationResponseDTO> {
     const params = new HttpParams()
       .set('year', year)
@@ -128,7 +120,6 @@ export class TeacherAssignmentService {
     return this.http.post<AssignmentValidationResponseDTO>(`${this.apiUrl}/validate`, null, { params });
   }
 
-  // Health check
   healthCheck(): Observable<string> {
     return this.http.get(`${this.apiUrl}/health`, { responseType: 'text' });
   }

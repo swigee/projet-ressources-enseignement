@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Education } from '../models/education.model';
+import { Education } from '../../models/education/education.model';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class EducationalManagerService {
-  
+
   private readonly http = inject(HttpClient)
 
   api = "http://localhost:8080/api/education-manager"
@@ -45,7 +45,7 @@ export class EducationalManagerService {
     .get<Education>(`${this.api}/${id}`)
     .subscribe(() => {
       this.router.navigate(['/education-manager/create']);
-      
+
       this.loadEducations();
     })
     }

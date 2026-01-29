@@ -1,12 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from "@angular/router";
-import { EducationalManagerService } from '../../services/educational-manager';
+import { EducationalManagerService } from '../../services/educational-manager/educational-manager';
 
 @Component({
   selector: 'app-training-manager',
   imports: [RouterLink],
   templateUrl: './educational-manager.html',
-  styleUrl: './educational-manager.css',
 })
 export class EducationalManager {
   edManager = inject(EducationalManagerService)

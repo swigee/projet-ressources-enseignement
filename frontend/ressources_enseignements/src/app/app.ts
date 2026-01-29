@@ -24,7 +24,6 @@ export class App {
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
 
-      // On regarde si l'URL actuelle contient l'un des mots de la liste
       const isHidden = hiddenRoutes.some(route => event.urlAfterRedirects.includes(route));
 
       if (isHidden) {

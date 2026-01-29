@@ -1,7 +1,7 @@
 import { Component, inject, signal, computed } from '@angular/core';
-import { UserModel } from '../../models/user/user-model';
+import { UserModel } from '../../models/user/user.model';
 import { UserService } from '../../services/user/user-service';
-import { PageTitle } from '../../services/page-title';
+import { PageTitle } from '../../services/page-title/page-title-service';
 
 @Component({
   selector: 'app-user-manager',

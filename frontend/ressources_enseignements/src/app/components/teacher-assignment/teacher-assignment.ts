@@ -21,7 +21,6 @@ interface DragData {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './teacher-assignment.html',
-  styleUrl: './teacher-assignment.css'
 })
 export class TeacherAssignmentComponent implements OnInit {
   selectedFormation: string = 'Informatique';
@@ -48,7 +47,7 @@ export class TeacherAssignmentComponent implements OnInit {
   }
 
   /**
-   * Charger les données depuis le backend
+   * load data from backend
    */
   loadData(): void {
     if (!this.selectedYear || !this.selectedClass) {
@@ -89,7 +88,7 @@ export class TeacherAssignmentComponent implements OnInit {
   }
 
   /**
-   * Recharger les données quand les filtres changent
+   * Reload data when filters change
    */
   onFilterChange(): void {
     console.log('Changement de filtre détecté:', {
@@ -101,9 +100,6 @@ export class TeacherAssignmentComponent implements OnInit {
     this.loadData();
   }
 
-  /**
-   * Filtrer les enseignants selon la recherche
-   */
   get filteredTeachers(): TeacherDTO[] {
     if (!this.searchQuery) {
       return this.teachers;
@@ -116,9 +112,6 @@ export class TeacherAssignmentComponent implements OnInit {
     );
   }
 
-  /**
-   * Drag & Drop - Début du drag
-   */
   onDragStart(event: DragEvent, teacher: TeacherDTO): void {
     this.draggedTeacher = teacher;
     if (event.dataTransfer) {
@@ -132,9 +125,6 @@ export class TeacherAssignmentComponent implements OnInit {
     }
   }
 
-  /**
-   * Drag & Drop - Survol de la zone de dépôt
-   */
   onDragOver(event: DragEvent): void {
     event.preventDefault();
     if (event.dataTransfer) {
@@ -142,9 +132,6 @@ export class TeacherAssignmentComponent implements OnInit {
     }
   }
 
-  /**
-   * Drag & Drop - Dépôt sur un module
-   */
   onDrop(event: DragEvent, ressourceId: number, lessonType: 'TD' | 'TP' | 'CM'): void {
     event.preventDefault();
     if (!event.dataTransfer) return;
@@ -230,16 +217,10 @@ export class TeacherAssignmentComponent implements OnInit {
     }
   }
 
-  /**
-   * Drag & Drop - Fin du drag
-   */
   onDragEnd(): void {
     this.draggedTeacher = null;
   }
 
-  /**
-   * Retirer un enseignant d'un module
-   */
   removeTeacher(assignmentId: number): void {
     if (confirm('Voulez-vous retirer cet enseignant de ce module ?')) {
       this.teacherService.deleteAssignment(assignmentId).subscribe({
@@ -255,9 +236,6 @@ export class TeacherAssignmentComponent implements OnInit {
     }
   }
 
-  /**
-   * Afficher les enseignants affectés
-   */
   getTeachersDisplay(teachers: TeacherAssignmentDTO[]): string {
     if (!teachers || teachers.length === 0) {
       return 'Non Affecté';
@@ -268,16 +246,10 @@ export class TeacherAssignmentComponent implements OnInit {
     return teachers[0].teacherName + ', +' + (teachers.length - 1);
   }
 
-  /**
-   * Vérifier si un module est vide
-   */
   isModuleEmpty(teachers: TeacherAssignmentDTO[]): boolean {
     return !teachers || teachers.length === 0;
   }
 
-  /**
-   * Obtenir la couleur de badge selon le type de cours
-   */
   getLessonTypeBadgeColor(lessonType: string): string {
     switch (lessonType) {
       case 'CM': return 'bg-purple-100 text-purple-800';
@@ -287,9 +259,6 @@ export class TeacherAssignmentComponent implements OnInit {
     }
   }
 
-  /**
-   * Valider les affectations
-   */
   validateAssignments(): void {
     if (!this.selectedYear || !this.selectedClass) {
       alert('Veuillez sélectionner une année et une classe');
@@ -319,9 +288,7 @@ export class TeacherAssignmentComponent implements OnInit {
     });
   }
 
-  /**
-   * Enregistrer toutes les affectations
-   */
+
   saveAssignments(): void {
     alert('Les affectations ont été enregistrées avec succès !');
     this.loadData();

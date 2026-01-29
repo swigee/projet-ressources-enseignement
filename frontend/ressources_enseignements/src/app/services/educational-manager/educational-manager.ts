@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Education } from '../../models/education.model';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs/internal/Observable';
 
 @Injectable({
   providedIn: 'root',
@@ -31,21 +32,11 @@ export class EducationalManagerService {
     .subscribe(() => this.loadEducations());
   }
 
-  createEducation(education: Education){
+  createEducation(education: Education): Observable<Education>{
     console.log(education)
-    this.http
-    .post<Education>(`${this.api}`, education)
-    .subscribe(() => {
-      this.router.navigate(['/education-manager']);
-      this.loadEducations();
-    });
+    return this.http.post<Education>(`${this.api}`, education)
   }
-  updateEducation(id: number){
-    this.http
-    .get<Education>(`${this.api}/${id}`)
-    .subscribe(() => {
-      this.router.navigate(['/education-manager/edit', id]);
-      this.loadEducations();
-    })
-    }
+  updateEducation(etu: Education): Observable<Education>{
+    return this.http.put<Education>(`${this.api}/${etu.idformation}`, etu)
+  }
 }

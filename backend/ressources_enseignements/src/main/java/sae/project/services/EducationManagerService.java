@@ -31,4 +31,8 @@ public class EducationManagerService {
     public List<Ressources> getRessourcesList(){
         return rrep.findAll();
     }
+    
+    public void update(Formation f){
+        emrep.save(f);
+    }
 }

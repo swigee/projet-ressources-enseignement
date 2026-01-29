@@ -41,9 +41,9 @@ export const routes: Routes = [
         path:'education-manager/create',
         component: EducationManagerCreation
     },
-    { 
-        path: 'education-manager/edit/:id', 
-        component: EducationManagerCreation 
+    {
+        path:'education-manager/edit',
+        component: EducationManagerCreation
     }
 
 ];

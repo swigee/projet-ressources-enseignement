@@ -1,13 +1,12 @@
 import {Component, inject, signal} from '@angular/core';
-import { PageTitle } from '../../services/page-title';
+import { PageTitle } from '../../services/page-title/page-title-service';
 
 @Component({
   selector: 'app-top-bar',
   standalone: true,
   templateUrl: './top-bar.html',
-  styleUrl: './top-bar.css'
 })
 export class TopBar {
   pageTitleService = inject(PageTitle);
-  title = signal(this.pageTitleService.title());
+  title = this.pageTitleService.title;
 }

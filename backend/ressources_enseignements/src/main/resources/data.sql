@@ -1,35 +1,32 @@
 -- =========================
--- NETTOYAGE (ordre FK)
+-- NETTOYAGE DES ANCIENNES TABLES (Legacy)
 -- =========================
-
-DELETE FROM assignment;
-DELETE FROM tickets;
-DELETE FROM ressourcessyllabus;
-DELETE FROM formationressources;
-DELETE FROM userformation;
-DELETE FROM userrole;
-
-DELETE FROM ressources;
-DELETE FROM syllabus;
-DELETE FROM formation;
-DELETE FROM role;
-DELETE FROM users;
+DROP TABLE IF EXISTS ressourcessyllabus;
+DROP TABLE IF EXISTS formationressources;
+DROP TABLE IF EXISTS userformation;
+DROP TABLE IF EXISTS tickets;
+DROP TABLE IF EXISTS ressources;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS role;
+DROP TABLE IF EXISTS app_role;
+-- DROP TABLE IF EXISTS position;
+-- Note: les nouvelles tables sont gérées par ddl-auto=create
 
 -- =========================
 -- RESET AUTO_INCREMENT
 -- =========================
-ALTER TABLE assignment AUTO_INCREMENT = 1;
-ALTER TABLE tickets AUTO_INCREMENT = 1;
-ALTER TABLE ressources AUTO_INCREMENT = 1;
-ALTER TABLE syllabus AUTO_INCREMENT = 1;
-ALTER TABLE formation AUTO_INCREMENT = 1;
-ALTER TABLE role AUTO_INCREMENT = 1;
-ALTER TABLE users AUTO_INCREMENT = 1;
+-- ALTER TABLE assignment AUTO_INCREMENT = 1;
+-- ALTER TABLE ticket AUTO_INCREMENT = 1;
+-- ALTER TABLE resource AUTO_INCREMENT = 1;
+-- ALTER TABLE syllabus AUTO_INCREMENT = 1;
+-- ALTER TABLE formation AUTO_INCREMENT = 1;
+-- ALTER TABLE role AUTO_INCREMENT = 1;
+-- ALTER TABLE user AUTO_INCREMENT = 1;
 
 -- =========================
 -- ROLES
 -- =========================
-INSERT INTO role (idrole, rights, title) VALUES
+INSERT INTO position (id, name, is_active) VALUES
 (1, 'ADMIN', b'1'),
 (2, 'TEACHER', b'0'),
 (3, 'STUDENT', b'0');
@@ -37,7 +34,7 @@ INSERT INTO role (idrole, rights, title) VALUES
 -- =========================
 -- USERS
 -- =========================
-INSERT INTO users (iduser, address, email, firstname, lastname, password, phonenumber, servicevalidation, username) VALUES
+INSERT INTO user (id, address, email, first_name, last_name, password, phone_number, is_validated, username) VALUES
 (1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', 'admin123', '0101010101', b'1', 'admin'),
 (2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', 'prof123', '0202020202', b'1', 'prof'),
 (3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', 'student123', '0303030303', b'0', 'student');
@@ -45,7 +42,7 @@ INSERT INTO users (iduser, address, email, firstname, lastname, password, phonen
 -- =========================
 -- USER ROLE
 -- =========================
-INSERT INTO userrole (idrole, iduser) VALUES
+INSERT INTO user_role (role_id, user_id) VALUES
 (1, 1),
 (2, 2),
 (3, 3);
@@ -53,7 +50,7 @@ INSERT INTO userrole (idrole, iduser) VALUES
 -- =========================
 -- FORMATIONS
 -- =========================
-INSERT INTO formation (idformation, name, year, class_name) VALUES
+INSERT INTO formation (id, name, year, class_name) VALUES
 -- Année 1
 (1, 'Informatique', '1', 'Classe A'),
 (2, 'Informatique', '1', 'Classe B'),
@@ -73,7 +70,7 @@ INSERT INTO formation (idformation, name, year, class_name) VALUES
 -- =========================
 -- USER FORMATION
 -- =========================
-INSERT INTO userformation (idformation, iduser) VALUES
+INSERT INTO user_formation (formation_id, user_id) VALUES
 (1, 2),  -- Prof pour Info Année 1 Classe A
 (5, 2),  -- Prof pour Info Année 2 Classe A
 (1, 3),  -- Étudiant pour Info Année 1 Classe A
@@ -82,18 +79,18 @@ INSERT INTO userformation (idformation, iduser) VALUES
 -- =========================
 -- RESSOURCES
 -- =========================
-INSERT INTO ressources (
-    idressource,
+INSERT INTO resource (
+    id,
     title,
     description,
     category,
     is_highlighted,
-    heure_cm_etat,
-    heure_cm_iut,
-    heure_td_etat,
-    heure_td_iut,
-    heure_tp_etat,
-    heure_tp_iut,
+    cm_state_hours,
+    cm_iut_hours,
+    td_state_hours,
+    td_iut_hours,
+    tp_state_hours,
+    tp_iut_hours,
     hours_per_week,
     hours_per_half_group
 ) VALUES
@@ -121,7 +118,7 @@ INSERT INTO ressources (
 -- =========================
 -- FORMATION RESSOURCES
 -- =========================
-INSERT INTO formationressources (idformation, idressource) VALUES
+INSERT INTO formation_resource (formation_id, resource_id) VALUES
 -- Année 1 Classe A
 (1, 1),  -- Java pour Info Année 1 Classe A
 (1, 2),  -- BDD pour Info Année 1 Classe A
@@ -147,7 +144,7 @@ INSERT INTO formationressources (idformation, idressource) VALUES
 -- =========================
 -- SYLLABUS
 -- =========================
-INSERT INTO syllabus (idsyllabus, descriptions) VALUES
+INSERT INTO syllabus (id, description) VALUES
 (1, 'Syllabus Programmation'),
 (2, 'Syllabus Mathématiques'),
 (3, 'Syllabus Web'),
@@ -156,7 +153,7 @@ INSERT INTO syllabus (idsyllabus, descriptions) VALUES
 -- =========================
 -- RESSOURCES SYLLABUS
 -- =========================
-INSERT INTO ressourcessyllabus (idressource, idsyllabus) VALUES
+INSERT INTO resource_syllabus (resource_id, syllabus_id) VALUES
 (1, 1),  -- Java -> Syllabus Prog
 (2, 1),  -- BDD -> Syllabus Prog
 (3, 3),  -- Web -> Syllabus Web
@@ -167,7 +164,7 @@ INSERT INTO ressourcessyllabus (idressource, idsyllabus) VALUES
 -- =========================
 -- ASSIGNMENT
 -- =========================
-INSERT INTO assignment (id_assignment, assignedtimes, lessontype, idressource, iduser) VALUES
+INSERT INTO assignment (id, assigned_times, lesson_type, resource_id, user_id) VALUES
 (1, 5, 'CM', 1, 2),  -- Prof enseigne Java en CM
 (2, 3, 'TD', 2, 2),  -- Prof enseigne BDD en TD
 (3, 2, 'TP', 3, 2);  -- Prof enseigne Web en TP
@@ -175,7 +172,7 @@ INSERT INTO assignment (id_assignment, assignedtimes, lessontype, idressource, i
 -- =========================
 -- TICKETS
 -- =========================
-INSERT INTO tickets (idticket, date, description, statue, title, iduser) VALUES
+INSERT INTO ticket (id, date, description, status, title, user_id) VALUES
 (1, '2025-12-17', 'Problème avec Java', 'OPEN', 'Question Java', 3),
 (2, '2025-12-17', 'Question sur BDD', 'CLOSED', 'Aide BDD', 3),
 (3, '2025-12-18', 'Bug sur le site web', 'OPEN', 'Bug Web', 3);

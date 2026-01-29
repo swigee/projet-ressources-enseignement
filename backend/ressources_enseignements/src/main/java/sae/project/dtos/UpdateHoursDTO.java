@@ -11,7 +11,8 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateHoursDTO {
-    private Integer ressourceId;
+    @com.fasterxml.jackson.annotation.JsonAlias("ressourceId")
+    private Integer resourceId;
     private Map<String, Integer> hoursPerWeek;
     private Integer hoursPerHalfGroup;
 }

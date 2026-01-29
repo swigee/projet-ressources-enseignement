@@ -15,14 +15,15 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
+ * Entité Formation représentant une formation avec année et classe
+ * 
  * @author andry
  */
 @Entity
-@Table(name = "FORMATION")
+@Table(name = "formation")
 @NamedQueries({
         @NamedQuery(name = "Formation.findAll", query = "SELECT f FROM Formation f"),
-        @NamedQuery(name = "Formation.findByIdformation", query = "SELECT f FROM Formation f WHERE f.idformation = :idformation"),
+        @NamedQuery(name = "Formation.findById", query = "SELECT f FROM Formation f WHERE f.id = :id"),
         @NamedQuery(name = "Formation.findByName", query = "SELECT f FROM Formation f WHERE f.name = :name"),
         @NamedQuery(name = "Formation.findByYearAndClassName", query = "SELECT f FROM Formation f WHERE f.year = :year AND f.className = :className")
 })
@@ -36,66 +37,34 @@ public class Formation implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "IDFORMATION")
-    private Integer idformation;
+    @Column(name = "id")
+    private Integer id;
 
-    @Column(name = "NAME", length = 255)
+    @Column(name = "name", length = 255)
     private String name;
 
-    @Column(name = "YEAR", length = 10)
+    @Column(name = "year", length = 10)
     private String year;
 
-    @Column(name = "CLASS_NAME", length = 50)
+    @Column(name = "class_name", length = 50)
     private String className;
 
     @ManyToMany
-    @JoinTable(
-            name = "USERFORMATION",
-            joinColumns = @JoinColumn(name = "IDFORMATION"),
-            inverseJoinColumns = @JoinColumn(name = "IDUSER")
-    )
+    @JoinTable(name = "user_formation", joinColumns = @JoinColumn(name = "formation_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     @JsonIgnore
-    private List<Users> usersList;
+    private List<User> usersList; // Keeping usersList naming for now to minimize getter refactoring, but type is
+                                  // User
 
     @ManyToMany
-    @JoinTable(
-            name = "FORMATIONRESSOURCES",
-            joinColumns = @JoinColumn(name = "IDFORMATION"),
-            inverseJoinColumns = @JoinColumn(name = "IDRESSOURCE")
-    )
+    @JoinTable(name = "formation_resource", joinColumns = @JoinColumn(name = "formation_id"), inverseJoinColumns = @JoinColumn(name = "resource_id"))
     @JsonIgnore
-    private List<Ressources> ressourcesList;
+    private List<Resource> resourceList;
 
     /**
      * Constructeur avec ID uniquement
      */
-    public Formation(Integer idformation) {
-        this.idformation = idformation;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Formation)) return false;
-        Formation formation = (Formation) o;
-        return idformation != null && idformation.equals(formation.idformation);
-    }
-
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Formation{" +
-                "idformation=" + idformation +
-                ", name='" + name + '\'' +
-                ", year='" + year + '\'' +
-                ", className='" + className + '\'' +
-                '}';
+    public Formation(Integer id) {
+        this.id = id;
     }
     
 }

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sae.project.dtos.LoginDto;
-import sae.project.model.Users;
+import sae.project.model.User;
 import sae.project.services.AuthService;
 
 import java.util.Map;
@@ -19,10 +19,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto login) {
 
-        Users user = authService.authenticate(
+        User user = authService.authenticate(
                 login.getUsername(),
-                login.getPassword()
-        );
+                login.getPassword());
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {

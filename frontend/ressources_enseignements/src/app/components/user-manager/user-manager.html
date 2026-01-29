@@ -1,0 +1,107 @@
+<div class="bg-white rounded-3xl shadow p-10 w-full max-w-5xl mx-auto">
+
+  <div class="flex justify-center border-b-2 pb-4">
+    <h3 class="text-2xl font-semibold">Utilisateurs existants</h3>
+  </div>
+
+  <div class="flex justify-end pt-5 pb-5 relative">
+    <button
+      type="button"
+      class="bg-gray-200 px-4 py-2 rounded-full font-semibold hover:bg-[#afb1b6] cursor-pointer"
+      (click)="showFilter.set(!showFilter())"
+    >
+      Filtrer
+      <i class="fa-solid fa-filter"></i>
+    </button>
+
+    @if (showFilter()) {
+    <div class="absolute top-full right-0 mt-2 w-64 bg-white shadow-lg rounded-xl p-4 z-10">
+      <div class="flex justify-between">
+        <p class="font-bold">Filtres</p>
+          <button (click)="showFilter.set(false)" class="cursor-pointer rounded-md hover:bg-[#afb1b6]"><i class="fa-solid fa-xmark fa-xl" style="color: #2f3032;"></i></button>
+      </div>
+      <div class="mb-3 mr-3 ml-3">
+        <label class="text-sm font-semibold">Nom</label>
+        <input
+          type="text"
+          class="w-full border rounded px-2 py-1 mt-1"
+          placeholder="Rechercher..."
+          [value]="searchName()"
+          (input)="searchName.set($any($event.target).value)"
+        />
+      </div>
+      <div class="mb-3 mr-3 ml-3">
+        <p class="text-sm font-semibold mb-1">Rôles</p>
+        @if (tabUsers().length === 0) {
+          <span class="text-gray-500 italic">Aucun utilisateur disponible pour filtrer les rôles</span>
+        } @else {
+<!--          @for(role of getAllRoles(); track $index) {-->
+<!--          <label class="flex items-center gap-2 text-sm">-->
+<!--            <input type="checkbox" [checked]="selectedRoles().includes(role.idrole)" (change)="toggleRole(role.idrole)" />-->
+<!--            {{ role.rights }}-->
+<!--          </label>-->
+<!--          }-->
+        }
+
+      </div>
+
+      <div class="flex justify-between">
+        <button class="text-sm text-gray-500" (click)="resetFilters()">Réinitialiser</button>
+        <button class="text-sm font-semibold" (click)="showFilter.set(false)">valider</button>
+      </div>
+    </div>
+    }
+  </div>
+
+
+  <table class="w-full mt-5">
+    <thead>
+      <tr>
+        <th class="border-b border-b-zinc-950/10 px-4 py-2 font-medium first:pl-(--gutter,--spacing(2)) last:pr-(--gutter,--spacing(2)) dark:border-b-white/10 sm:first:pl-1 sm:last:pr-1">Nom</th>
+        <th class="border-b border-b-zinc-950/10 px-4 py-2 font-medium first:pl-(--gutter,--spacing(2)) last:pr-(--gutter,--spacing(2)) dark:border-b-white/10 sm:first:pl-1 sm:last:pr-1">Rôles</th>
+        <th class="border-b border-b-zinc-950/10 px-4 py-2 font-medium first:pl-(--gutter,--spacing(2)) last:pr-(--gutter,--spacing(2)) dark:border-b-white/10 sm:first:pl-1 sm:last:pr-1">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @if (filteredUsers().length === 0) {
+        <tr>
+          <td colspan="6" class="text-center text-gray-500 italic py-8">Aucun utilisateur ne correspond à votre recherche ou aucun utilisateur n'est disponible.</td>
+        </tr>
+      } @else {
+        @for (user of filteredUsers(); track $index) {
+          <tr class="even:bg-gray-100 text-center transition">
+            <td class="px-4 py-4 font-semibold text-lg">
+              {{user.firstname}} {{user.lastname}}
+            </td>
+            <td class="px-4 py-4">
+              <div class="flex flex-wrap gap-2 justify-center">
+               @for(role of user.roles; track $index) {
+                  <span
+                    class="px-3 py-1 rounded-full text-sm bg-blue-200 flex items-center justify-center overflow-hidden max-w-[100px]">
+                    {{ role.rights.length > 20 ? (role.rights.slice(0, role.rights.length/2) + '...') : role.rights }}
+                  </span>
+                  @if(showEditRole()) {
+                    <button type="button" class="ml-1" (click)="removeUserRole(user.iduser, role.idrole)">
+                      <i class="fa-solid fa-xmark fa-xl" style="color: #2f3032;"></i>
+                    </button>
+                  }
+                }
+                  <button type="button" class="p-2 bg-gray-200 rounded hover:bg-gray-300 cursor-pointer" (click)="editRoleUser(user)">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+
+              </div>
+            </td>
+            <td class="px-4 py-4">
+              <div class="flex justify-center">
+                <button type="button" class="p-2 bg-black text-white rounded hover:bg-zinc-800 cursor-pointer" (click)="removeUser(user.iduser)" >
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</div>

@@ -7,9 +7,8 @@
     <div class="px-8 py-6 border-b border-gray-200">
         <h2 class="text-xl font-semibold text-gray-900">Création d'une formation</h2>
     </div>
-
-    <div class="px-8 py-6">
-        <form [formGroup]="form">
+    <form [formGroup]="form">
+        <div class="px-8 py-6">
             <div class="relative">
                 <label for="training-name" class="block text-sm font-medium text-gray-700 mb-2">
                     Nom de la formation <span class="text-red-500">*</span>
@@ -54,6 +53,6 @@
             text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-sm" (click)="clickCreate({ name: name.value, description: description.value, lessons: selectedLessons})">
                 {{ form.value.id ? 'Modifier la formation' : 'Créer la formation' }} <i class="fa-light fa-plus font-bold"></i>
             </button>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>

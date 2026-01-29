@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Education } from '../../models/education.model';
+import { Education } from '../../models/education/education.model';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
@@ -8,7 +8,7 @@ import { Observable } from 'rxjs/internal/Observable';
   providedIn: 'root',
 })
 export class EducationalManagerService {
-  
+
   private readonly http = inject(HttpClient)
 
   api = "http://localhost:8080/api/education-manager"

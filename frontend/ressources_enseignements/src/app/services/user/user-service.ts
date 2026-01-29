@@ -1,7 +1,7 @@
 import {inject, Injectable, signal} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {catchError, Observable, of, tap} from 'rxjs';
-import {UserModel} from '../../models/user/user-model';
+import {UserModel} from '../../models/user/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +22,14 @@ export class UserService {
 
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  updateUserRole(iduser: number, roles: string[]): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${iduser}/roles`, { roles });
+  }
+
+  deleteUserRole(iduser: number, idrole: number): Observable<any> {
+    return this.http.delete<void>(`${this.apiUrl}/${iduser}/roles`, { body: { idrole } });
   }
 }
 

@@ -11,45 +11,44 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import sae.project.model.Formation;
-import sae.project.model.Ressources;
+import sae.project.model.Resource;
 import sae.project.services.EducationManagerService;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/education-manager")
 public class EducationManagerController {
-    @Autowired 
+    @Autowired
     private EducationManagerService emrep;
-    
-    
+
     @GetMapping("/list")
     public Iterable<Formation> list() {
         return emrep.getAll();
     }
-    
+
     @GetMapping("/{id}")
     public Formation get(@PathVariable String id) {
         return null;
     }
-    
+
     @GetMapping("/lessons/list")
-    public Iterable<Ressources> getRessources() {
+    public Iterable<Resource> getRessources() {
         return emrep.getRessourcesList();
     }
-    
+
     @PutMapping("/{id}")
     public void put(@RequestBody Formation etu) {
         emrep.update(etu);
     }
-    
+
     @PostMapping
     public void post(@RequestBody Formation f) {
         emrep.create(f);
     }
-    
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         emrep.delete(id);
     }
-    
+
 }

@@ -17,7 +17,6 @@ import {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './pedagogical-schedule.html',
-  styleUrls: ['./pedagogical-schedule.css']
 })
 export class PedagogicalScheduleComponent implements OnInit {
   activeTab: string = 'maquette';
@@ -44,7 +43,6 @@ export class PedagogicalScheduleComponent implements OnInit {
     this.loadScheduleData();
   }
 
-  // Charger les données du planning
   loadScheduleData(): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -69,7 +67,6 @@ export class PedagogicalScheduleComponent implements OnInit {
       });
   }
 
-  // Initialiser les données par défaut (fallback)
   initializeDefaultData(): void {
     this.scheduleData = [];
     this.projectData = {
@@ -82,39 +79,32 @@ export class PedagogicalScheduleComponent implements OnInit {
     this.weeks = [];
   }
 
-  // Gestion des onglets
   setActiveTab(tab: string): void {
     this.activeTab = tab;
   }
 
-  // Changement d'année
   onYearChange(year: string): void {
     this.selectedYear = year;
     this.selectedClass = this.classData[year].classes[0];
     this.loadScheduleData();
   }
 
-  // Obtenir les clés des années
   getYearKeys(): string[] {
     return Object.keys(this.classData);
   }
 
-  // Obtenir les classes disponibles
   getAvailableClasses(): string[] {
     return this.classData[this.selectedYear]?.classes || [];
   }
 
-  // Activer le mode édition
   enableEditing(): void {
     this.isEditing = true;
   }
 
-  // Valider et sauvegarder les modifications
   validateEditing(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // Préparer les données pour la validation
     const ressourcesDTO: UpdateHoursDTO[] = this.scheduleData.map(row => ({
       ressourceId: row.id,
       hoursPerWeek: row.hoursPerWeek,
@@ -122,7 +112,7 @@ export class PedagogicalScheduleComponent implements OnInit {
     }));
 
     const projectDTO: UpdateHoursDTO = {
-      ressourceId: 0, // Le projet n'a pas d'ID de ressource
+      ressourceId: 0,
       hoursPerWeek: this.projectData.hoursPerWeek,
       hoursPerHalfGroup: this.projectData.hoursPerHalfGroup
     };
@@ -140,7 +130,7 @@ export class PedagogicalScheduleComponent implements OnInit {
           if (response.success) {
             alert('Planning validé et sauvegardé avec succès !');
             this.isEditing = false;
-            this.loadScheduleData(); // Recharger les données
+            this.loadScheduleData();
           } else {
             this.errorMessage = response.message;
             if (response.errors && response.errors.length > 0) {
@@ -158,48 +148,40 @@ export class PedagogicalScheduleComponent implements OnInit {
       });
   }
 
-  // Obtenir toutes les semaines
   getAllWeeks(): WeekDTO[] {
     return this.weeks.flatMap(month => month.weeks);
   }
 
-  // Calculer le total des heures pour une ressource
   calculateTotalHours(row: RessourceScheduleDTO): number {
     if (!row.hoursPerWeek) return 0;
     return Object.values(row.hoursPerWeek).reduce((sum, hours) => sum + (hours || 0), 0);
   }
 
-  // Calculer le total du projet
   calculateProjectTotal(): number {
     if (!this.projectData?.hoursPerWeek) return 0;
     return Object.values(this.projectData.hoursPerWeek).reduce((sum, hours) => sum + (hours || 0), 0);
   }
 
-  // Calculer le total d'une semaine
   calculateWeekTotal(weekNum: number): number {
     return this.scheduleData.reduce((sum, row) => {
       return sum + (row.hoursPerWeek[weekNum.toString()] || 0);
     }, 0);
   }
 
-  // Calculer le total d'une semaine avec projet
   calculateWeekTotalWithProject(weekNum: number): number {
     const resourcesTotal = this.calculateWeekTotal(weekNum);
     const projectHours = this.projectData?.hoursPerWeek[weekNum.toString()] || 0;
     return resourcesTotal + projectHours;
   }
 
-  // Calculer le grand total (hors projet)
   calculateGrandTotal(): number {
     return this.scheduleData.reduce((sum, row) => sum + this.calculateTotalHours(row), 0);
   }
 
-  // Calculer le grand total avec projet
   calculateGrandTotalWithProject(): number {
     return this.calculateGrandTotal() + this.calculateProjectTotal();
   }
 
-  // Compter les semaines entreprise
   getCompanyWeeksCount(): number {
     return this.getAllWeeks().filter(week => week.type === 'S').length;
   }

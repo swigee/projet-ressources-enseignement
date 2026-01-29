@@ -4,21 +4,23 @@ import { EducationalManager } from './components/educational-manager/educational
 import { Login } from './components/login/login'
 import { PedagogicalScheduleComponent } from './components/pedagogical-schedule/pedagogical-schedule';
 import { EducationManagerCreation } from './components/education-manager-creation/education-manager-creation';
+import {TeacherAssignmentComponent} from './components/teacher-assignment/teacher-assignment';
 import {UserManager} from './components/user-manager/user-manager';
+import path from 'path/win32';
 
 export const routes: Routes = [
-   /*{
-        path:'',
-        redirectTo:'login',
-        pathMatch:'full',
+    {
+      path:'',
+      redirectTo:'login',
+      pathMatch:'full',
 
     },
     {
       path:'login',
       component: Login
-    },*/
+    },
     {
-        path:'',
+        path:'dashboard',
         component: Dashboard
     },
     {
@@ -34,6 +36,10 @@ export const routes: Routes = [
         component: Dashboard
     },
     {
+      path:'teacher-assignment',
+      component: TeacherAssignmentComponent
+    },
+    {
         path:'education-manager',
         component: EducationalManager
     },
@@ -44,6 +50,10 @@ export const routes: Routes = [
     {
         path:'education-manager/edit',
         component: EducationManagerCreation
+    },
+    {
+      path:'user-manager',
+      component: UserManager
     }
 
 ];

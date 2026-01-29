@@ -8,7 +8,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RessourceScheduleDTO {
+public class ResourceScheduleDTO {
     private Integer id;
     private String courseName;
     private String category;
@@ -17,4 +17,3 @@ public class RessourceScheduleDTO {
     private Integer hoursPerHalfGroup;
     private Integer totalHours;
 }
-

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sae.project.dtos.*;
-import sae.project.model.Ressources;
+import sae.project.model.Resource;
 import sae.project.repositories.PedagogicalScheduleRepository;
 
 import java.util.*;
@@ -26,7 +26,7 @@ public class PedagogicalScheduleService {
     /**
      * Récupérer toutes les ressources
      */
-    public List<Ressources> getAll() {
+    public List<Resource> getAll() {
         log.info("Récupération de toutes les ressources");
         return pedagogicalScheduleRepository.findAll();
     }
@@ -34,7 +34,7 @@ public class PedagogicalScheduleService {
     /**
      * Récupérer toutes les ressources avec mapping en DTO
      */
-    public List<RessourceScheduleDTO> getAllAsDTO() {
+    public List<ResourceScheduleDTO> getAllAsDTO() {
         log.info("Récupération de toutes les ressources en DTO");
         return pedagogicalScheduleRepository.findAll().stream()
                 .map(this::mapToDTO)
@@ -44,7 +44,7 @@ public class PedagogicalScheduleService {
     /**
      * Récupérer une ressource par ID
      */
-    public Optional<Ressources> getById(Integer id) {
+    public Optional<Resource> getById(Integer id) {
         log.info("Récupération de la ressource avec l'ID: {}", id);
         return pedagogicalScheduleRepository.findById(id);
     }
@@ -52,7 +52,7 @@ public class PedagogicalScheduleService {
     /**
      * Récupérer les ressources par année et classe
      */
-    public List<RessourceScheduleDTO> getByYearAndClass(String year, String className) {
+    public List<ResourceScheduleDTO> getByYearAndClass(String year, String className) {
         log.info("Récupération des ressources pour l'année {} et la classe {}", year, className);
         return pedagogicalScheduleRepository.findByYearAndClass(year, className).stream()
                 .map(this::mapToDTO)
@@ -65,7 +65,7 @@ public class PedagogicalScheduleService {
     public PedagogicalScheduleDTO getCompleteSchedule(String year, String className) {
         log.info("Récupération du planning complet pour {} - {}", year, className);
 
-        List<RessourceScheduleDTO> ressources = getByYearAndClass(year, className);
+        List<ResourceScheduleDTO> ressources = getByYearAndClass(year, className);
         ProjectScheduleDTO project = getProjectData();
         List<MonthDTO> weeks = getWeeksForYear(year);
         ScheduleStatisticsDTO statistics = calculateStatistics(ressources, project, weeks);
@@ -83,7 +83,7 @@ public class PedagogicalScheduleService {
     /**
      * Créer une nouvelle ressource
      */
-    public Ressources create(Ressources ressource) {
+    public Resource create(Resource ressource) {
         log.info("Création d'une nouvelle ressource: {}", ressource.getTitle());
 
         // Validation
@@ -97,7 +97,7 @@ public class PedagogicalScheduleService {
     /**
      * Mettre à jour une ressource
      */
-    public Ressources update(Integer id, Ressources ressourceDetails) {
+    public Resource update(Integer id, Resource ressourceDetails) {
         log.info("Mise à jour de la ressource avec l'ID: {}", id);
 
         return pedagogicalScheduleRepository.findById(id)
@@ -117,7 +117,7 @@ public class PedagogicalScheduleService {
     /**
      * Mettre à jour les heures d'une ressource
      */
-    public Ressources updateHours(Integer id, UpdateHoursDTO updateDTO) {
+    public Resource updateHours(Integer id, UpdateHoursDTO updateDTO) {
         log.info("Mise à jour des heures pour la ressource ID: {}", id);
 
         return pedagogicalScheduleRepository.findById(id)
@@ -146,7 +146,7 @@ public class PedagogicalScheduleService {
                 try {
                     validateAndUpdateRessource(ressourceDTO, errors);
                 } catch (Exception e) {
-                    errors.add("Erreur pour la ressource ID " + ressourceDTO.getRessourceId() + ": " + e.getMessage());
+                    errors.add("Erreur pour la ressource ID " + ressourceDTO.getResourceId() + ": " + e.getMessage());
                 }
             }
 
@@ -198,7 +198,7 @@ public class PedagogicalScheduleService {
     /**
      * Rechercher des ressources par mot-clé
      */
-    public List<RessourceScheduleDTO> searchByKeyword(String keyword) {
+    public List<ResourceScheduleDTO> searchByKeyword(String keyword) {
         log.info("Recherche de ressources avec le mot-clé: {}", keyword);
         return pedagogicalScheduleRepository.searchByTitleContaining(keyword).stream()
                 .map(this::mapToDTO)
@@ -210,9 +210,9 @@ public class PedagogicalScheduleService {
     /**
      * Mapper une entité Ressources en DTO
      */
-    private RessourceScheduleDTO mapToDTO(Ressources ressource) {
-        return RessourceScheduleDTO.builder()
-                .id(ressource.getIdressource())
+    private ResourceScheduleDTO mapToDTO(Resource ressource) {
+        return ResourceScheduleDTO.builder()
+                .id(ressource.getId())
                 .courseName(ressource.getTitle())
                 .category(ressource.getCategory())
                 .isHighlighted(ressource.getIsHighlighted())
@@ -226,7 +226,7 @@ public class PedagogicalScheduleService {
      * Valider et mettre à jour une ressource
      */
     private void validateAndUpdateRessource(UpdateHoursDTO dto, List<String> errors) {
-        Ressources ressource = pedagogicalScheduleRepository.findById(dto.getRessourceId())
+        Resource ressource = pedagogicalScheduleRepository.findById(dto.getResourceId())
                 .orElseThrow(() -> new RuntimeException("Ressource non trouvée"));
 
         // Validation des heures
@@ -296,18 +296,14 @@ public class PedagogicalScheduleService {
                             new WeekDTO(1, "02", "E"),
                             new WeekDTO(2, "09", "E"),
                             new WeekDTO(3, "16", "E"),
-                            new WeekDTO(4, "23", "E")
-                    )
-            ));
+                            new WeekDTO(4, "23", "E"))));
 
             months.add(createMonth("Octobre 2024",
                     List.of(
                             new WeekDTO(5, "30", "E"),
                             new WeekDTO(6, "07", "S"),
                             new WeekDTO(7, "14", "E"),
-                            new WeekDTO(8, "21", "S")
-                    )
-            ));
+                            new WeekDTO(8, "21", "S"))));
         } else {
             // Années 1 et 2 (sans alternance)
             months.add(createMonth("Septembre 2024",
@@ -315,9 +311,7 @@ public class PedagogicalScheduleService {
                             new WeekDTO(1, "02", "E"),
                             new WeekDTO(2, "09", "E"),
                             new WeekDTO(3, "16", "E"),
-                            new WeekDTO(4, "23", "E")
-                    )
-            ));
+                            new WeekDTO(4, "23", "E"))));
         }
 
         return months;
@@ -337,12 +331,12 @@ public class PedagogicalScheduleService {
      * Calculer les statistiques du planning
      */
     private ScheduleStatisticsDTO calculateStatistics(
-            List<RessourceScheduleDTO> ressources,
+            List<ResourceScheduleDTO> ressources,
             ProjectScheduleDTO project,
             List<MonthDTO> weeks) {
 
         Integer totalResources = ressources.stream()
-                .mapToInt(RessourceScheduleDTO::getTotalHours)
+                .mapToInt(ResourceScheduleDTO::getTotalHours)
                 .sum();
 
         Integer totalWithProject = totalResources + project.getTotalHours();

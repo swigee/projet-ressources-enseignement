@@ -15,60 +15,60 @@ import java.util.List;
  * @author andry
  */
 @Entity
-@Table(name = "SYLLABUS")
+@Table(name = "syllabus")
 @NamedQueries({
-    @NamedQuery(name = "Syllabus.findAll", query = "SELECT s FROM Syllabus s"),
-    @NamedQuery(name = "Syllabus.findByIdsyllabus", query = "SELECT s FROM Syllabus s WHERE s.idsyllabus = :idsyllabus"),
-    @NamedQuery(name = "Syllabus.findByDescriptions", query = "SELECT s FROM Syllabus s WHERE s.descriptions = :descriptions")})
+        @NamedQuery(name = "Syllabus.findAll", query = "SELECT s FROM Syllabus s"),
+        @NamedQuery(name = "Syllabus.findById", query = "SELECT s FROM Syllabus s WHERE s.id = :id"),
+        @NamedQuery(name = "Syllabus.findByDescription", query = "SELECT s FROM Syllabus s WHERE s.description = :description") })
 public class Syllabus implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "IDSYLLABUS")
-    private Integer idsyllabus;
-    @Column(name = "DESCRIPTIONS")
-    private String descriptions;
+    @Column(name = "id")
+    private Integer id;
+    @Column(name = "description")
+    private String description;
     @JsonIgnore
     @ManyToMany(mappedBy = "syllabusList")
-    private List<Ressources> ressourcesList;
+    private List<Resource> resourceList;
 
     public Syllabus() {
     }
 
-    public Syllabus(Integer idsyllabus) {
-        this.idsyllabus = idsyllabus;
+    public Syllabus(Integer id) {
+        this.id = id;
     }
 
-    public Integer getIdsyllabus() {
-        return idsyllabus;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdsyllabus(Integer idsyllabus) {
-        this.idsyllabus = idsyllabus;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public String getDescriptions() {
-        return descriptions;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescriptions(String descriptions) {
-        this.descriptions = descriptions;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public List<Ressources> getRessourcesList() {
-        return ressourcesList;
+    public List<Resource> getResourceList() {
+        return resourceList;
     }
 
-    public void setRessourcesList(List<Ressources> ressourcesList) {
-        this.ressourcesList = ressourcesList;
+    public void setResourceList(List<Resource> resourceList) {
+        this.resourceList = resourceList;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idsyllabus != null ? idsyllabus.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -79,7 +79,8 @@ public class Syllabus implements Serializable {
             return false;
         }
         Syllabus other = (Syllabus) object;
-        if ((this.idsyllabus == null && other.idsyllabus != null) || (this.idsyllabus != null && !this.idsyllabus.equals(other.idsyllabus))) {
+        if ((this.id == null && other.id != null)
+                || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -87,7 +88,7 @@ public class Syllabus implements Serializable {
 
     @Override
     public String toString() {
-        return "sae.project.model.Syllabus[ idsyllabus=" + idsyllabus + " ]";
+        return "sae.project.model.Syllabus[ id=" + id + " ]";
     }
-    
+
 }

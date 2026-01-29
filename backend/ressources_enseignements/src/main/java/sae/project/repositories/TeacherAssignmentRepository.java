@@ -13,65 +13,61 @@ import java.util.Optional;
 public interface TeacherAssignmentRepository extends JpaRepository<Assignment, Integer> {
 
     // Trouver les affectations par enseignant
-    @Query("SELECT a FROM Assignment a WHERE a.iduser.iduser = :userId")
+    @Query("SELECT a FROM Assignment a WHERE a.user.id = :userId")
     List<Assignment> findByUserId(@Param("userId") Integer userId);
 
     // Trouver les affectations par ressource
-    @Query("SELECT a FROM Assignment a WHERE a.idressource.idressource = :ressourceId")
-    List<Assignment> findByRessourceId(@Param("ressourceId") Integer ressourceId);
+    @Query("SELECT a FROM Assignment a WHERE a.resource.id = :resourceId")
+    List<Assignment> findByResourceId(@Param("resourceId") Integer resourceId);
 
     // Trouver par enseignant et ressource
-    @Query("SELECT a FROM Assignment a WHERE a.iduser.iduser = :userId AND a.idressource.idressource = :ressourceId")
-    Optional<Assignment> findByUserIdAndRessourceId(
+    @Query("SELECT a FROM Assignment a WHERE a.user.id = :userId AND a.resource.id = :resourceId")
+    Optional<Assignment> findByUserIdAndResourceId(
             @Param("userId") Integer userId,
-            @Param("ressourceId") Integer ressourceId
-    );
+            @Param("resourceId") Integer resourceId);
 
     // Trouver par enseignant, ressource ET type de cours
-    @Query("SELECT a FROM Assignment a WHERE a.iduser.iduser = :userId " +
-            "AND a.idressource.idressource = :ressourceId " +
-            "AND a.lessontype = :lessonType")
-    Optional<Assignment> findByUserIdAndRessourceIdAndLessonType(
+    @Query("SELECT a FROM Assignment a WHERE a.user.id = :userId " +
+            "AND a.resource.id = :resourceId " +
+            "AND a.lessonType = :lessonType")
+    Optional<Assignment> findByUserIdAndResourceIdAndLessonType(
             @Param("userId") Integer userId,
-            @Param("ressourceId") Integer ressourceId,
-            @Param("lessonType") String lessonType
-    );
+            @Param("resourceId") Integer resourceId,
+            @Param("lessonType") String lessonType);
 
     // Trouver par type de cours
-    List<Assignment> findByLessontype(String lessontype);
+    List<Assignment> findByLessonType(String lessonType);
 
     // Trouver les affectations par formation (via ressource)
     @Query("SELECT a FROM Assignment a " +
-            "JOIN a.idressource r " +
+            "JOIN a.resource r " +
             "JOIN r.formationList f " +
             "WHERE f.year = :year AND f.className = :className")
     List<Assignment> findByFormation(
             @Param("year") String year,
-            @Param("className") String className
-    );
+            @Param("className") String className);
 
     // Calculer le total des heures pour un enseignant
-    @Query("SELECT COALESCE(SUM(a.assignedtimes), 0) FROM Assignment a WHERE a.iduser.iduser = :userId")
+    @Query("SELECT COALESCE(SUM(a.assignedTimes), 0) FROM Assignment a WHERE a.user.id = :userId")
     Integer getTotalHoursByUserId(@Param("userId") Integer userId);
 
     // Trouver les ressources non affectées pour une formation
-    @Query("SELECT r FROM Ressources r " +
+    @Query("SELECT r FROM Resource r " +
             "JOIN r.formationList f " +
             "WHERE f.year = :year AND f.className = :className " +
-            "AND r.idressource NOT IN (SELECT a.idressource.idressource FROM Assignment a)")
-    List<Object> findUnassignedRessources(
+            "AND r.id NOT IN (SELECT a.resource.id FROM Assignment a)")
+    List<Object> findUnassignedResources(
             @Param("year") String year,
-            @Param("className") String className
-    );
+            @Param("className") String className);
 
     // Statistiques par type de cours
-    @Query("SELECT a.lessontype, COUNT(a), SUM(a.assignedtimes) " +
-            "FROM Assignment a GROUP BY a.lessontype")
+    @Query("SELECT a.lessonType, COUNT(a), SUM(a.assignedTimes) " +
+            "FROM Assignment a GROUP BY a.lessonType")
     List<Object[]> getStatisticsByLessonType();
 
     // Enseignants avec leurs heures
-    @Query("SELECT u.iduser, u.firstname, u.lastname, COALESCE(SUM(a.assignedtimes), 0) " +
-            "FROM Users u LEFT JOIN Assignment a ON u.iduser = a.iduser.iduser " +
-            "GROUP BY u.iduser, u.firstname, u.lastname")
+    @Query("SELECT u.id, u.firstName, u.lastName, COALESCE(SUM(a.assignedTimes), 0) " +
+            "FROM User u LEFT JOIN Assignment a ON u.id = a.user.id " +
+            "GROUP BY u.id, u.firstName, u.lastName")
     List<Object[]> getTeachersWithHours();
 }

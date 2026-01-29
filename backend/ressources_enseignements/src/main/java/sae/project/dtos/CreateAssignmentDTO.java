@@ -19,7 +19,8 @@ public class CreateAssignmentDTO {
     private Integer userId;
 
     @NotNull(message = "L'ID de la ressource est obligatoire")
-    private Integer ressourceId;
+    @com.fasterxml.jackson.annotation.JsonAlias("ressourceId")
+    private Integer resourceId;
 
     @NotNull(message = "Le type de cours est obligatoire")
     private String lessonType; // CM, TD, TP

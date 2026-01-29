@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class AffectationRowDTO {
-    private Integer ressourceId;
+    private Integer resourceId;
     private String module;
 
     // Heures prévues

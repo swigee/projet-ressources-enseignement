@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class PedagogicalScheduleDTO {
     private String selectedYear;
     private String selectedClass;
-    private java.util.List<RessourceScheduleDTO> scheduleData;
+    private java.util.List<ResourceScheduleDTO> scheduleData;
     private ProjectScheduleDTO projectData;
     private java.util.List<MonthDTO> weeks;
     private ScheduleStatisticsDTO statistics;

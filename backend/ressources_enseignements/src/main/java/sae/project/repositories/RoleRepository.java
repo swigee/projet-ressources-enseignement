@@ -6,6 +6,5 @@ import sae.project.model.Role;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Integer> {
-    Role findByRights(String rights);
+    Role findByName(String name);
 }
-

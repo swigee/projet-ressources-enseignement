@@ -3,7 +3,7 @@ package sae.project.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sae.project.dtos.LoginDto;
+import sae.project.dtos.auth.LoginRequestDTO;
 import sae.project.model.User;
 import sae.project.services.AuthService;
 
@@ -17,7 +17,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto login) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO login) {
 
         User user = authService.authenticate(
                 login.getUsername(),

@@ -8,7 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sae.project.dtos.*;
+import sae.project.dtos.schedule.PedagogicalScheduleDTO;
+import sae.project.dtos.schedule.ResourceScheduleDTO;
+import sae.project.dtos.schedule.UpdateHoursDTO;
+import sae.project.dtos.schedule.ValidationRequestDTO;
+import sae.project.dtos.schedule.ValidationResponseDTO;
 import sae.project.model.Resource;
 import sae.project.services.PedagogicalScheduleService;
 
@@ -79,13 +83,14 @@ public class PedagogicalScheduleController {
      * Récupérer les ressources par année et classe
      */
     @GetMapping("/ressources/filter")
-    @Operation(summary = "Récupérer les ressources par année et classe")
+    @Operation(summary = "Récupérer les ressources par année, classe et semestre")
     public ResponseEntity<List<ResourceScheduleDTO>> getRessourcesByFilter(
             @Parameter(description = "Année d'étude") @RequestParam String year,
-            @Parameter(description = "Nom de la classe") @RequestParam String className) {
-        log.info("GET /api/pedagogical-schedule/ressources/filter?year={}&className={}", year, className);
+            @Parameter(description = "Nom de la classe") @RequestParam String className,
+            @Parameter(description = "Semestre (1 ou 2)") @RequestParam Integer semester) {
+        log.info("GET /api/pedagogical-schedule/ressources/filter?year={}&className={}&semester={}", year, className, semester);
         try {
-            List<ResourceScheduleDTO> ressources = pedagogicalScheduleService.getByYearAndClass(year, className);
+            List<ResourceScheduleDTO> ressources = pedagogicalScheduleService.getByYearAndClass(year, className, semester);
             return ResponseEntity.ok(ressources);
         } catch (Exception e) {
             log.error("Erreur lors du filtrage des ressources", e);
@@ -100,10 +105,11 @@ public class PedagogicalScheduleController {
     @Operation(summary = "Récupérer le planning complet avec statistiques")
     public ResponseEntity<PedagogicalScheduleDTO> getCompleteSchedule(
             @Parameter(description = "Année d'étude") @RequestParam String year,
-            @Parameter(description = "Nom de la classe") @RequestParam String className) {
-        log.info("GET /api/pedagogical-schedule/schedule?year={}&className={}", year, className);
+            @Parameter(description = "Nom de la classe") @RequestParam String className,
+            @Parameter(description = "Semestre (1 ou 2)") @RequestParam Integer semester) {
+        log.info("GET /api/pedagogical-schedule/schedule?year={}&className={}&semester={}", year, className, semester);
         try {
-            PedagogicalScheduleDTO schedule = pedagogicalScheduleService.getCompleteSchedule(year, className);
+            PedagogicalScheduleDTO schedule = pedagogicalScheduleService.getCompleteSchedule(year, className, semester);
             return ResponseEntity.ok(schedule);
         } catch (Exception e) {
             log.error("Erreur lors de la récupération du planning complet", e);

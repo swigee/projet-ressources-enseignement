@@ -181,9 +181,9 @@ public class RessourcesService {
                 .category(resource.getCategory())
                 .heuresPrevisionnelles(heuresPrevisionnelles)
                 .heuresReelles(heuresReelles)
-                .heuresTD(resource.getTdIutHours() != null ? resource.getTdIutHours() : 0)
-                .heuresTP(resource.getTpIutHours() != null ? resource.getTpIutHours() : 0)
-                .heuresCM(resource.getCmIutHours() != null ? resource.getCmIutHours() : 0)
+                .heuresTD(resource.getTdStateHours() != null ? resource.getTdStateHours() : 0)
+                .heuresTP(resource.getTpStateHours() != null ? resource.getTpStateHours() : 0)
+                .heuresCM(resource.getCmStateHours() != null ? resource.getCmStateHours() : 0)
                 .isHighlighted(resource.getIsHighlighted() != null ? resource.getIsHighlighted() : false)
                 .assignedTeachers(assignedTeachers)
                 .build();

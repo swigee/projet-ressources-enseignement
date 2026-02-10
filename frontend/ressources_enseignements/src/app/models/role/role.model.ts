@@ -1,5 +1,5 @@
 export interface RoleModel {
-  idrole: number;
-  title: string;
-  rights: string;
+  id: number;
+  name: string;
+  is_active: number;
 }

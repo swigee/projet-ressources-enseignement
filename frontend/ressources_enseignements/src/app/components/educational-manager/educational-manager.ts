@@ -10,11 +10,11 @@ import { EducationalManagerService } from '../../services/educational-manager/ed
 export class EducationalManager {
   edManager = inject(EducationalManagerService)
 
-  clickDelete(id: number){
+  clickDelete(id: number) {
     this.edManager.deleteEducation(id)
   }
 
-  updateEducation(id: number){
+  updateEducation(id: number) {
     this.edManager.updateEducation(id)
   }
 }

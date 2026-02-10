@@ -1,7 +1,7 @@
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {forkJoin} from 'rxjs';
-import {RessourcesService} from '../../services/ressources/ressources-service';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
+import { RessourcesService } from '../../services/ressources/ressources-service';
 import {
   RessourceRowDTO, RessourcesTotalsDTO,
   ScheduleConflictDTO,
@@ -17,13 +17,24 @@ import {
   ValidationRequestDTO,
   UpdateHoursDTO
 } from '../../services/pedagogical-schedule/pedagogical-schedule-service';
+import { UserService } from '../../services/user/user-service';
+import { Router } from '@angular/router';
+import { PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser, AsyncPipe, NgIf, NgFor } from '@angular/common'; // added AsyncPipe, NgIf, NgFor
+import { TicketService, CreateTicketDTO } from '../../services/ticket/ticket.service';
+import { ServiceSheetService } from '../../services/professor-service/service-sheet.service';
+import { ServiceSummary } from '../../models/service-summary.model';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-ressource',
   standalone: true,
   imports: [
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AsyncPipe,
+    NgIf,
+    NgFor
   ],
   templateUrl: './ressource.html',
   styleUrl: './ressource.css',
@@ -31,9 +42,33 @@ import {
 export class Ressource implements OnInit {
   private readonly ressourcesTableService = inject(RessourcesService);
   private readonly pedagogicalScheduleService = inject(PedagogicalScheduleService);
+  private readonly userService = inject(UserService);
+  private readonly router = inject(Router);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly serviceSheetService = inject(ServiceSheetService);
+  private readonly ticketService = inject(TicketService);
 
   // Tab state
   activeTab = signal<string>('ressources');
+
+  // Validation state
+  validationStatus = signal<string>('NONE'); // NONE, SUBMITTED, VALIDATED
+  showValidationConfirm = signal<boolean>(false);
+  services = signal<ServiceSummary[]>([]);
+
+  filteredServices = computed(() => {
+    const allServices = this.services();
+    const year = this.selectedYear();
+    // Filter services that match the selected year
+    return allServices.filter(service => service.year === year);
+  });
+
+  // Ticket Modal state
+  showModal = false;
+  ticketData: CreateTicketDTO = {
+    title: '',
+    description: ''
+  };
 
   // Filter state
   searchQuery = signal<string>('');
@@ -111,6 +146,8 @@ export class Ressource implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+    this.loadValidationStatus();
+    this.loadServices();
   }
 
   loadData(): void {
@@ -385,7 +422,7 @@ export class Ressource implements OnInit {
     });
   }
 
-  getWeekTotal(hoursPerWeek: {[key: string]: WeekHoursDTO}, weekNum: number): number {
+  getWeekTotal(hoursPerWeek: { [key: string]: WeekHoursDTO }, weekNum: number): number {
     const w = hoursPerWeek[weekNum.toString()];
     return w ? (w.cm || 0) + (w.td || 0) + (w.tp || 0) : 0;
   }
@@ -395,5 +432,96 @@ export class Ressource implements OnInit {
     const value = Number(target.value) || 0;
     const project = this.projectData();
     this.projectData.set({ ...project, hoursPerHalfGroup: value });
+  }
+
+  // Validation methods
+  loadValidationStatus(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const userId = Number(localStorage.getItem('userId'));
+      if (userId) {
+        this.userService.getUserById(userId).subscribe({
+          next: (user) => {
+            if (user.validationStatus) {
+              this.validationStatus.set(user.validationStatus);
+            }
+          },
+          error: (err) => console.error('Error loading validation status', err)
+        });
+      }
+    }
+  }
+
+  loadServices(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const userId = Number(localStorage.getItem('userId'));
+      if (userId) {
+        this.serviceSheetService.getServicesSheet(userId).subscribe({
+          next: (data) => this.services.set(data),
+          error: (err) => console.error('Error loading services', err)
+        });
+      }
+    }
+  }
+
+  requestValidation(): void {
+    this.showValidationConfirm.set(true);
+  }
+
+  cancelValidation(): void {
+    this.showValidationConfirm.set(false);
+  }
+
+  confirmValidation(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const userId = Number(localStorage.getItem('userId'));
+      this.userService.validateService(userId).subscribe({
+        next: () => {
+          alert("Service validé avec succès !");
+          this.validationStatus.set('SUBMITTED');
+          this.showValidationConfirm.set(false);
+        },
+        error: (err) => {
+          console.error("Erreur validation service", err);
+          alert("Erreur lors de la validation du service.");
+          this.showValidationConfirm.set(false);
+        }
+      });
+    }
+  }
+
+  // Ticket Methods
+  openTicketModal() {
+    this.showModal = true;
+  }
+
+  closeTicketModal() {
+    this.showModal = false;
+    this.ticketData = { title: '', description: '' };
+  }
+
+  submitTicket() {
+    if (!this.ticketData.title || !this.ticketData.description) {
+      alert("Veuillez remplir tous les champs obligatoires.");
+      return;
+    }
+
+    if (isPlatformBrowser(this.platformId)) {
+      const userId = Number(localStorage.getItem('userId'));
+      if (!userId) {
+        alert("Utilisateur non connecté.");
+        return;
+      }
+
+      this.ticketService.createTicket(userId, this.ticketData).subscribe({
+        next: () => {
+          alert("Ticket envoyé avec succès !");
+          this.closeTicketModal();
+        },
+        error: (err) => {
+          console.error("Erreur envoi ticket", err);
+          alert("Erreur lors de l'envoi du ticket.");
+        }
+      });
+    }
   }
 }

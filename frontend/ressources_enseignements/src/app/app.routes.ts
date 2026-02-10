@@ -6,7 +6,6 @@ import { EducationManagerCreation } from './components/education-manager-creatio
 import { TeacherAssignmentComponent } from './components/teacher-assignment/teacher-assignment';
 import { UserManager } from './components/user-manager/user-manager';
 import { Ressource } from './components/ressource/ressource';
-import { ServiceSheet } from './components/service-sheet/service-sheet';
 
 
 export const routes: Routes = [
@@ -33,10 +32,6 @@ export const routes: Routes = [
     component: Ressource
   },
   {
-    path: 'service-sheet',
-    component: ServiceSheet
-  },
-  {
     path: 'teacher-assignment',
     component: TeacherAssignmentComponent
   },
@@ -51,10 +46,10 @@ export const routes: Routes = [
   {
     path: 'user-manager',
     component: UserManager
-    },
-    {
-      path: 'ressource',
-      component: Ressource
+  },
+  {
+    path: 'ressource',
+    component: Ressource
   }
 
 ];

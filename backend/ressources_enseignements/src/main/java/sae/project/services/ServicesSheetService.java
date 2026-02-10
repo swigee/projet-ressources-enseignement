@@ -51,6 +51,12 @@ public class ServicesSheetService {
                 currentDto.setHoursTP(currentDto.getHoursTP() + hours);
             }
 
+            // Set year from formation list if not set
+            if (currentDto.getYear() == null && ressource.getFormationList() != null
+                    && !ressource.getFormationList().isEmpty()) {
+                currentDto.setYear(ressource.getFormationList().get(0).getYear());
+            }
+
             currentDto.setTotalHours(currentDto.getHoursCM() + currentDto.getHoursTD() + currentDto.getHoursTP());
         }
 

@@ -4,4 +4,5 @@ export interface ServiceSummary {
   hoursTD: number;
   hoursTP: number;
   totalHours: number;
+  year?: string;
 }

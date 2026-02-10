@@ -49,9 +49,11 @@ INSERT INTO formation (id, name, year, class_name) VALUES
 -- USER FORMATION
 -- =========================
 INSERT INTO user_formation (formation_id, user_id) VALUES
-(1, 2),
-(3, 2),
+(1, 2), -- Info 1A
+(3, 2), -- Info 2A
+(5, 2), -- Info 3A (New: pour tester filtre année 3)
 (1, 3);
+
 
 -- =========================
 -- RESSOURCES (37 modules BUT Informatique)
@@ -325,7 +327,9 @@ INSERT INTO resource_syllabus (resource_id, syllabus_id) VALUES
 INSERT INTO assignment (id, assigned_times, lesson_type, resource_id, user_id) VALUES
 (1, 20, 'CM', 1, 2),
 (2, 25, 'TD', 2, 2),
-(3, 20, 'CM', 7, 2);
+(3, 20, 'CM', 7, 2),
+(4, 30, 'CM', 13, 2), -- Dev App Year 2
+(5, 25, 'TD', 26, 2); -- Arch Log Year 3
 
 -- =========================
 -- TICKETS

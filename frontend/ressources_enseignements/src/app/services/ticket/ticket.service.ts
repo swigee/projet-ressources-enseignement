@@ -10,7 +10,7 @@ export class TicketService {
 
   constructor(private http: HttpClient) { }
 
-  createTicket(ticket: { title: string, description: string, iduser: number }): Observable<any> {
+  createTicket(ticket: { title: string, description: string, userId: number }): Observable<any> {
     return this.http.post(this.apiUrl, ticket);
   }
 

@@ -79,4 +79,12 @@ public class UserService {
 
         userRepository.save(user);
     }
+
+    @Transactional
+    public void validateUser(int id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setValidationStatus("SUBMITTED");
+        userRepository.save(user);
+    }
 }

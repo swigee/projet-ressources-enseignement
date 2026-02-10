@@ -3,8 +3,8 @@ package sae.project.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sae.project.dtos.TicketDto;
-import sae.project.model.Tickets;
-import sae.project.model.Users;
+import sae.project.model.Ticket;
+import sae.project.model.User;
 import sae.project.repositories.TicketRepository;
 import sae.project.repositories.UserRepository;
 import java.sql.Date;
@@ -18,14 +18,14 @@ public class TicketService {
     private UserRepository usersRepository;
 
     public void createTicket(TicketDto dto) {
-        Users user = usersRepository.findById(dto.iduser).orElseThrow();
+        User user = usersRepository.findById(dto.userId).orElseThrow();
 
-        Tickets ticket = new Tickets();
+        Ticket ticket = new Ticket();
         ticket.setTitle(dto.title);
         ticket.setDescription(dto.description);
-        ticket.setStatue("OPEN"); // Valeur par défaut
+        ticket.setStatus("OPEN"); // Valeur par défaut
         ticket.setDate(Date.valueOf(LocalDate.now())); // Date d'aujourd'hui
-        ticket.setIduser(user);
+        ticket.setUser(user);
 
         ticketsRepository.save(ticket);
     }

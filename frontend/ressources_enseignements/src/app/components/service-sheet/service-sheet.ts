@@ -3,8 +3,9 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router'; // <--- Import Router pour rediriger si pas connecté
 import { ServiceSummary } from '../../models/service-summary.model';
-import { ServiceSheetService } from "../../services/service-sheet.service";
-import { TicketService } from "../../services/ticket.service";
+import { ServiceSheetService } from "../../services/professor-service/service-sheet.service";
+import { TicketService } from "../../services/ticket/ticket.service";
+import { UserService } from "../../services/user/user-service";
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -24,9 +25,12 @@ export class ServiceSheet implements OnInit {
     description: ''
   };
 
+  validationStatus: string = 'NONE'; // NONE, SUBMITTED, VALIDATED
+
   constructor(
     private serviceSheetService: ServiceSheetService,
     private ticketService: TicketService,
+    private userService: UserService, // Inject UserService
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
@@ -60,8 +64,14 @@ export class ServiceSheet implements OnInit {
       // 5. On lance la requête avec le VRAI ID
       console.log("Chargement des services pour l'utilisateur ID :", userId);
       this.services$ = this.serviceSheetService.getServicesSheet(userId);
+
+      // Check validation status
+      this.userService.getUserById(userId).subscribe(user => {
+        this.validationStatus = user.validationStatus;
+      });
     }
   }
+
   openTicketModal() {
     this.showModal = true;
   }
@@ -79,7 +89,7 @@ export class ServiceSheet implements OnInit {
       const newTicket = {
         title: this.ticketData.title,
         description: this.ticketData.description,
-        iduser: userId
+        userId: userId
       };
 
       this.ticketService.createTicket(newTicket).subscribe({
@@ -90,6 +100,35 @@ export class ServiceSheet implements OnInit {
         error: (err) => {
           console.error("Erreur envoi ticket", err);
           alert("Erreur lors de l'envoi du ticket.");
+        }
+      });
+    }
+  }
+
+  showValidationConfirm = false;
+
+  requestValidation() {
+    console.log("Requesting validation...");
+    this.showValidationConfirm = true;
+  }
+
+  cancelValidation() {
+    this.showValidationConfirm = false;
+  }
+
+  validateService() {
+    if (isPlatformBrowser(this.platformId)) {
+      const userId = Number(localStorage.getItem('userId'));
+      this.userService.validateService(userId).subscribe({
+        next: () => {
+          alert("Service validé avec succès !");
+          this.validationStatus = 'SUBMITTED';
+          this.showValidationConfirm = false;
+        },
+        error: (err) => {
+          console.error("Erreur validation service", err);
+          alert("Erreur lors de la validation du service.");
+          this.showValidationConfirm = false;
         }
       });
     }

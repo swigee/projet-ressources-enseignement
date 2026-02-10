@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sae.project.dtos.ServicesSummaryDto;
 import sae.project.model.Assignment;
-import sae.project.model.Ressources;
-import sae.project.repositories.AssignmentRepository;
+import sae.project.repositories.TeacherAssignmentRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,18 +14,18 @@ import java.util.Map;
 @Service
 public class ServicesSheetService {
     @Autowired
-    private AssignmentRepository assignmentRepository;
+    private TeacherAssignmentRepository assignmentRepository;
 
     public List<ServicesSummaryDto> getServicesSummary(Integer userId) {
         // 1. Récupérer toutes les lignes brutes de la BDD pour ce prof
-        List<Assignment> assignments = assignmentRepository.findByIduser_Iduser(userId);
+        List<Assignment> assignments = assignmentRepository.findByUserId(userId);
 
         // 2. Regrouper par Ressource (Map <ID_Ressource, DTO>)
         Map<Integer, ServicesSummaryDto> summaryMap = new HashMap<>();
 
         for (Assignment assign : assignments) {
-            Ressources ressource = assign.getIdressource();
-            Integer resId = ressource.getIdressource();
+            sae.project.model.Resource ressource = assign.getResource();
+            Integer resId = ressource.getId();
 
             // Si on n'a pas encore cette ressource dans la liste, on la crée
             if (!summaryMap.containsKey(resId)) {
@@ -39,12 +38,10 @@ public class ServicesSheetService {
                 summaryMap.put(resId, dto);
             }
 
-
             ServicesSummaryDto currentDto = summaryMap.get(resId);
-            int hours = assign.getAssignedtimes(); // 'assignedtimes' dans ton data.sql
+            int hours = assign.getAssignedTimes();
 
-
-            String type = assign.getLessontype();
+            String type = assign.getLessonType();
 
             if ("CM".equalsIgnoreCase(type)) {
                 currentDto.setHoursCM(currentDto.getHoursCM() + hours);
@@ -54,10 +51,8 @@ public class ServicesSheetService {
                 currentDto.setHoursTP(currentDto.getHoursTP() + hours);
             }
 
-
             currentDto.setTotalHours(currentDto.getHoursCM() + currentDto.getHoursTD() + currentDto.getHoursTP());
         }
-
 
         return new ArrayList<>(summaryMap.values());
     }

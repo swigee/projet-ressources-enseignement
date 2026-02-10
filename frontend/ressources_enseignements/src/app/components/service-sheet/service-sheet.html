@@ -34,16 +34,49 @@
   </ng-template>
 </div>
 
-<div class="mt-8 flex justify-end gap-4">
-  <button (click)="openTicketModal()"
-    class="px-6 py-3 bg-red-100 text-red-700 font-semibold rounded-lg hover:bg-red-200 transition duration-200">
-    Signaler un problème
-  </button>
-  <button
-    class="px-6 py-3 bg-green-100 text-green-700 font-semibold rounded-lg hover:bg-green-200 transition duration-200">
-    Valider le service
-  </button>
+<div class="mt-8 flex flex-col items-end gap-6" *ngIf="validationStatus === 'NONE'; else statusStepper">
+  <div class="flex gap-4">
+    <button (click)="openTicketModal()"
+      class="px-6 py-3 bg-red-100 text-red-700 font-semibold rounded-lg hover:bg-red-200 transition duration-200">
+      Signaler un problème
+    </button>
+    <button (click)="requestValidation()"
+      class="px-6 py-3 bg-green-100 text-green-700 font-semibold rounded-lg hover:bg-green-200 transition duration-200">
+      Valider le service
+    </button>
+  </div>
 </div>
+
+<ng-template #statusStepper>
+  <div class="mt-8 flex justify-center w-full">
+    <div class="flex items-center w-full max-w-2xl">
+
+      <!-- Etape 1 : Envoyé -->
+      <div class="flex flex-col items-center relative">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+          [ngClass]="{'bg-green-100 border-green-500 text-green-600': validationStatus === 'SUBMITTED' || validationStatus === 'VALIDATED', 'bg-gray-100 border-gray-300 text-gray-400': validationStatus === 'NONE'}">
+          <i class="fa-solid fa-paper-plane text-xl"></i>
+        </div>
+        <span class="absolute -bottom-8 text-sm font-medium text-gray-600 w-32 text-center">Validation envoyée</span>
+      </div>
+
+      <!-- Ligne de connexion -->
+      <div class="flex-1 h-1 mx-4 rounded transition-all duration-300"
+        [ngClass]="{'bg-green-500': validationStatus === 'VALIDATED', 'bg-gray-200': validationStatus !== 'VALIDATED'}">
+      </div>
+
+      <!-- Etape 2 : Validé -->
+      <div class="flex flex-col items-center relative">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+          [ngClass]="{'bg-green-100 border-green-500 text-green-600': validationStatus === 'VALIDATED', 'bg-gray-100 border-gray-300 text-gray-400': validationStatus !== 'VALIDATED'}">
+          <i class="fa-solid fa-circle-check text-xl"></i>
+        </div>
+        <span class="absolute -bottom-8 text-sm font-medium text-gray-600 w-32 text-center">Validé par le chef</span>
+      </div>
+
+    </div>
+  </div>
+</ng-template>
 
 
 <div *ngIf="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -91,6 +124,29 @@
         </button>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!-- Validation Confirmation Pop-up -->
+<div *ngIf="showValidationConfirm" class="fixed bottom-6 right-6 z-50 animate-bounce-in">
+  <div class="bg-white rounded-lg shadow-2xl border border-gray-200 p-6 max-w-sm flex flex-col gap-4">
+    <div>
+      <h3 class="font-bold text-gray-800 text-lg mb-2">Confirmer la validation</h3>
+      <p class="text-sm text-gray-600">
+        Une fois validé, vous ne pourrez plus signaler de problèmes. Êtes-vous sûr de vouloir envoyer votre service au
+        chef de département ?
+      </p>
+    </div>
+    <div class="flex justify-end gap-3">
+      <button (click)="cancelValidation()"
+        class="px-4 py-2 bg-gray-100 text-gray-600 font-medium rounded hover:bg-gray-200 transition">
+        Abandonner
+      </button>
+      <button (click)="validateService()"
+        class="px-4 py-2 bg-green-600 text-white font-medium rounded hover:bg-green-700 transition shadow-sm">
+        Envoyer
+      </button>
     </div>
   </div>
 </div>

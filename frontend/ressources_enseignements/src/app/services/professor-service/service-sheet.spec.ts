@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ServiceSheet } from './service-sheet';
+import { ServiceSheetService } from './service-sheet.service';
 
-describe('ServiceSheet', () => {
-  let service: ServiceSheet;
+describe('ServiceSheetService', () => {
+  let service: ServiceSheetService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ServiceSheet);
+    service = TestBed.inject(ServiceSheetService);
   });
 
   it('should be created', () => {

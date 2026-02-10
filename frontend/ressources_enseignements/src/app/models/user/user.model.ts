@@ -11,7 +11,7 @@ export interface UserModel {
   username: string;
   address?: string;
   email?: string;
-  servicevalidation?: boolean;
+  validationStatus?: string;
   roles?: RoleModel[];
   formations?: any[];
   tickets?: any[];

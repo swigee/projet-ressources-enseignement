@@ -9,22 +9,25 @@ public class UserDTO {
     public String username;
     public String address;
     public String email;
-    public boolean servicevalidation;
+    public String validationStatus;
     public List<Object> roles; // Liste d'objets JSON pour chaque rôle
     public List<String> formations;
     public List<String> tickets;
     public List<String> assignments;
 
-    public UserDTO() {}
+    public UserDTO() {
+    }
 
-    public UserDTO(int iduser, String firstname, String lastname, String username, String address, String email, boolean servicevalidation, List<Object> roles, List<String> formations, List<String> tickets, List<String> assignments) {
+    public UserDTO(int iduser, String firstname, String lastname, String username, String address, String email,
+            String validationStatus, List<Object> roles, List<String> formations, List<String> tickets,
+            List<String> assignments) {
         this.iduser = iduser;
         this.firstname = firstname;
         this.lastname = lastname;
         this.username = username;
         this.address = address;
         this.email = email;
-        this.servicevalidation = servicevalidation;
+        this.validationStatus = validationStatus;
         this.roles = roles;
         this.formations = formations;
         this.tickets = tickets;

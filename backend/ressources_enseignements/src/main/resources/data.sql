@@ -1,14 +1,14 @@
 -- =========================
 -- NETTOYAGE DES ANCIENNES TABLES (Legacy)
 -- =========================
-DROP TABLE IF EXISTS ressourcessyllabus;
-DROP TABLE IF EXISTS formationressources;
-DROP TABLE IF EXISTS userformation;
-DROP TABLE IF EXISTS tickets;
-DROP TABLE IF EXISTS ressources;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS role;
-DROP TABLE IF EXISTS app_role;
+-- DROP TABLE IF EXISTS ressourcessyllabus;
+-- DROP TABLE IF EXISTS formationressources;
+-- DROP TABLE IF EXISTS userformation;
+-- DROP TABLE IF EXISTS tickets;
+-- DROP TABLE IF EXISTS ressources;
+-- DROP TABLE IF EXISTS users;
+-- DROP TABLE IF EXISTS role;
+-- DROP TABLE IF EXISTS app_role;
 -- DROP TABLE IF EXISTS position;
 -- Note: les nouvelles tables sont gérées par ddl-auto=create
 
@@ -34,10 +34,10 @@ INSERT INTO position (id, name, is_active) VALUES
 -- =========================
 -- USERS
 -- =========================
-INSERT INTO user (id, address, email, first_name, last_name, password, phone_number, is_validated, username) VALUES
-(1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', 'admin123', '0101010101', b'1', 'admin'),
-(2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', 'prof123', '0202020202', b'1', 'prof'),
-(3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', 'student123', '0303030303', b'0', 'student');
+INSERT INTO user (id, address, email, first_name, last_name, password, phone_number, validation_status, username) VALUES
+(1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', 'admin123', '0101010101', 'VALIDATED', 'admin'),
+(2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', 'prof123', '0202020202', 'VALIDATED', 'prof'),
+(3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', 'student123', '0303030303', 'NONE', 'student');
 
 -- =========================
 -- USER ROLE

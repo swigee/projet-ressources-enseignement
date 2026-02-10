@@ -5,7 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sae.project.dtos.*;
+import sae.project.dtos.schedule.MonthDTO;
+import sae.project.dtos.schedule.PedagogicalScheduleDTO;
+import sae.project.dtos.schedule.ProjectScheduleDTO;
+import sae.project.dtos.schedule.ResourceScheduleDTO;
+import sae.project.dtos.schedule.ScheduleStatisticsDTO;
+import sae.project.dtos.schedule.UpdateHoursDTO;
+import sae.project.dtos.schedule.ValidationRequestDTO;
+import sae.project.dtos.schedule.ValidationResponseDTO;
+import sae.project.dtos.schedule.WeekDTO;
+import sae.project.dtos.schedule.WeekHoursDTO;
 import sae.project.model.Resource;
 import sae.project.repositories.PedagogicalScheduleRepository;
 
@@ -50,11 +59,11 @@ public class PedagogicalScheduleService {
     }
 
     /**
-     * Récupérer les ressources par année et classe
+     * Récupérer les ressources par année, classe et semestre
      */
-    public List<ResourceScheduleDTO> getByYearAndClass(String year, String className) {
-        log.info("Récupération des ressources pour l'année {} et la classe {}", year, className);
-        return pedagogicalScheduleRepository.findByYearAndClass(year, className).stream()
+    public List<ResourceScheduleDTO> getByYearAndClass(String year, String className, Integer semester) {
+        log.info("Récupération des ressources pour l'année {} la classe {} et le semestre {}", year, className, semester);
+        return pedagogicalScheduleRepository.findByYearAndClassAndSemester(year, className, semester).stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
@@ -62,17 +71,18 @@ public class PedagogicalScheduleService {
     /**
      * Récupérer le planning complet
      */
-    public PedagogicalScheduleDTO getCompleteSchedule(String year, String className) {
-        log.info("Récupération du planning complet pour {} - {}", year, className);
+    public PedagogicalScheduleDTO getCompleteSchedule(String year, String className, Integer semester) {
+        log.info("Récupération du planning complet pour {} - {} - semestre {}", year, className, semester);
 
-        List<ResourceScheduleDTO> ressources = getByYearAndClass(year, className);
+        List<ResourceScheduleDTO> ressources = getByYearAndClass(year, className, semester);
         ProjectScheduleDTO project = getProjectData();
-        List<MonthDTO> weeks = getWeeksForYear(year);
+        List<MonthDTO> weeks = getWeeksForYearAndSemester(year, semester);
         ScheduleStatisticsDTO statistics = calculateStatistics(ressources, project, weeks);
 
         return PedagogicalScheduleDTO.builder()
                 .selectedYear(year)
                 .selectedClass(className)
+                .selectedSemester(String.valueOf(semester))
                 .scheduleData(ressources)
                 .projectData(project)
                 .weeks(weeks)
@@ -211,14 +221,22 @@ public class PedagogicalScheduleService {
      * Mapper une entité Ressources en DTO
      */
     private ResourceScheduleDTO mapToDTO(Resource ressource) {
+        Map<String, WeekHoursDTO> weekHours = ressource.getHoursPerWeek();
+        int totalCM = weekHours.values().stream().mapToInt(w -> w.getCm() != null ? w.getCm() : 0).sum();
+        int totalTD = weekHours.values().stream().mapToInt(w -> w.getTd() != null ? w.getTd() : 0).sum();
+        int totalTP = weekHours.values().stream().mapToInt(w -> w.getTp() != null ? w.getTp() : 0).sum();
+
         return ResourceScheduleDTO.builder()
                 .id(ressource.getId())
                 .courseName(ressource.getTitle())
                 .category(ressource.getCategory())
                 .isHighlighted(ressource.getIsHighlighted())
-                .hoursPerWeek(ressource.getHoursPerWeek())
+                .hoursPerWeek(weekHours)
                 .hoursPerHalfGroup(ressource.getHoursPerHalfGroup())
                 .totalHours(ressource.getTotalHours())
+                .totalCM(totalCM)
+                .totalTD(totalTD)
+                .totalTP(totalTP)
                 .build();
     }
 
@@ -231,9 +249,16 @@ public class PedagogicalScheduleService {
 
         // Validation des heures
         if (dto.getHoursPerWeek() != null) {
-            for (Map.Entry<String, Integer> entry : dto.getHoursPerWeek().entrySet()) {
-                if (entry.getValue() < 0) {
-                    errors.add("Les heures doivent être positives pour la semaine " + entry.getKey());
+            for (Map.Entry<String, WeekHoursDTO> entry : dto.getHoursPerWeek().entrySet()) {
+                WeekHoursDTO w = entry.getValue();
+                if (w.getCm() != null && w.getCm() < 0) {
+                    errors.add("Les heures CM doivent être positives pour la semaine " + entry.getKey());
+                }
+                if (w.getTd() != null && w.getTd() < 0) {
+                    errors.add("Les heures TD doivent être positives pour la semaine " + entry.getKey());
+                }
+                if (w.getTp() != null && w.getTp() < 0) {
+                    errors.add("Les heures TP doivent être positives pour la semaine " + entry.getKey());
                 }
             }
         }
@@ -246,6 +271,18 @@ public class PedagogicalScheduleService {
         if (errors.isEmpty()) {
             ressource.setHoursPerWeek(dto.getHoursPerWeek());
             ressource.setHoursPerHalfGroup(dto.getHoursPerHalfGroup());
+
+            // Sync CM/TD/TP totals
+            Map<String, WeekHoursDTO> weekHours = dto.getHoursPerWeek();
+            if (weekHours != null) {
+                int totalCM = weekHours.values().stream().mapToInt(w -> w.getCm() != null ? w.getCm() : 0).sum();
+                int totalTD = weekHours.values().stream().mapToInt(w -> w.getTd() != null ? w.getTd() : 0).sum();
+                int totalTP = weekHours.values().stream().mapToInt(w -> w.getTp() != null ? w.getTp() : 0).sum();
+                ressource.setCmStateHours(totalCM);
+                ressource.setTdStateHours(totalTD);
+                ressource.setTpStateHours(totalTP);
+            }
+
             pedagogicalScheduleRepository.save(ressource);
         }
     }
@@ -256,9 +293,16 @@ public class PedagogicalScheduleService {
     private void validateProjectData(UpdateHoursDTO projectDTO, List<String> errors) {
         // Logique de validation spécifique au projet
         if (projectDTO.getHoursPerWeek() != null) {
-            for (Map.Entry<String, Integer> entry : projectDTO.getHoursPerWeek().entrySet()) {
-                if (entry.getValue() < 0) {
-                    errors.add("Les heures du projet doivent être positives pour la semaine " + entry.getKey());
+            for (Map.Entry<String, WeekHoursDTO> entry : projectDTO.getHoursPerWeek().entrySet()) {
+                WeekHoursDTO w = entry.getValue();
+                if (w.getCm() != null && w.getCm() < 0) {
+                    errors.add("Les heures CM du projet doivent être positives pour la semaine " + entry.getKey());
+                }
+                if (w.getTd() != null && w.getTd() < 0) {
+                    errors.add("Les heures TD du projet doivent être positives pour la semaine " + entry.getKey());
+                }
+                if (w.getTp() != null && w.getTp() < 0) {
+                    errors.add("Les heures TP du projet doivent être positives pour la semaine " + entry.getKey());
                 }
             }
         }
@@ -268,11 +312,11 @@ public class PedagogicalScheduleService {
      * Obtenir les données du projet SAE
      */
     private ProjectScheduleDTO getProjectData() {
-        Map<String, Integer> defaultHours = new HashMap<>();
-        defaultHours.put("1", 8);
-        defaultHours.put("2", 8);
-        defaultHours.put("3", 8);
-        defaultHours.put("4", 8);
+        Map<String, WeekHoursDTO> defaultHours = new HashMap<>();
+        defaultHours.put("1", WeekHoursDTO.builder().cm(2).td(3).tp(3).total(8).build());
+        defaultHours.put("2", WeekHoursDTO.builder().cm(2).td(3).tp(3).total(8).build());
+        defaultHours.put("3", WeekHoursDTO.builder().cm(2).td(3).tp(3).total(8).build());
+        defaultHours.put("4", WeekHoursDTO.builder().cm(2).td(3).tp(3).total(8).build());
 
         return ProjectScheduleDTO.builder()
                 .id("project-sae")
@@ -284,37 +328,57 @@ public class PedagogicalScheduleService {
     }
 
     /**
-     * Obtenir les semaines pour une année donnée
+     * Obtenir les semaines pour une année et un semestre donnés
+     * Semestre 1 : semaines 1-20 (Sept-Jan)
+     * Semestre 2 : semaines 21-40 (Fev-Jun)
      */
-    private List<MonthDTO> getWeeksForYear(String year) {
+    private List<MonthDTO> getWeeksForYearAndSemester(String year, Integer semester) {
         List<MonthDTO> months = new ArrayList<>();
+        boolean isAlternance = "3".equals(year);
 
-        // Exemple pour l'année 3 (avec alternance)
-        if ("3".equals(year)) {
-            months.add(createMonth("Septembre 2024",
-                    List.of(
-                            new WeekDTO(1, "02", "E"),
-                            new WeekDTO(2, "09", "E"),
-                            new WeekDTO(3, "16", "E"),
-                            new WeekDTO(4, "23", "E"))));
-
-            months.add(createMonth("Octobre 2024",
-                    List.of(
-                            new WeekDTO(5, "30", "E"),
-                            new WeekDTO(6, "07", "S"),
-                            new WeekDTO(7, "14", "E"),
-                            new WeekDTO(8, "21", "S"))));
+        if (semester == 1) {
+            // Semestre 1 : Septembre - Janvier (semaines 1-20)
+            months.add(createMonth("Septembre",
+                    createWeeks(1, 4, isAlternance)));
+            months.add(createMonth("Octobre",
+                    createWeeks(5, 8, isAlternance)));
+            months.add(createMonth("Novembre",
+                    createWeeks(9, 12, isAlternance)));
+            months.add(createMonth("Decembre",
+                    createWeeks(13, 16, isAlternance)));
+            months.add(createMonth("Janvier",
+                    createWeeks(17, 20, isAlternance)));
         } else {
-            // Années 1 et 2 (sans alternance)
-            months.add(createMonth("Septembre 2024",
-                    List.of(
-                            new WeekDTO(1, "02", "E"),
-                            new WeekDTO(2, "09", "E"),
-                            new WeekDTO(3, "16", "E"),
-                            new WeekDTO(4, "23", "E"))));
+            // Semestre 2 : Février - Juin (semaines 21-40)
+            months.add(createMonth("Fevrier",
+                    createWeeks(21, 24, isAlternance)));
+            months.add(createMonth("Mars",
+                    createWeeks(25, 28, isAlternance)));
+            months.add(createMonth("Avril",
+                    createWeeks(29, 32, isAlternance)));
+            months.add(createMonth("Mai",
+                    createWeeks(33, 36, isAlternance)));
+            months.add(createMonth("Juin",
+                    createWeeks(37, 40, isAlternance)));
         }
 
         return months;
+    }
+
+    /**
+     * Créer une liste de semaines entre start et end (inclus)
+     * Pour l'alternance (année 3), les semaines paires sont en entreprise (S)
+     */
+    private List<WeekDTO> createWeeks(int start, int end, boolean isAlternance) {
+        List<WeekDTO> weeks = new ArrayList<>();
+        for (int i = start; i <= end; i++) {
+            String type = "E";
+            if (isAlternance && i % 2 == 0) {
+                type = "S";
+            }
+            weeks.add(new WeekDTO(i, String.valueOf(i), type));
+        }
+        return weeks;
     }
 
     /**
@@ -350,16 +414,25 @@ public class PedagogicalScheduleService {
         Map<Integer, Integer> weeklyTotalsWithProject = new HashMap<>();
 
         // Calculer les totaux par semaine
+        WeekHoursDTO defaultWeek = WeekHoursDTO.builder().cm(0).td(0).tp(0).total(0).build();
         weeks.stream()
                 .flatMap(month -> month.getWeeks().stream())
                 .forEach(week -> {
                     int weekTotal = ressources.stream()
-                            .mapToInt(r -> r.getHoursPerWeek().getOrDefault(String.valueOf(week.getNum()), 0))
+                            .mapToInt(r -> {
+                                WeekHoursDTO w = r.getHoursPerWeek().getOrDefault(String.valueOf(week.getNum()), defaultWeek);
+                                return (w.getCm() != null ? w.getCm() : 0)
+                                     + (w.getTd() != null ? w.getTd() : 0)
+                                     + (w.getTp() != null ? w.getTp() : 0);
+                            })
                             .sum();
 
                     weeklyTotals.put(week.getNum(), weekTotal);
 
-                    int projectHours = project.getHoursPerWeek().getOrDefault(String.valueOf(week.getNum()), 0);
+                    WeekHoursDTO projectWeek = project.getHoursPerWeek().getOrDefault(String.valueOf(week.getNum()), defaultWeek);
+                    int projectHours = (projectWeek.getCm() != null ? projectWeek.getCm() : 0)
+                                     + (projectWeek.getTd() != null ? projectWeek.getTd() : 0)
+                                     + (projectWeek.getTp() != null ? projectWeek.getTp() : 0);
                     weeklyTotalsWithProject.put(week.getNum(), weekTotal + projectHours);
                 });
 

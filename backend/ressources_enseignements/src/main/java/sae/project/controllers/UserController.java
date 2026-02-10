@@ -3,7 +3,7 @@ package sae.project.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sae.project.dtos.UserDTO;
+import sae.project.dtos.user.UserDTO;
 import sae.project.model.Role;
 import sae.project.model.User;
 import sae.project.services.UserService;

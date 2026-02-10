@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import sae.project.dtos.schedule.WeekHoursDTO;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -90,6 +92,10 @@ public class Resource implements Serializable {
     @Column(name = "hours_per_half_group")
     private Integer hoursPerHalfGroup;
 
+    // Semestre (1 ou 2 dans l'année)
+    @Column(name = "semester")
+    private Integer semester;
+
     // Relations
     @ManyToMany(mappedBy = "resourceList", fetch = FetchType.LAZY)
     @JsonIgnoreProperties("resourceList")
@@ -106,23 +112,39 @@ public class Resource implements Serializable {
 
     // Méthodes utilitaires pour gérer hoursPerWeek comme Map
     @Transient
-    public Map<String, Integer> getHoursPerWeek() {
+    public Map<String, WeekHoursDTO> getHoursPerWeek() {
         if (hoursPerWeekJson == null || hoursPerWeekJson.isEmpty()) {
             return new HashMap<>();
         }
+        com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        // Try new format first: Map<String, WeekHoursDTO>
         try {
-            // Conversion JSON vers Map (nécessite Jackson ObjectMapper)
-            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
             return mapper.readValue(hoursPerWeekJson,
-                    new com.fasterxml.jackson.core.type.TypeReference<Map<String, Integer>>() {
+                    new com.fasterxml.jackson.core.type.TypeReference<Map<String, WeekHoursDTO>>() {
                     });
         } catch (Exception e) {
-            return new HashMap<>();
+            // Fallback: old format Map<String, Integer> — convert to WeekHoursDTO
+            try {
+                Map<String, Integer> oldFormat = mapper.readValue(hoursPerWeekJson,
+                        new com.fasterxml.jackson.core.type.TypeReference<Map<String, Integer>>() {
+                        });
+                Map<String, WeekHoursDTO> converted = new HashMap<>();
+                for (Map.Entry<String, Integer> entry : oldFormat.entrySet()) {
+                    converted.put(entry.getKey(),
+                            WeekHoursDTO.builder()
+                                    .cm(0).td(0).tp(0)
+                                    .total(entry.getValue() != null ? entry.getValue() : 0)
+                                    .build());
+                }
+                return converted;
+            } catch (Exception ex) {
+                return new HashMap<>();
+            }
         }
     }
 
     @Transient
-    public void setHoursPerWeek(Map<String, Integer> hoursPerWeek) {
+    public void setHoursPerWeek(Map<String, WeekHoursDTO> hoursPerWeek) {
         try {
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
             this.hoursPerWeekJson = mapper.writeValueAsString(hoursPerWeek);
@@ -135,7 +157,9 @@ public class Resource implements Serializable {
     @Transient
     public Integer getTotalHours() {
         return getHoursPerWeek().values().stream()
-                .mapToInt(Integer::intValue)
+                .mapToInt(w -> (w.getCm() != null ? w.getCm() : 0)
+                             + (w.getTd() != null ? w.getTd() : 0)
+                             + (w.getTp() != null ? w.getTp() : 0))
                 .sum();
     }
 

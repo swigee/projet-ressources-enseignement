@@ -5,12 +5,7 @@ import { Login } from './components/login/login'
 import { EducationManagerCreation } from './components/education-manager-creation/education-manager-creation';
 import {TeacherAssignmentComponent} from './components/teacher-assignment/teacher-assignment';
 import {UserManager} from './components/user-manager/user-manager';
-<<<<<<< HEAD
-import path from 'path/win32';
 import { Ressource } from './components/ressource/ressource';
-=======
-import { Ressource } from './components/ressource/ressource';
->>>>>>> main
 
 export const routes: Routes = [
     // {

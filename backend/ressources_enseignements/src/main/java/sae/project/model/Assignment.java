@@ -4,6 +4,7 @@
  */
 package sae.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,101 +23,82 @@ import java.io.Serializable;
  * @author andry
  */
 @Entity
-@Table(name = "ASSIGNMENT")
+@Table(name = "assignment")
 @NamedQueries({
-    @NamedQuery(name = "Assignment.findAll", query = "SELECT a FROM Assignment a"),
-    @NamedQuery(name = "Assignment.findByIdAssignment", query = "SELECT a FROM Assignment a WHERE a.idAssignment = :idAssignment"),
-    @NamedQuery(name = "Assignment.findByAssignedtimes", query = "SELECT a FROM Assignment a WHERE a.assignedtimes = :assignedtimes"),
-    @NamedQuery(name = "Assignment.findByLessontype", query = "SELECT a FROM Assignment a WHERE a.lessontype = :lessontype")})
+        @NamedQuery(name = "Assignment.findAll", query = "SELECT a FROM Assignment a"),
+        @NamedQuery(name = "Assignment.findById", query = "SELECT a FROM Assignment a WHERE a.id = :id"),
+        @NamedQuery(name = "Assignment.findByAssignedTimes", query = "SELECT a FROM Assignment a WHERE a.assignedTimes = :assignedTimes"),
+        @NamedQuery(name = "Assignment.findByLessonType", query = "SELECT a FROM Assignment a WHERE a.lessonType = :lessonType") })
 public class Assignment implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "ID_ASSIGNMENT")
-    private Integer idAssignment;
-    @Column(name = "ASSIGNEDTIMES")
-    private Integer assignedtimes;
-    @Column(name = "LESSONTYPE")
-    private String lessontype;
-    @JoinColumn(name = "IDRESSOURCE", referencedColumnName = "IDRESSOURCE")
+    @Column(name = "id")
+    private Integer id;
+
+    @Column(name = "assigned_times")
+    private Integer assignedTimes;
+
+    @Column(name = "lesson_type")
+    private String lessonType;
+
+    @JsonIgnore
+    @JoinColumn(name = "resource_id", referencedColumnName = "id")
     @ManyToOne
-    private Ressources idressource;
-    @JoinColumn(name = "IDUSER", referencedColumnName = "IDUSER")
+    private Resource resource;
+
+    @JsonIgnore
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
-    private Users iduser;
+    private User user;
 
     public Assignment() {
     }
 
-    public Assignment(Integer idAssignment) {
-        this.idAssignment = idAssignment;
+    public Assignment(Integer id) {
+        this.id = id;
     }
 
-    public Integer getIdAssignment() {
-        return idAssignment;
+    // Getters and Setters manually updated for now (or could switch to Lombok)
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdAssignment(Integer idAssignment) {
-        this.idAssignment = idAssignment;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public Integer getAssignedtimes() {
-        return assignedtimes;
+    public Integer getAssignedTimes() {
+        return assignedTimes;
     }
 
-    public void setAssignedtimes(Integer assignedtimes) {
-        this.assignedtimes = assignedtimes;
+    public void setAssignedTimes(Integer assignedTimes) {
+        this.assignedTimes = assignedTimes;
     }
 
-    public String getLessontype() {
-        return lessontype;
+    public String getLessonType() {
+        return lessonType;
     }
 
-    public void setLessontype(String lessontype) {
-        this.lessontype = lessontype;
+    public void setLessonType(String lessonType) {
+        this.lessonType = lessonType;
     }
 
-    public Ressources getIdressource() {
-        return idressource;
+    public Resource getResource() {
+        return resource;
     }
 
-    public void setIdressource(Ressources idressource) {
-        this.idressource = idressource;
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
-    public Users getIduser() {
-        return iduser;
+    public User getUser() {
+        return user;
     }
 
-    public void setIduser(Users iduser) {
-        this.iduser = iduser;
+    public void setUser(User user) {
+        this.user = user;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (idAssignment != null ? idAssignment.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Assignment)) {
-            return false;
-        }
-        Assignment other = (Assignment) object;
-        if ((this.idAssignment == null && other.idAssignment != null) || (this.idAssignment != null && !this.idAssignment.equals(other.idAssignment))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "sae.project.model.Assignment[ idAssignment=" + idAssignment + " ]";
-    }
-    
 }

@@ -1,7 +1,7 @@
 import {inject, Injectable, signal} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {catchError, Observable, of, tap} from 'rxjs';
-import {UserModel} from '../../models/user/user-model';
+import {UserModel} from '../../models/user/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -12,17 +12,29 @@ export class UserService {
 
   constructor() {}
 
-  getAllUsers(): Observable<any[]> {
+  getAllUsers(): Observable<UserModel[]> {
     return this.http.get<any[]>(`${this.apiUrl}/list`);
   }
 
-  getUserById(id: number): Observable<any> {
+  getUserById(id: number): Observable<UserModel> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  updateUserRole(iduser: number, roles: number[]): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${iduser}/roles`, { roles });
+  }
+
+  deleteUserRole(iduser: number, idrole: number): Observable<UserModel> {
+    return this.http.delete<UserModel>(`${this.apiUrl}/${iduser}/roles`, { body: { idrole } });
+  }
+
+  deleteAllUserRole(iduser: number): Observable<UserModel> {
+      return this.http.delete<UserModel>(`${this.apiUrl}/${iduser}/allroles`);
+    }
 }
 
 export default UserService

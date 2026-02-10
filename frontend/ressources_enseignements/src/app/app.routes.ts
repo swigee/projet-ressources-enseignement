@@ -3,8 +3,8 @@ import { Dashboard } from './components/dashboard/dashboard';
 import { EducationalManager } from './components/educational-manager/educational-manager';
 import { Login } from './components/login/login'
 import { EducationManagerCreation } from './components/education-manager-creation/education-manager-creation';
-import {TeacherAssignmentComponent} from './components/teacher-assignment/teacher-assignment';
-import {UserManager} from './components/user-manager/user-manager';
+import { TeacherAssignmentComponent } from './components/teacher-assignment/teacher-assignment';
+import { UserManager } from './components/user-manager/user-manager';
 import { Ressource } from './components/ressource/ressource';
 
 export const routes: Routes = [

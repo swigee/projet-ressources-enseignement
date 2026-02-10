@@ -51,12 +51,17 @@ public class TeacherAssignmentService {
         /**
          * Récupérer la grille d'affectation complète
          */
-        public AssignmentGridDTO getAssignmentGrid(String formation, String year, String className) {
-                log.info("Récupération de la grille d'affectation pour {} - {} - {}", formation, year, className);
+        public AssignmentGridDTO getAssignmentGrid(String formation, String year, String className, String semester) {
+                log.info("Récupération de la grille d'affectation pour {} - {} - {} - semester={}", formation, year, className, semester);
+
+                Integer semesterInt = null;
+                if (semester != null && !semester.isEmpty()) {
+                        semesterInt = Integer.parseInt(semester);
+                }
 
                 List<TeacherDTO> teachers = getAllTeachers();
-                List<AffectationRowDTO> affectationGrid = getAffectationRows(year, className);
-                AssignmentStatisticsDTO statistics = calculateStatistics(year, className);
+                List<AffectationRowDTO> affectationGrid = getAffectationRows(year, className, semesterInt);
+                AssignmentStatisticsDTO statistics = calculateStatistics(year, className, semesterInt);
 
                 return AssignmentGridDTO.builder()
                                 .selectedFormation(formation)
@@ -167,6 +172,7 @@ public class TeacherAssignmentService {
 
                 // Récupérer toutes les ressources de la formation
                 List<Resource> ressources = ressourcesRepository.findByYearAndClass(year, className);
+                // Note: validateAssignments validates all semesters
 
                 // Vérifier les ressources non affectées
                 for (Resource ressource : ressources) {
@@ -232,8 +238,13 @@ public class TeacherAssignmentService {
         /**
          * Récupérer les lignes d'affectation pour une formation
          */
-        private List<AffectationRowDTO> getAffectationRows(String year, String className) {
-                List<Resource> ressources = ressourcesRepository.findByYearAndClass(year, className);
+        private List<AffectationRowDTO> getAffectationRows(String year, String className, Integer semester) {
+                List<Resource> ressources;
+                if (semester != null) {
+                        ressources = ressourcesRepository.findByYearAndClassAndSemester(year, className, semester);
+                } else {
+                        ressources = ressourcesRepository.findByYearAndClass(year, className);
+                }
 
                 return ressources.stream()
                                 .map(ressource -> {
@@ -289,7 +300,7 @@ public class TeacherAssignmentService {
         /**
          * Calculer les statistiques
          */
-        private AssignmentStatisticsDTO calculateStatistics(String year, String className) {
+        private AssignmentStatisticsDTO calculateStatistics(String year, String className, Integer semester) {
                 List<Assignment> assignments = assignmentRepository.findByFormation(year, className);
 
                 Integer totalHours = assignments.stream()
@@ -310,7 +321,12 @@ public class TeacherAssignmentService {
                                                                 a -> a.getAssignedTimes() != null ? a.getAssignedTimes()
                                                                                 : 0)));
 
-                List<Resource> ressources = ressourcesRepository.findByYearAndClass(year, className);
+                List<Resource> ressources;
+                if (semester != null) {
+                        ressources = ressourcesRepository.findByYearAndClassAndSemester(year, className, semester);
+                } else {
+                        ressources = ressourcesRepository.findByYearAndClass(year, className);
+                }
                 long unassignedModules = ressources.stream()
                                 .filter(r -> assignmentRepository.findByResourceId(r.getId()).isEmpty())
                                 .count();

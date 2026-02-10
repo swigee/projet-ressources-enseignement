@@ -106,23 +106,58 @@
           />
         </div>
 
-        <!-- Teacher filter badges -->
-        <div class="flex flex-wrap gap-2 items-center">
-          <span class="text-sm font-medium text-gray-700 mr-2">Filtrer par enseignant:</span>
-          @for (teacher of availableTeachers(); track teacher.teacherId) {
-            <button
-              (click)="toggleTeacherFilter(teacher.teacherId)"
-              [class]="isTeacherSelected(teacher.teacherId)
-                ? 'px-3 py-1 rounded-full text-sm bg-blue-500 text-white transition-colors'
-                : 'px-3 py-1 rounded-full text-sm bg-blue-200 text-blue-800 hover:bg-blue-300 transition-colors'"
-            >
-              {{ teacher.fullName }}
-            </button>
+        <!-- Teacher search autocomplete -->
+        <div class="relative">
+          <span class="text-sm font-medium text-gray-700 mb-2 block">Filtrer par enseignant:</span>
+          <div class="relative">
+            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Rechercher un enseignant..."
+              [value]="teacherSearchQuery()"
+              (input)="onTeacherSearchInput($event)"
+              (blur)="closeTeacherDropdown()"
+              class="w-full pl-9 pr-4 py-2 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+            />
+            <!-- Dropdown -->
+            @if (showTeacherDropdown() && filteredTeacherSuggestions().length > 0) {
+              <div class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-48 overflow-y-auto">
+                @for (teacher of filteredTeacherSuggestions(); track teacher.teacherId) {
+                  <button
+                    (mousedown)="selectTeacherFromDropdown(teacher.teacherId)"
+                    class="w-full text-left px-4 py-2 text-sm hover:bg-blue-50 transition-colors"
+                  >
+                    {{ teacher.fullName }}
+                  </button>
+                }
+              </div>
+            }
+            @if (showTeacherDropdown() && teacherSearchQuery().trim() && filteredTeacherSuggestions().length === 0) {
+              <div class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 px-4 py-3">
+                <span class="text-sm text-gray-400 italic">Aucun enseignant trouve</span>
+              </div>
+            }
+          </div>
+
+          <!-- Selected teacher badges -->
+          @if (selectedTeacherIds().length > 0) {
+            <div class="flex flex-wrap gap-2 mt-3 items-center">
+              @for (teacherId of selectedTeacherIds(); track teacherId) {
+                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-blue-500 text-white">
+                  {{ getTeacherName(teacherId) }}
+                  <button (click)="removeTeacherFilter(teacherId)" class="ml-1 hover:text-blue-200 transition-colors">&times;</button>
+                </span>
+              }
+            </div>
           }
+
+          <!-- Clear filters button -->
           @if (selectedTeacherIds().length > 0 || searchQuery()) {
             <button
               (click)="clearFilters()"
-              class="px-3 py-1 rounded-full text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
+              class="mt-3 px-3 py-1 rounded-full text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
             >
               Effacer les filtres
             </button>
@@ -156,9 +191,9 @@
               <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Module</th>
               <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Heures Prev.</th>
               <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Heures Reelles</th>
-              <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">TD</th>
-              <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">TP</th>
-              <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">CM</th>
+              <th class="px-4 py-3 text-center text-sm font-semibold" style="color: #4ecdc4">TD</th>
+              <th class="px-4 py-3 text-center text-sm font-semibold" style="color: #a864a8">TP</th>
+              <th class="px-4 py-3 text-center text-sm font-semibold" style="color: #ff6b6b">CM</th>
               <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Enseignants</th>
               <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Statut</th>
             </tr>
@@ -194,17 +229,17 @@
                     </td>
 
                     <!-- Heures TD -->
-                    <td class="px-4 py-3 text-center">
+                    <td class="px-4 py-3 text-center font-medium" style="color: #4ecdc4">
                       {{ row.heuresTD }}h
                     </td>
 
                     <!-- Heures TP -->
-                    <td class="px-4 py-3 text-center">
+                    <td class="px-4 py-3 text-center font-medium" style="color: #a864a8">
                       {{ row.heuresTP }}h
                     </td>
 
                     <!-- Heures CM -->
-                    <td class="px-4 py-3 text-center">
+                    <td class="px-4 py-3 text-center font-medium" style="color: #ff6b6b">
                       {{ row.heuresCM }}h
                     </td>
 
@@ -249,9 +284,9 @@
               <td class="px-4 py-3">Total</td>
               <td class="px-4 py-3 text-center">{{ calculatedTotals().totalHeuresPrevisionnelles }}h</td>
               <td class="px-4 py-3 text-center">{{ calculatedTotals().totalHeuresReelles }}h</td>
-              <td class="px-4 py-3 text-center">{{ calculatedTotals().totalHeuresTD }}h</td>
-              <td class="px-4 py-3 text-center">{{ calculatedTotals().totalHeuresTP }}h</td>
-              <td class="px-4 py-3 text-center">{{ calculatedTotals().totalHeuresCM }}h</td>
+              <td class="px-4 py-3 text-center" style="color: #4ecdc4">{{ calculatedTotals().totalHeuresTD }}h</td>
+              <td class="px-4 py-3 text-center" style="color: #a864a8">{{ calculatedTotals().totalHeuresTP }}h</td>
+              <td class="px-4 py-3 text-center" style="color: #ff6b6b">{{ calculatedTotals().totalHeuresCM }}h</td>
               <td class="px-4 py-3" colspan="2"></td>
             </tr>
             </tfoot>
@@ -292,15 +327,15 @@
             </div>
             <div>
               <div class="text-sm text-gray-600">Total TD</div>
-              <div class="text-xl font-bold text-green-600">{{ calculatedTotals().totalHeuresTD }}h</div>
+              <div class="text-xl font-bold" style="color: #4ecdc4">{{ calculatedTotals().totalHeuresTD }}h</div>
             </div>
             <div>
               <div class="text-sm text-gray-600">Total TP</div>
-              <div class="text-xl font-bold text-purple-600">{{ calculatedTotals().totalHeuresTP }}h</div>
+              <div class="text-xl font-bold" style="color: #a864a8">{{ calculatedTotals().totalHeuresTP }}h</div>
             </div>
             <div>
               <div class="text-sm text-gray-600">Total CM</div>
-              <div class="text-xl font-bold text-orange-600">{{ calculatedTotals().totalHeuresCM }}h</div>
+              <div class="text-xl font-bold" style="color: #ff6b6b">{{ calculatedTotals().totalHeuresCM }}h</div>
             </div>
           </div>
         </div>
@@ -312,29 +347,60 @@
       <div class="p-6 space-y-6">
 
         <!-- Edit Controls Bar -->
-        <div class="flex justify-end gap-3">
-          <button
-            (click)="enableEditing()"
-            [disabled]="isEditing()"
-            class="px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 transition-colors duration-200 font-medium"
-          >
-            Modifier
-          </button>
-          <button
-            (click)="validateEditing()"
-            [disabled]="!isEditing()"
-            class="px-5 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 transition-colors duration-200 font-medium"
-          >
-            Valider
-          </button>
-          <button
-            (click)="cancelEditing()"
-            [disabled]="!isEditing()"
-            class="px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors duration-200 font-medium"
-          >
-            Annuler
-          </button>
+        <div class="flex items-center justify-between gap-3 sticky top-0 z-50 bg-white py-3 border-b border-gray-200 shadow-sm -mx-6 px-6">
+          <!-- Editing indicator -->
+          <div>
+            @if (isEditing()) {
+              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm font-medium">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                Mode edition actif
+              </span>
+            }
+          </div>
+
+          <div class="flex gap-3">
+            <button
+              (click)="enableEditing()"
+              [disabled]="isEditing()"
+              class="inline-flex items-center gap-2 px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 transition-colors duration-200 font-medium"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+              Modifier
+            </button>
+            <button
+              (click)="validateEditing()"
+              [disabled]="!isEditing()"
+              class="inline-flex items-center gap-2 px-5 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 transition-colors duration-200 font-medium"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Valider
+            </button>
+            <button
+              (click)="cancelEditing()"
+              [disabled]="!isEditing()"
+              class="inline-flex items-center gap-2 px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors duration-200 font-medium"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Annuler
+            </button>
+          </div>
         </div>
+
+        <!-- Success banner -->
+        @if (successMessage()) {
+          <div class="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-sm font-medium text-green-800">{{ successMessage() }}</p>
+          </div>
+        }
 
         <!-- Stats Cards Row -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">

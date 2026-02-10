@@ -65,9 +65,10 @@ public interface TeacherAssignmentRepository extends JpaRepository<Assignment, I
             "FROM Assignment a GROUP BY a.lessonType")
     List<Object[]> getStatisticsByLessonType();
 
-    // Enseignants avec leurs heures
+    // Enseignants avec leurs heures (exclure les étudiants)
     @Query("SELECT u.id, u.firstName, u.lastName, COALESCE(SUM(a.assignedTimes), 0) " +
             "FROM User u LEFT JOIN Assignment a ON u.id = a.user.id " +
+            "WHERE u.id NOT IN (SELECT ur.id FROM User ur JOIN ur.roleList r WHERE r.id = 3) " +
             "GROUP BY u.id, u.firstName, u.lastName")
     List<Object[]> getTeachersWithHours();
 }

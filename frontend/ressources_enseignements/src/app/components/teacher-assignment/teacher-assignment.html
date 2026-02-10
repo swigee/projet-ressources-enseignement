@@ -70,8 +70,8 @@
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="">Tous les semestres</option>
-          <option value="s1">Semestre 1</option>
-          <option value="s2">Semestre 2</option>
+          <option value="1">Semestre 1</option>
+          <option value="2">Semestre 2</option>
         </select>
       </div>
     </div>
@@ -173,7 +173,7 @@
             </tr>
             </thead>
             <tbody>
-              @for (row of affectationGrid; track row.ressourceId) {
+              @for (row of affectationGrid; track row.resourceId) {
                 <tr class="border-b border-gray-200 hover:bg-gray-50">
                   <td class="px-4 py-3 text-sm font-medium">{{ row.module }}</td>
 
@@ -182,7 +182,7 @@
                     <div
                       class="min-h-[56px] flex flex-col items-center"
                       (dragover)="onDragOver($event)"
-                      (drop)="onDrop($event, row.ressourceId, 'TD')"
+                      (drop)="onDrop($event, row.resourceId, 'TD')"
                     >
                       @if (isModuleEmpty(row.tdTeachers)) {
                         <div class="w-full text-center text-gray-400 italic border-2 border-dashed rounded p-2">
@@ -213,7 +213,7 @@
                     <div
                       class="min-h-[56px] flex flex-col items-center"
                       (dragover)="onDragOver($event)"
-                      (drop)="onDrop($event, row.ressourceId, 'TP')"
+                      (drop)="onDrop($event, row.resourceId, 'TP')"
                     >
                       @if (isModuleEmpty(row.tpTeachers)) {
                         <div class="w-full text-center text-gray-400 italic border-2 border-dashed rounded p-2">
@@ -244,7 +244,7 @@
                     <div
                       class="min-h-[56px] flex flex-col items-center"
                       (dragover)="onDragOver($event)"
-                      (drop)="onDrop($event, row.ressourceId, 'CM')"
+                      (drop)="onDrop($event, row.resourceId, 'CM')"
                     >
                       @if (isModuleEmpty(row.cmTeachers)) {
                         <div class="w-full text-center text-gray-400 italic border-2 border-dashed rounded p-2">

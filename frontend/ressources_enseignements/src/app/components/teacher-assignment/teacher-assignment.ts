@@ -66,7 +66,8 @@ export class TeacherAssignmentComponent implements OnInit {
     this.teacherService.getAssignmentGrid(
       this.selectedFormation,
       this.selectedYear,
-      this.selectedClass
+      this.selectedClass,
+      this.selectedSemester
     ).subscribe({
       next: (data: AssignmentGridDTO) => {
         console.log('Données reçues du backend:', data);
@@ -142,7 +143,7 @@ export class TeacherAssignmentComponent implements OnInit {
 
       if (dragData.type !== 'teacher') return;
 
-      const module = this.affectationGrid.find(m => m.ressourceId === ressourceId);
+      const module = this.affectationGrid.find(m => m.resourceId === ressourceId);
       if (!module) return;
 
       let teacherList: TeacherAssignmentDTO[];
@@ -193,7 +194,7 @@ export class TeacherAssignmentComponent implements OnInit {
       } else {
         const assignment: CreateAssignmentDTO = {
           userId: dragData.teacherId,
-          ressourceId: ressourceId,
+          resourceId: ressourceId,
           lessonType: lessonType,
           assignedTimes: hours
         };

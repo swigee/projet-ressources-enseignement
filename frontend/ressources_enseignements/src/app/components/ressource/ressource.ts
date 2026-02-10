@@ -38,6 +38,8 @@ export class Ressource implements OnInit {
   // Filter state
   searchQuery = signal<string>('');
   selectedTeacherIds = signal<number[]>([]);
+  teacherSearchQuery = signal<string>('');
+  showTeacherDropdown = signal<boolean>(false);
   selectedYear = signal<string>('1');
   selectedClass = signal<string>('Classe A');
   selectedSemester = signal<string>('1');
@@ -48,6 +50,7 @@ export class Ressource implements OnInit {
   conflicts = signal<ScheduleConflictDTO[]>([]);
   isLoading = signal<boolean>(false);
   errorMessage = signal<string>('');
+  successMessage = signal<string>('');
 
   // Maquette-specific state
   scheduleData = signal<RessourceScheduleDTO[]>([]);
@@ -107,6 +110,17 @@ export class Ressource implements OnInit {
       return this.conflicts();
     }
     return this.conflicts().filter(c => selectedTeachers.includes(c.teacherId));
+  });
+
+  // Autocomplete suggestions for teacher search
+  filteredTeacherSuggestions = computed(() => {
+    const query = this.teacherSearchQuery().toLowerCase().trim();
+    const selected = this.selectedTeacherIds();
+    const teachers = this.availableTeachers();
+    if (!query) return [];
+    return teachers.filter(t =>
+      t.fullName.toLowerCase().includes(query) && !selected.includes(t.teacherId)
+    );
   });
 
   ngOnInit(): void {
@@ -202,6 +216,36 @@ export class Ressource implements OnInit {
   clearFilters(): void {
     this.searchQuery.set('');
     this.selectedTeacherIds.set([]);
+    this.teacherSearchQuery.set('');
+    this.showTeacherDropdown.set(false);
+  }
+
+  onTeacherSearchInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.teacherSearchQuery.set(target.value);
+    this.showTeacherDropdown.set(target.value.trim().length > 0);
+  }
+
+  selectTeacherFromDropdown(teacherId: number): void {
+    const current = this.selectedTeacherIds();
+    if (!current.includes(teacherId)) {
+      this.selectedTeacherIds.set([...current, teacherId]);
+    }
+    this.teacherSearchQuery.set('');
+    this.showTeacherDropdown.set(false);
+  }
+
+  removeTeacherFilter(teacherId: number): void {
+    this.selectedTeacherIds.set(this.selectedTeacherIds().filter(id => id !== teacherId));
+  }
+
+  getTeacherName(teacherId: number): string {
+    const teacher = this.availableTeachers().find(t => t.teacherId === teacherId);
+    return teacher ? teacher.fullName : '';
+  }
+
+  closeTeacherDropdown(): void {
+    setTimeout(() => this.showTeacherDropdown.set(false), 200);
   }
 
   hasConflict(ressource: RessourceRowDTO): boolean {
@@ -220,6 +264,7 @@ export class Ressource implements OnInit {
 
   // Maquette editing methods
   enableEditing(): void {
+    this.successMessage.set('');
     this.isEditing.set(true);
   }
 
@@ -251,27 +296,28 @@ export class Ressource implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.success) {
-            alert('Planning valide et sauvegarde avec succes !');
+            this.successMessage.set('Planning valide et sauvegarde avec succes !');
+            setTimeout(() => this.successMessage.set(''), 5000);
             this.isEditing.set(false);
             this.loadData();
           } else {
             this.errorMessage.set(response.message);
             if (response.errors && response.errors.length > 0) {
-              alert('Erreurs detectees:\n' + response.errors.join('\n'));
+              this.errorMessage.set('Erreurs detectees:\n' + response.errors.join('\n'));
             }
           }
           this.isLoading.set(false);
         },
         error: (error) => {
           console.error('Erreur lors de la validation:', error);
-          this.errorMessage.set('Erreur lors de la sauvegarde');
-          alert('Erreur lors de la sauvegarde du planning');
+          this.errorMessage.set('Erreur lors de la sauvegarde du planning');
           this.isLoading.set(false);
         }
       });
   }
 
   cancelEditing(): void {
+    this.successMessage.set('');
     this.isEditing.set(false);
     this.loadData();
   }

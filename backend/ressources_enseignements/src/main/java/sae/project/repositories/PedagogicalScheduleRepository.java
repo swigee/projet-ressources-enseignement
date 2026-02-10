@@ -41,6 +41,14 @@ public interface PedagogicalScheduleRepository extends JpaRepository<Resource, I
                         @Param("year") String year,
                         @Param("className") String className);
 
+        // Rechercher par année, classe et semestre (via formation)
+        @Query("SELECT DISTINCT r FROM Resource r JOIN r.formationList f " +
+                        "WHERE f.year = :year AND f.className = :className AND r.semester = :semester")
+        List<Resource> findByYearAndClassAndSemester(
+                        @Param("year") String year,
+                        @Param("className") String className,
+                        @Param("semester") Integer semester);
+
         // Compter les ressources par catégorie
         @Query("SELECT r.category, COUNT(r) FROM Resource r " +
                         "GROUP BY r.category")

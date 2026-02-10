@@ -2,11 +2,12 @@ import { Routes } from '@angular/router';
 import { Dashboard } from './components/dashboard/dashboard';
 import { EducationalManager } from './components/educational-manager/educational-manager';
 import { Login } from './components/login/login'
-import { PedagogicalScheduleComponent } from './components/pedagogical-schedule/pedagogical-schedule';
 import { EducationManagerCreation } from './components/education-manager-creation/education-manager-creation';
 import { TeacherAssignmentComponent } from './components/teacher-assignment/teacher-assignment';
 import { UserManager } from './components/user-manager/user-manager';
+import { Ressource } from './components/ressource/ressource';
 import { ServiceSheet } from './components/service-sheet/service-sheet';
+
 
 export const routes: Routes = [
   {
@@ -29,7 +30,7 @@ export const routes: Routes = [
   },
   {
     path: 'educational-model',
-    component: PedagogicalScheduleComponent
+    component: Ressource
   },
   {
     path: 'service-sheet',
@@ -50,6 +51,10 @@ export const routes: Routes = [
   {
     path: 'user-manager',
     component: UserManager
+    },
+    {
+      path: 'ressource',
+      component: Ressource
   }
 
 ];

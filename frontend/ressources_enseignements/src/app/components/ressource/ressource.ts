@@ -1,0 +1,399 @@
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {forkJoin} from 'rxjs';
+import {RessourcesService} from '../../services/ressources/ressources-service';
+import {
+  RessourceRowDTO, RessourcesTotalsDTO,
+  ScheduleConflictDTO,
+  TeacherBadgeDTO
+} from '../../models/ressources/ressources.model';
+import {
+  PedagogicalScheduleService,
+  RessourceScheduleDTO,
+  ProjectScheduleDTO,
+  MonthDTO,
+  WeekDTO,
+  WeekHoursDTO,
+  ValidationRequestDTO,
+  UpdateHoursDTO
+} from '../../services/pedagogical-schedule/pedagogical-schedule-service';
+
+@Component({
+  selector: 'app-ressource',
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule
+  ],
+  templateUrl: './ressource.html',
+  styleUrl: './ressource.css',
+})
+export class Ressource implements OnInit {
+  private readonly ressourcesTableService = inject(RessourcesService);
+  private readonly pedagogicalScheduleService = inject(PedagogicalScheduleService);
+
+  // Tab state
+  activeTab = signal<string>('ressources');
+
+  // Filter state
+  searchQuery = signal<string>('');
+  selectedTeacherIds = signal<number[]>([]);
+  selectedYear = signal<string>('1');
+  selectedClass = signal<string>('Classe A');
+  selectedSemester = signal<string>('1');
+
+  // Data state
+  ressources = signal<RessourceRowDTO[]>([]);
+  availableTeachers = signal<TeacherBadgeDTO[]>([]);
+  conflicts = signal<ScheduleConflictDTO[]>([]);
+  isLoading = signal<boolean>(false);
+  errorMessage = signal<string>('');
+
+  // Maquette-specific state
+  scheduleData = signal<RessourceScheduleDTO[]>([]);
+  projectData = signal<ProjectScheduleDTO>({
+    id: 'project-sae', name: 'Projet SAE', hoursPerWeek: {}, hoursPerHalfGroup: 0, totalHours: 0
+  });
+  weeks = signal<MonthDTO[]>([]);
+  isEditing = signal<boolean>(false);
+
+  // Class data
+  classData: Record<string, { name: string; classes: string[] }> = {
+    '1': { name: 'Annee 1', classes: ['Classe A', 'Classe B'] },
+    '2': { name: 'Annee 2', classes: ['Classe A', 'Classe B'] },
+    '3': { name: 'Annee 3 (Alternance)', classes: ['Classe A', 'Classe B'] }
+  };
+
+  // Computed filtered data
+  filteredRessources = computed(() => {
+    let result = this.ressources();
+    const query = this.searchQuery().toLowerCase();
+    const selectedTeachers = this.selectedTeacherIds();
+
+    // Apply search filter
+    if (query) {
+      result = result.filter(r =>
+        r.moduleName.toLowerCase().includes(query) ||
+        (r.category && r.category.toLowerCase().includes(query))
+      );
+    }
+
+    // Apply teacher filter
+    if (selectedTeachers.length > 0) {
+      result = result.filter(r =>
+        r.assignedTeachers.some(t => selectedTeachers.includes(t.teacherId))
+      );
+    }
+
+    return result;
+  });
+
+  // Auto-updating totals
+  calculatedTotals = computed<RessourcesTotalsDTO>(() => {
+    const filtered = this.filteredRessources();
+    return {
+      totalHeuresPrevisionnelles: filtered.reduce((sum, r) => sum + r.heuresPrevisionnelles, 0),
+      totalHeuresReelles: filtered.reduce((sum, r) => sum + r.heuresReelles, 0),
+      totalHeuresTD: filtered.reduce((sum, r) => sum + r.heuresTD, 0),
+      totalHeuresTP: filtered.reduce((sum, r) => sum + r.heuresTP, 0),
+      totalHeuresCM: filtered.reduce((sum, r) => sum + r.heuresCM, 0)
+    };
+  });
+
+  // Computed conflicts for filtered rows
+  filteredConflicts = computed(() => {
+    const selectedTeachers = this.selectedTeacherIds();
+    if (selectedTeachers.length === 0) {
+      return this.conflicts();
+    }
+    return this.conflicts().filter(c => selectedTeachers.includes(c.teacherId));
+  });
+
+  ngOnInit(): void {
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    forkJoin({
+      ressourcesData: this.ressourcesTableService.getRessourcesTable(this.selectedYear(), this.selectedClass(), this.selectedSemester()),
+      scheduleData: this.pedagogicalScheduleService.getCompleteSchedule(this.selectedYear(), this.selectedClass(), this.selectedSemester())
+    }).subscribe({
+      next: (data) => {
+        // Ressources tab data
+        this.ressources.set(data.ressourcesData.ressources);
+        this.availableTeachers.set(data.ressourcesData.availableTeachers);
+        this.conflicts.set(data.ressourcesData.conflicts);
+
+        // Maquette tab data
+        this.scheduleData.set(data.scheduleData.scheduleData);
+        this.projectData.set(data.scheduleData.projectData);
+        this.weeks.set(data.scheduleData.weeks);
+
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement:', error);
+        this.errorMessage.set(error.message || 'Erreur lors du chargement des donnees');
+        this.isLoading.set(false);
+        this.initializeDefaultData();
+      }
+    });
+  }
+
+  initializeDefaultData(): void {
+    this.ressources.set([]);
+    this.availableTeachers.set([]);
+    this.conflicts.set([]);
+    this.scheduleData.set([]);
+    this.projectData.set({
+      id: 'project-sae', name: 'Projet SAE', hoursPerWeek: {}, hoursPerHalfGroup: 0, totalHours: 0
+    });
+    this.weeks.set([]);
+  }
+
+  setActiveTab(tab: string): void {
+    // Cancel editing when switching tabs
+    if (this.isEditing()) {
+      this.cancelEditing();
+    }
+    this.activeTab.set(tab);
+  }
+
+  onYearChange(year: string): void {
+    this.selectedYear.set(year);
+    this.selectedClass.set(this.classData[year].classes[0]);
+    this.selectedSemester.set('1');
+    this.loadData();
+  }
+
+  onClassChange(): void {
+    this.loadData();
+  }
+
+  onSemesterChange(semester: string): void {
+    this.selectedSemester.set(semester);
+    this.loadData();
+  }
+
+  getYearKeys(): string[] {
+    return Object.keys(this.classData);
+  }
+
+  getAvailableClasses(): string[] {
+    return this.classData[this.selectedYear()]?.classes || [];
+  }
+
+  toggleTeacherFilter(teacherId: number): void {
+    const current = this.selectedTeacherIds();
+    if (current.includes(teacherId)) {
+      this.selectedTeacherIds.set(current.filter(id => id !== teacherId));
+    } else {
+      this.selectedTeacherIds.set([...current, teacherId]);
+    }
+  }
+
+  isTeacherSelected(teacherId: number): boolean {
+    return this.selectedTeacherIds().includes(teacherId);
+  }
+
+  clearFilters(): void {
+    this.searchQuery.set('');
+    this.selectedTeacherIds.set([]);
+  }
+
+  hasConflict(ressource: RessourceRowDTO): boolean {
+    const conflictingModules = this.conflicts().flatMap(c => c.conflictingModules);
+    return conflictingModules.includes(ressource.moduleName);
+  }
+
+  getConflictDetails(ressource: RessourceRowDTO): ScheduleConflictDTO | undefined {
+    return this.conflicts().find(c => c.conflictingModules.includes(ressource.moduleName));
+  }
+
+  onSearchInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.searchQuery.set(target.value);
+  }
+
+  // Maquette editing methods
+  enableEditing(): void {
+    this.isEditing.set(true);
+  }
+
+  validateEditing(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    const ressourcesDTO: UpdateHoursDTO[] = this.scheduleData().map(row => ({
+      ressourceId: row.id,
+      hoursPerWeek: row.hoursPerWeek,
+      hoursPerHalfGroup: row.hoursPerHalfGroup
+    }));
+
+    const projectDTO: UpdateHoursDTO = {
+      ressourceId: 0,
+      hoursPerWeek: this.projectData().hoursPerWeek,
+      hoursPerHalfGroup: this.projectData().hoursPerHalfGroup
+    };
+
+    const validationRequest: ValidationRequestDTO = {
+      selectedYear: this.selectedYear(),
+      selectedClass: this.selectedClass(),
+      selectedSemester: this.selectedSemester(),
+      ressources: ressourcesDTO,
+      project: projectDTO
+    };
+
+    this.pedagogicalScheduleService.validateSchedule(validationRequest)
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            alert('Planning valide et sauvegarde avec succes !');
+            this.isEditing.set(false);
+            this.loadData();
+          } else {
+            this.errorMessage.set(response.message);
+            if (response.errors && response.errors.length > 0) {
+              alert('Erreurs detectees:\n' + response.errors.join('\n'));
+            }
+          }
+          this.isLoading.set(false);
+        },
+        error: (error) => {
+          console.error('Erreur lors de la validation:', error);
+          this.errorMessage.set('Erreur lors de la sauvegarde');
+          alert('Erreur lors de la sauvegarde du planning');
+          this.isLoading.set(false);
+        }
+      });
+  }
+
+  cancelEditing(): void {
+    this.isEditing.set(false);
+    this.loadData();
+  }
+
+  // Maquette calculation methods
+  getAllWeeks(): WeekDTO[] {
+    return this.weeks().flatMap(month => month.weeks);
+  }
+
+  calculateTotalHours(row: RessourceScheduleDTO): number {
+    if (!row.hoursPerWeek) return 0;
+    return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.cm || 0) + (w.td || 0) + (w.tp || 0), 0);
+  }
+
+  calculateTotalCM(row: RessourceScheduleDTO): number {
+    if (!row.hoursPerWeek) return 0;
+    return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.cm || 0), 0);
+  }
+
+  calculateTotalTD(row: RessourceScheduleDTO): number {
+    if (!row.hoursPerWeek) return 0;
+    return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.td || 0), 0);
+  }
+
+  calculateTotalTP(row: RessourceScheduleDTO): number {
+    if (!row.hoursPerWeek) return 0;
+    return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.tp || 0), 0);
+  }
+
+  get maquetteTotalCM(): number {
+    return this.scheduleData().reduce((s, r) => s + this.calculateTotalCM(r), 0);
+  }
+
+  get maquetteTotalTD(): number {
+    return this.scheduleData().reduce((s, r) => s + this.calculateTotalTD(r), 0);
+  }
+
+  get maquetteTotalTP(): number {
+    return this.scheduleData().reduce((s, r) => s + this.calculateTotalTP(r), 0);
+  }
+
+  calculateProjectTotal(): number {
+    const project = this.projectData();
+    if (!project?.hoursPerWeek) return 0;
+    return Object.values(project.hoursPerWeek).reduce((sum, w) => sum + (w.cm || 0) + (w.td || 0) + (w.tp || 0), 0);
+  }
+
+  calculateWeekTotal(weekNum: number): number {
+    return this.scheduleData().reduce((sum, row) => {
+      const w = row.hoursPerWeek[weekNum.toString()];
+      return sum + (w ? (w.cm || 0) + (w.td || 0) + (w.tp || 0) : 0);
+    }, 0);
+  }
+
+  calculateWeekTotalWithProject(weekNum: number): number {
+    const resourcesTotal = this.calculateWeekTotal(weekNum);
+    const pw = this.projectData()?.hoursPerWeek[weekNum.toString()];
+    return resourcesTotal + (pw ? (pw.cm || 0) + (pw.td || 0) + (pw.tp || 0) : 0);
+  }
+
+  calculateMaquetteGrandTotal(): number {
+    return this.scheduleData().reduce((sum, row) => sum + this.calculateTotalHours(row), 0);
+  }
+
+  calculateGrandTotalWithProject(): number {
+    return this.calculateMaquetteGrandTotal() + this.calculateProjectTotal();
+  }
+
+  getCompanyWeeksCount(): number {
+    return this.getAllWeeks().filter(week => week.type === 'S').length;
+  }
+
+  // Update methods for signal-based inputs
+  updateScheduleHoursByType(rowId: number, weekNum: number, type: 'cm' | 'td' | 'tp', event: Event): void {
+    const value = Number((event.target as HTMLInputElement).value) || 0;
+    const data = this.scheduleData();
+    const updatedData = data.map(row => {
+      if (row.id === rowId) {
+        const current = row.hoursPerWeek[weekNum.toString()] || { cm: 0, td: 0, tp: 0, total: 0 };
+        const updated = { ...current, [type]: value };
+        updated.total = updated.cm + updated.td + updated.tp;
+        return { ...row, hoursPerWeek: { ...row.hoursPerWeek, [weekNum.toString()]: updated } };
+      }
+      return row;
+    });
+    this.scheduleData.set(updatedData);
+  }
+
+  updateScheduleHalfGroup(rowId: number, event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const value = Number(target.value) || 0;
+    const data = this.scheduleData();
+    const updatedData = data.map(row => {
+      if (row.id === rowId) {
+        return { ...row, hoursPerHalfGroup: value };
+      }
+      return row;
+    });
+    this.scheduleData.set(updatedData);
+  }
+
+  updateProjectHoursByType(weekNum: number, type: 'cm' | 'td' | 'tp', event: Event): void {
+    const value = Number((event.target as HTMLInputElement).value) || 0;
+    const project = this.projectData();
+    const current = project.hoursPerWeek[weekNum.toString()] || { cm: 0, td: 0, tp: 0, total: 0 };
+    const updated = { ...current, [type]: value };
+    updated.total = updated.cm + updated.td + updated.tp;
+    this.projectData.set({
+      ...project,
+      hoursPerWeek: { ...project.hoursPerWeek, [weekNum.toString()]: updated }
+    });
+  }
+
+  getWeekTotal(hoursPerWeek: {[key: string]: WeekHoursDTO}, weekNum: number): number {
+    const w = hoursPerWeek[weekNum.toString()];
+    return w ? (w.cm || 0) + (w.td || 0) + (w.tp || 0) : 0;
+  }
+
+  updateProjectHalfGroup(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const value = Number(target.value) || 0;
+    const project = this.projectData();
+    this.projectData.set({ ...project, hoursPerHalfGroup: value });
+  }
+}

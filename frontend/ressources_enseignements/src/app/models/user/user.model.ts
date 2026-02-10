@@ -1,8 +1,4 @@
-export interface RoleModel {
-  idrole: number;
-  title: string;
-  rights: string;
-}
+import { RoleModel } from '../role/role.model';
 
 export interface UserModel {
   iduser: number;

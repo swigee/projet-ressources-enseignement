@@ -24,7 +24,19 @@ INSERT INTO position (id, name, is_active) VALUES
 INSERT INTO user (id, address, email, first_name, last_name, password, phone_number, validation_status, username) VALUES
 (1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', 'admin123', '0101010101', 'VALIDATED', 'admin'),
 (2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', 'prof123', '0202020202', 'VALIDATED', 'prof'),
-(3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', 'student123', '0303030303', 'NONE', 'student');
+(3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', 'student123', '0303030303', 'NONE', 'student'),
+(4, '10 rue des Lilas', 'martin.dupont@univ.fr', 'Martin', 'Dupont', 'pass123', '0604010101', 'NONE', 'mdupont'),
+(5, '12 avenue Pasteur', 'sophie.bernard@univ.fr', 'Sophie', 'Bernard', 'pass123', '0604020202', 'NONE', 'sbernard'),
+(6, '5 boulevard Victor Hugo', 'jean.moreau@univ.fr', 'Jean', 'Moreau', 'pass123', '0604030303', 'NONE', 'jmoreau'),
+(7, '8 rue de la Paix', 'claire.petit@univ.fr', 'Claire', 'Petit', 'pass123', '0604040404', 'NONE', 'cpetit'),
+(8, '3 place de la Gare', 'pierre.leroy@univ.fr', 'Pierre', 'Leroy', 'pass123', '0604050505', 'NONE', 'pleroy'),
+(9, '15 rue Voltaire', 'nathalie.roux@univ.fr', 'Nathalie', 'Roux', 'pass123', '0604060606', 'NONE', 'nroux'),
+(10, '22 avenue de la Republique', 'francois.garcia@univ.fr', 'Francois', 'Garcia', 'pass123', '0604070707', 'NONE', 'fgarcia'),
+(11, '7 rue Descartes', 'isabelle.martinez@univ.fr', 'Isabelle', 'Martinez', 'pass123', '0604080808', 'NONE', 'imartinez'),
+(12, '9 rue Pascal', 'david.thomas@univ.fr', 'David', 'Thomas', 'pass123', '0604090909', 'NONE', 'dthomas'),
+(13, '18 avenue Foch', 'emilie.robert@univ.fr', 'Emilie', 'Robert', 'pass123', '0604101010', 'NONE', 'erobert'),
+(14, '4 rue Moliere', 'philippe.richard@univ.fr', 'Philippe', 'Richard', 'pass123', '0604111111', 'NONE', 'prichard'),
+(15, '11 boulevard Gambetta', 'anne.dubois@univ.fr', 'Anne', 'Dubois', 'pass123', '0604121212', 'NONE', 'adubois');
 
 -- =========================
 -- USER ROLE
@@ -32,7 +44,19 @@ INSERT INTO user (id, address, email, first_name, last_name, password, phone_num
 INSERT INTO user_role (role_id, user_id) VALUES
 (1, 1),
 (2, 2),
-(3, 3);
+(3, 3),
+(2, 4),
+(2, 5),
+(2, 6),
+(2, 7),
+(2, 8),
+(2, 9),
+(2, 10),
+(2, 11),
+(2, 12),
+(2, 13),
+(2, 14),
+(2, 15);
 
 -- =========================
 -- FORMATIONS (BUT Informatique)
@@ -49,10 +73,21 @@ INSERT INTO formation (id, name, year, class_name) VALUES
 -- USER FORMATION
 -- =========================
 INSERT INTO user_formation (formation_id, user_id) VALUES
-(1, 2), -- Info 1A
-(3, 2), -- Info 2A
-(5, 2), -- Info 3A (New: pour tester filtre année 3)
-(1, 3);
+(1, 2),
+(3, 2),
+(1, 3),
+(1, 4), (2, 4), (3, 4),
+(1, 5), (2, 5),
+(1, 6), (3, 6),
+(1, 7), (2, 7),
+(3, 8), (4, 8),
+(1, 9), (3, 9),
+(5, 10), (6, 10),
+(1, 11), (2, 11), (3, 11),
+(3, 12), (4, 12),
+(5, 13), (6, 13),
+(1, 14), (2, 14),
+(3, 15), (5, 15);
 
 
 -- =========================

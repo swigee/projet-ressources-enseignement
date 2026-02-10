@@ -12,11 +12,11 @@ export class UserService {
 
   constructor() {}
 
-  getAllUsers(): Observable<any[]> {
+  getAllUsers(): Observable<UserModel[]> {
     return this.http.get<any[]>(`${this.apiUrl}/list`);
   }
 
-  getUserById(id: number): Observable<any> {
+  getUserById(id: number): Observable<UserModel> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
@@ -24,13 +24,17 @@ export class UserService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  updateUserRole(iduser: number, roles: string[]): Observable<any> {
+  updateUserRole(iduser: number, roles: number[]): Observable<any> {
     return this.http.put(`${this.apiUrl}/${iduser}/roles`, { roles });
   }
 
-  deleteUserRole(iduser: number, idrole: number): Observable<any> {
-    return this.http.delete<void>(`${this.apiUrl}/${iduser}/roles`, { body: { idrole } });
+  deleteUserRole(iduser: number, idrole: number): Observable<UserModel> {
+    return this.http.delete<UserModel>(`${this.apiUrl}/${iduser}/roles`, { body: { idrole } });
   }
+
+  deleteAllUserRole(iduser: number): Observable<UserModel> {
+      return this.http.delete<UserModel>(`${this.apiUrl}/${iduser}/allroles`);
+    }
   validateService(userId: number): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/${userId}/validate`, {});
   }

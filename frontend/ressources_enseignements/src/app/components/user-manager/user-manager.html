@@ -7,101 +7,163 @@
   <div class="flex justify-end pt-5 pb-5 relative">
     <button
       type="button"
-      class="bg-gray-200 px-4 py-2 rounded-full font-semibold hover:bg-[#afb1b6] cursor-pointer"
-      (click)="showFilter.set(!showFilter())"
-    >
-      Filtrer
-      <i class="fa-solid fa-filter"></i>
+      class="bg-gray-200 px-4 py-2 rounded-full font-semibold cursor-pointer hover:bg-[#afb1b6]"
+      (click)="showFilter.set(!showFilter())">
+      Filtrer <i class="fa-solid fa-filter"></i>
     </button>
 
     @if (showFilter()) {
     <div class="absolute top-full right-0 mt-2 w-64 bg-white shadow-lg rounded-xl p-4 z-10">
-      <div class="flex justify-between">
+      <div class="flex justify-between mb-2">
         <p class="font-bold">Filtres</p>
-          <button (click)="showFilter.set(false)" class="cursor-pointer rounded-md hover:bg-[#afb1b6]"><i class="fa-solid fa-xmark fa-xl" style="color: #2f3032;"></i></button>
+        <button class=" pr-1 pl-1  cursor-pointer hover:bg-gray-300 rounded" (click)="showFilter.set(false)">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
-      <div class="mb-3 mr-3 ml-3">
+
+      <div class="mb-3">
         <label class="text-sm font-semibold">Nom</label>
         <input
           type="text"
           class="w-full border rounded px-2 py-1 mt-1"
           placeholder="Rechercher..."
           [value]="searchName()"
-          (input)="searchName.set($any($event.target).value)"
-        />
+          (input)="searchName.set($any($event.target).value)" />
       </div>
-      <div class="mb-3 mr-3 ml-3">
-        <p class="text-sm font-semibold mb-1">Rôles</p>
-        @if (tabUsers().length === 0) {
-          <span class="text-gray-500 italic">Aucun utilisateur disponible pour filtrer les rôles</span>
-        } @else {
-<!--          @for(role of getAllRoles(); track $index) {-->
-<!--          <label class="flex items-center gap-2 text-sm">-->
-<!--            <input type="checkbox" [checked]="selectedRoles().includes(role.idrole)" (change)="toggleRole(role.idrole)" />-->
-<!--            {{ role.rights }}-->
-<!--          </label>-->
-<!--          }-->
-        }
 
+      <div class="mb-3">
+        <label class="text-sm font-semibold">Rôle</label>
+        <select class="w-full border rounded px-2 py-1 mt-1" multiple
+                (change)="onRoleFilterChange($event)">
+          @for(role of tabRoles(); track role.id){
+            <option class="cursor-pointer pr-1 pl-1 hover:bg-gray-200 rounded" [value]="role.id">{{ role.name }}</option>
+          }
+        </select>
       </div>
 
       <div class="flex justify-between">
-        <button class="text-sm text-gray-500" (click)="resetFilters()">Réinitialiser</button>
-        <button class="text-sm font-semibold" (click)="showFilter.set(false)">valider</button>
+        <button
+          class="px-3 py-1 text-sm bg-gray-200 rounded cursor-pointer hover:bg-gray-400"
+          (click)="resetFilters()">
+          Réinitialiser
+        </button>
+
+        <button
+          class="px-3 py-1 text-sm bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-800"
+          (click)="showFilter.set(false)">
+          Valider
+        </button>
       </div>
     </div>
     }
   </div>
 
-
   <table class="w-full mt-5">
     <thead>
-      <tr>
-        <th class="border-b border-b-zinc-950/10 px-4 py-2 font-medium first:pl-(--gutter,--spacing(2)) last:pr-(--gutter,--spacing(2)) dark:border-b-white/10 sm:first:pl-1 sm:last:pr-1">Nom</th>
-        <th class="border-b border-b-zinc-950/10 px-4 py-2 font-medium first:pl-(--gutter,--spacing(2)) last:pr-(--gutter,--spacing(2)) dark:border-b-white/10 sm:first:pl-1 sm:last:pr-1">Rôles</th>
-        <th class="border-b border-b-zinc-950/10 px-4 py-2 font-medium first:pl-(--gutter,--spacing(2)) last:pr-(--gutter,--spacing(2)) dark:border-b-white/10 sm:first:pl-1 sm:last:pr-1">Actions</th>
-      </tr>
+    <tr>
+      <th class="border-b px-4 py-2">Nom</th>
+      <th class="border-b px-4 py-2">Rôles</th>
+      <th class="border-b px-4 py-2">Actions</th>
+    </tr>
     </thead>
-    <tbody>
-      @if (filteredUsers().length === 0) {
-        <tr>
-          <td colspan="6" class="text-center text-gray-500 italic py-8">Aucun utilisateur ne correspond à votre recherche ou aucun utilisateur n'est disponible.</td>
-        </tr>
-      } @else {
-        @for (user of filteredUsers(); track $index) {
-          <tr class="even:bg-gray-100 text-center transition">
-            <td class="px-4 py-4 font-semibold text-lg">
-              {{user.firstname}} {{user.lastname}}
-            </td>
-            <td class="px-4 py-4">
-              <div class="flex flex-wrap gap-2 justify-center">
-               @for(role of user.roles; track $index) {
-                  <span
-                    class="px-3 py-1 rounded-full text-sm bg-blue-200 flex items-center justify-center overflow-hidden max-w-[100px]">
-                    {{ role.rights.length > 20 ? (role.rights.slice(0, role.rights.length/2) + '...') : role.rights }}
-                  </span>
-                  @if(showEditRole()) {
-                    <button type="button" class="ml-1" (click)="removeUserRole(user.iduser, role.idrole)">
-                      <i class="fa-solid fa-xmark fa-xl" style="color: #2f3032;"></i>
-                    </button>
-                  }
-                }
-                  <button type="button" class="p-2 bg-gray-200 rounded hover:bg-gray-300 cursor-pointer" (click)="editRoleUser(user)">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                  </button>
 
-              </div>
-            </td>
-            <td class="px-4 py-4">
-              <div class="flex justify-center">
-                <button type="button" class="p-2 bg-black text-white rounded hover:bg-zinc-800 cursor-pointer" (click)="removeUser(user.iduser)" >
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
+    <tbody>
+    @for (user of filteredUsers(); track user.iduser) {
+    <tr class="even:bg-gray-100 text-center">
+
+      <td class="px-4 py-4 font-semibold">
+        {{ user.firstname }} {{ user.lastname }}
+      </td>
+
+      <td class="px-4 py-4 relative">
+        <div class="flex flex-wrap gap-2 justify-center items-center">
+
+          @for(role of user.roles; track role.id) {
+          <span class="px-3 py-1 rounded-full text-sm bg-blue-200 hover:bg-blue-300 flex items-center gap-2">
+                  {{ role.name }}
+
+            <button class="cursor-pointer" (click)="removeUserRole(user.iduser, role.id)">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </span>
+
+          }
+
+          <button
+            class="p-2 bg-gray-200 rounded cursor-pointer hover:bg-gray-300"
+            (click)="openAddRolePopup(user)">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+
+        </div>
+
+        @if(showAddRolePopup() === user.iduser) {
+        <div
+          class="absolute right-0 top-full mt-2 z-50
+                       w-72 bg-white rounded-xl shadow-lg p-4">
+
+          <div class="flex justify-between items-center mb-3">
+            <h4 class="text-sm font-semibold">Ajouter des rôles</h4>
+            <button class=" pr-1 pl-1 cursor-pointer hover:bg-gray-200 rounded" (click)="closeAddRolePopup() ">
+              <i class="fa-solid fa-xmark cursor-pointer"></i>
+            </button>
+          </div>
+
+          <input
+            type="text"
+            class="w-full border rounded px-2 py-1 mb-3 text-sm"
+            placeholder="Rechercher un rôle..."
+            [value]="searchRoleText()"
+            (input)="searchRoleText.set($any($event.target).value)" />
+
+          <div class="max-h-40 overflow-y-auto mb-3 ">
+            @for(role of tabRoles(); track role.id) {
+              <label class="flex pr-1 pl-1 items-center gap-2 text-sm py-1 cursor-pointer hover:bg-gray-200 rounded" >
+                <input
+                  type="checkbox"
+                  [checked]="hasRole(user, role.id) || selectedRolesToAdd().includes(role.id)"
+                  (change)="toggleRoleToAdd(role.id)"
+                />
+                <span>
+                  {{ role.name }}
+                </span>
+              </label>
+            }
+
+            @if(getFilteredAvailableRoles(user).length === 0) {
+            <div class="text-xs italic text-gray-400">
+              Aucun rôle disponible
+            </div>
+            }
+          </div>
+
+          <div class="flex justify-end gap-2">
+              <button
+                class="px-3 py-1 text-sm bg-gray-200 rounded cursor-pointer hover:bg-gray-400"
+                (click)="closeAddRolePopup()">
+                Annuler
+              </button>
+
+              <button
+                class="px-3 py-1 text-sm bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-800"
+                 (click)="addSelectedRolesToUser(user)">
+                Valider
+              </button>
+          </div>
+        </div>
         }
-      }
+      </td>
+
+      <td class="px-4 py-4">
+        <button
+          class="p-2 bg-gray-500 text-white rounded cursor-pointer hover:bg-gray-700"
+          (click)="removeUser(user.iduser)">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </td>
+
+    </tr>
+    }
     </tbody>
   </table>
 </div>

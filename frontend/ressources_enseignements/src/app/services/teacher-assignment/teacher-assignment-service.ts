@@ -24,7 +24,7 @@ export interface TeacherAssignmentDTO {
 }
 
 export interface AffectationRowDTO {
-  ressourceId: number;
+  resourceId: number;
   module: string;
   td: string;
   tp: string;
@@ -58,7 +58,7 @@ export interface AssignmentGridDTO {
 
 export interface CreateAssignmentDTO {
   userId: number;
-  ressourceId: number;
+  resourceId: number;
   lessonType: string;
   assignedTimes: number;
 }
@@ -87,11 +87,15 @@ export class TeacherAssignmentService {
     return this.http.get<TeacherDTO[]>(`${this.apiUrl}/teachers/search`, { params });
   }
 
-  getAssignmentGrid(formation: string, year: string, className: string): Observable<AssignmentGridDTO> {
-    const params = new HttpParams()
+  getAssignmentGrid(formation: string, year: string, className: string, semester?: string): Observable<AssignmentGridDTO> {
+    let params = new HttpParams()
       .set('formation', formation)
       .set('year', year)
       .set('className', className);
+
+    if (semester) {
+      params = params.set('semester', semester);
+    }
 
     return this.http.get<AssignmentGridDTO>(`${this.apiUrl}/grid`, { params });
   }

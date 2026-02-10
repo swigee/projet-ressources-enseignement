@@ -53,11 +53,12 @@ public class TeacherAssignmentController {
     public ResponseEntity<AssignmentGridDTO> getAssignmentGrid(
             @RequestParam(required = false) String formation,
             @RequestParam String year,
-            @RequestParam String className) {
-        log.info("GET /api/teacher-assignment/grid?formation={}&year={}&className={}",
-                formation, year, className);
+            @RequestParam String className,
+            @RequestParam(required = false) String semester) {
+        log.info("GET /api/teacher-assignment/grid?formation={}&year={}&className={}&semester={}",
+                formation, year, className, semester);
 
-        AssignmentGridDTO grid = assignmentService.getAssignmentGrid(formation, year, className);
+        AssignmentGridDTO grid = assignmentService.getAssignmentGrid(formation, year, className, semester);
         return ResponseEntity.ok(grid);
     }
 

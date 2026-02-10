@@ -48,7 +48,7 @@ public class UserController {
                     user.getUsername(),
                     user.getAddress(),
                     user.getEmail(),
-                    Boolean.TRUE.equals(user.getIsValidated()),
+                    user.getValidationStatus(),
                     roleJsons,
                     formationJsons,
                     ticketJsons,
@@ -88,6 +88,12 @@ public class UserController {
     public ResponseEntity<Void> removeUserRole(@PathVariable int id, @RequestBody Map<String, Integer> body) {
         Integer idrole = body.get("idrole");
         userService.removeUserRoleById(id, idrole);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(path = "/{id}/validate", produces = { "application/json" })
+    public ResponseEntity<Void> validateUser(@PathVariable int id) {
+        userService.validateUser(id);
         return ResponseEntity.ok().build();
     }
 

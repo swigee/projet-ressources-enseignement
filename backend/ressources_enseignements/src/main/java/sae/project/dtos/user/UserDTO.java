@@ -18,7 +18,7 @@ public class UserDTO {
     private String username;
     private String address;
     private String email;
-    private boolean servicevalidation;
+    private String validationStatus;
     private List<Object> roles;
     private List<String> formations;
     private List<String> tickets;

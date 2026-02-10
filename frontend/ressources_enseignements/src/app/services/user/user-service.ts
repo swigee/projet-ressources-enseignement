@@ -1,7 +1,7 @@
-import {inject, Injectable, signal} from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {catchError, Observable, of, tap} from 'rxjs';
-import {UserModel} from '../../models/user/user.model';
+import { catchError, Observable, of, tap } from 'rxjs';
+import { UserModel } from '../../models/user/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -35,6 +35,9 @@ export class UserService {
   deleteAllUserRole(iduser: number): Observable<UserModel> {
       return this.http.delete<UserModel>(`${this.apiUrl}/${iduser}/allroles`);
     }
+  validateService(userId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${userId}/validate`, {});
+  }
 }
 
 export default UserService

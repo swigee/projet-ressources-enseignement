@@ -1,6 +1,6 @@
 import { Component, inject, Input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LessonService } from '../../services/lesson/lesson-service';
 import { EducationalManagerService } from '../../services/educational-manager/educational-manager';
 import { Lesson } from '../../models/lesson/lesson.model';
@@ -16,9 +16,8 @@ export class EducationManagerCreation {
   edService = inject(EducationalManagerService)
   selectedLessons: Lesson[] = [];
   
-  @Input() education?: Education;
   form!: FormGroup;
-
+  private route = inject(ActivatedRoute);
   constructor(
     private fb: FormBuilder,
     private service: EducationalManagerService,
@@ -29,11 +28,25 @@ export class EducationManagerCreation {
   }
   ngOnInit() {
     this.form = this.fb.group({
-      id: [this.education?.idformation || null], 
-      name: [this.education?.name || '', Validators.required],
-      description: [this.education?.description || ''],
-      lessons: [this.education?.lessons || []]
+      id: [null],
+      name: ['', Validators.required],
+      description: [''],
+      lessons: [[]]
     });
+
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if (id) {
+    this.edService.getEducationById(+id).subscribe(edu => {
+      this.form.patchValue(edu);
+
+      const allLessons = this.lessonsService.lessonsList();
+
+      this.selectedLessons = allLessons.filter(l =>
+        edu.lessons?.some(el => el.id === l.id)
+      );
+    });
+  }
   }
 
   goBack() {
@@ -49,15 +62,13 @@ export class EducationManagerCreation {
     }
   }
 
-  clickCreate(e: Education){
-    console.log('click sur bouton, creation')
-    this.edService.createEducation(e);
-  }
-
   submit() {
     if (this.form.invalid) return;
-    const edu: Education = this.form.value;
-    if (edu.idformation) {
+    const edu: Education = {
+      ...this.form.value,
+      lessons: this.selectedLessons
+    };
+    if (edu.id) {
       this.service.updateEducation(edu).subscribe(() => {
         this.router.navigate(['/education-manager']);
         this.edService.loadEducations();

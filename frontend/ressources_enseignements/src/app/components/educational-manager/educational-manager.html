@@ -35,11 +35,11 @@
                     </div> 
                 </td>
             </tr>
-            @for(ed of edManager.educationList(); track ed.idformation){
+            @for(ed of edManager.educationList(); track ed.id){
                 <tr (click)="updateEducation(ed)" class="cursor-pointer">
                     <td> <div class="pt-3 pb-3"> {{ ed.name }} </div> </td>
                     <td> <div class="pt-3 pb-3"> {{ ed.description }} </div> </td>
-                    <td> <div class="pt-3 pb-3"> <button class="bg-black w-6 h-6 rounded-sm" (click)="ed.idformation !== undefined && clickDelete(ed.idformation)"> <i class="fa-solid fa-trash text-white text-xs pt-0.5"></i> </button></div> </td>
+                    <td> <div class="pt-3 pb-3"> <button class="bg-black w-6 h-6 rounded-sm" (click)="ed.id !== undefined && clickDelete(ed.id)"> <i class="fa-solid fa-trash text-white text-xs pt-0.5"></i> </button></div> </td>
                 </tr>
              }
         </tbody>

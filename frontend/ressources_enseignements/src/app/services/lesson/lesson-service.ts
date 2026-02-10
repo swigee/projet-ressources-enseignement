@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Lesson } from '../../models/lesson/lesson.model';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -24,4 +25,7 @@ export class LessonService {
     .subscribe(t => this.lessonListDatabase.set(t));
   }
 
+  loadLessonsById(id: number): Observable<Lesson[]>{
+    return this.http.get<Lesson[]>(`${this.api}/lessons/${id}`);
+  }
 }

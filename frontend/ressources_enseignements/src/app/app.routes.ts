@@ -9,18 +9,18 @@ import {UserManager} from './components/user-manager/user-manager';
 import path from 'path/win32';
 
 export const routes: Routes = [
-    {
-      path:'',
-      redirectTo:'login',
-      pathMatch:'full',
+    // {
+    //   path:'',
+    //   redirectTo:'login',
+    //   pathMatch:'full',
 
-    },
+    // },
+    // {
+    //   path:'login',
+    //   component: Login
+    // },
     {
-      path:'login',
-      component: Login
-    },
-    {
-        path:'dashboard',
+        path:'',
         component: Dashboard
     },
     {
@@ -48,7 +48,7 @@ export const routes: Routes = [
         component: EducationManagerCreation
     },
     {
-        path:'education-manager/edit',
+        path:'education-manager/edit/:id',
         component: EducationManagerCreation
     },
     {

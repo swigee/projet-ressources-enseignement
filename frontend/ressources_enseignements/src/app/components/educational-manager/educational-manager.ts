@@ -19,6 +19,6 @@ export class EducationalManager {
   }
 
   updateEducation(etu: Education){
-    this.router.navigate(['/education-manager/edit', etu]);
+    this.router.navigate(['/education-manager/edit', etu.id]);
   }
 }

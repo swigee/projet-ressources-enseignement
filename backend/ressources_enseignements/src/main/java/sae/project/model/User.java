@@ -29,7 +29,7 @@ import java.util.List;
         @NamedQuery(name = "User.findByAddress", query = "SELECT u FROM User u WHERE u.address = :address"),
         @NamedQuery(name = "User.findByPhoneNumber", query = "SELECT u FROM User u WHERE u.phoneNumber = :phoneNumber"),
         @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
-        @NamedQuery(name = "User.findByIsValidated", query = "SELECT u FROM User u WHERE u.isValidated = :isValidated") })
+        @NamedQuery(name = "User.findByValidationStatus", query = "SELECT u FROM User u WHERE u.validationStatus = :validationStatus") })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -64,8 +64,8 @@ public class User implements Serializable {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "is_validated")
-    private Boolean isValidated;
+    @Column(name = "validation_status")
+    private String validationStatus = "NONE"; // NONE, SUBMITTED, VALIDATED
 
     @ManyToMany(mappedBy = "usersList")
     private List<Formation> formationList;

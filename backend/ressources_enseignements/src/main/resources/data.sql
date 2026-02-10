@@ -21,22 +21,22 @@ INSERT INTO position (id, name, is_active) VALUES
 -- =========================
 -- USERS
 -- =========================
-INSERT INTO user (id, address, email, first_name, last_name, password, phone_number, is_validated, username) VALUES
-(1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', 'admin123', '0101010101', b'1', 'admin'),
-(2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', 'prof123', '0202020202', b'1', 'prof'),
-(3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', 'student123', '0303030303', b'0', 'student'),
-(4, '10 rue des Lilas', 'martin.dupont@univ.fr', 'Martin', 'Dupont', 'pass123', '0604010101', b'1', 'mdupont'),
-(5, '12 avenue Pasteur', 'sophie.bernard@univ.fr', 'Sophie', 'Bernard', 'pass123', '0604020202', b'1', 'sbernard'),
-(6, '5 boulevard Victor Hugo', 'jean.moreau@univ.fr', 'Jean', 'Moreau', 'pass123', '0604030303', b'1', 'jmoreau'),
-(7, '8 rue de la Paix', 'claire.petit@univ.fr', 'Claire', 'Petit', 'pass123', '0604040404', b'1', 'cpetit'),
-(8, '3 place de la Gare', 'pierre.leroy@univ.fr', 'Pierre', 'Leroy', 'pass123', '0604050505', b'1', 'pleroy'),
-(9, '15 rue Voltaire', 'nathalie.roux@univ.fr', 'Nathalie', 'Roux', 'pass123', '0604060606', b'1', 'nroux'),
-(10, '22 avenue de la Republique', 'francois.garcia@univ.fr', 'Francois', 'Garcia', 'pass123', '0604070707', b'1', 'fgarcia'),
-(11, '7 rue Descartes', 'isabelle.martinez@univ.fr', 'Isabelle', 'Martinez', 'pass123', '0604080808', b'1', 'imartinez'),
-(12, '9 rue Pascal', 'david.thomas@univ.fr', 'David', 'Thomas', 'pass123', '0604090909', b'1', 'dthomas'),
-(13, '18 avenue Foch', 'emilie.robert@univ.fr', 'Emilie', 'Robert', 'pass123', '0604101010', b'1', 'erobert'),
-(14, '4 rue Moliere', 'philippe.richard@univ.fr', 'Philippe', 'Richard', 'pass123', '0604111111', b'1', 'prichard'),
-(15, '11 boulevard Gambetta', 'anne.dubois@univ.fr', 'Anne', 'Dubois', 'pass123', '0604121212', b'1', 'adubois');
+INSERT INTO user (id, address, email, first_name, last_name, password, phone_number, validation_status, username) VALUES
+(1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', 'admin123', '0101010101', 'VALIDATED', 'admin'),
+(2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', 'prof123', '0202020202', 'VALIDATED', 'prof'),
+(3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', 'student123', '0303030303', 'NONE', 'student'),
+(4, '10 rue des Lilas', 'martin.dupont@univ.fr', 'Martin', 'Dupont', 'pass123', '0604010101', 'NONE', 'mdupont'),
+(5, '12 avenue Pasteur', 'sophie.bernard@univ.fr', 'Sophie', 'Bernard', 'pass123', '0604020202', 'NONE', 'sbernard'),
+(6, '5 boulevard Victor Hugo', 'jean.moreau@univ.fr', 'Jean', 'Moreau', 'pass123', '0604030303', 'NONE', 'jmoreau'),
+(7, '8 rue de la Paix', 'claire.petit@univ.fr', 'Claire', 'Petit', 'pass123', '0604040404', 'NONE', 'cpetit'),
+(8, '3 place de la Gare', 'pierre.leroy@univ.fr', 'Pierre', 'Leroy', 'pass123', '0604050505', 'NONE', 'pleroy'),
+(9, '15 rue Voltaire', 'nathalie.roux@univ.fr', 'Nathalie', 'Roux', 'pass123', '0604060606', 'NONE', 'nroux'),
+(10, '22 avenue de la Republique', 'francois.garcia@univ.fr', 'Francois', 'Garcia', 'pass123', '0604070707', 'NONE', 'fgarcia'),
+(11, '7 rue Descartes', 'isabelle.martinez@univ.fr', 'Isabelle', 'Martinez', 'pass123', '0604080808', 'NONE', 'imartinez'),
+(12, '9 rue Pascal', 'david.thomas@univ.fr', 'David', 'Thomas', 'pass123', '0604090909', 'NONE', 'dthomas'),
+(13, '18 avenue Foch', 'emilie.robert@univ.fr', 'Emilie', 'Robert', 'pass123', '0604101010', 'NONE', 'erobert'),
+(14, '4 rue Moliere', 'philippe.richard@univ.fr', 'Philippe', 'Richard', 'pass123', '0604111111', 'NONE', 'prichard'),
+(15, '11 boulevard Gambetta', 'anne.dubois@univ.fr', 'Anne', 'Dubois', 'pass123', '0604121212', 'NONE', 'adubois');
 
 -- =========================
 -- USER ROLE
@@ -88,6 +88,7 @@ INSERT INTO user_formation (formation_id, user_id) VALUES
 (5, 13), (6, 13),
 (1, 14), (2, 14),
 (3, 15), (5, 15);
+
 
 -- =========================
 -- RESSOURCES (37 modules BUT Informatique)
@@ -361,7 +362,9 @@ INSERT INTO resource_syllabus (resource_id, syllabus_id) VALUES
 INSERT INTO assignment (id, assigned_times, lesson_type, resource_id, user_id) VALUES
 (1, 20, 'CM', 1, 2),
 (2, 25, 'TD', 2, 2),
-(3, 20, 'CM', 7, 2);
+(3, 20, 'CM', 7, 2),
+(4, 30, 'CM', 13, 2), -- Dev App Year 2
+(5, 25, 'TD', 26, 2); -- Arch Log Year 3
 
 -- =========================
 -- TICKETS

@@ -14,7 +14,7 @@ export class EducationalManager {
   constructor(private router: Router) {
   }
 
-  clickDelete(id: number){
+  clickDelete(id: number) {
     this.edManager.deleteEducation(id)
   }
 

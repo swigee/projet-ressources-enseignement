@@ -3,7 +3,7 @@ package sae.project.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sae.project.dtos.UserDTO;
+import sae.project.dtos.user.UserDTO;
 import sae.project.model.Role;
 import sae.project.model.User;
 import sae.project.services.UserService;
@@ -11,7 +11,6 @@ import sae.project.services.UserService;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -26,10 +25,22 @@ public class UserController {
         return userService.userList().stream().map(user -> {
             List<Role> roles = user.getRoleList();
             List<Object> roleJsons = roles != null ? roles.stream().map(role -> (Object) Map.of(
-                    "idrole", role.getId(),
-                    "title", role.getIsActive(), // mapped title to isActive
-                    "rights", role.getName() // mapped rights to name
+                    "id", role.getId(),
+                    "is_active", role.getIsActive(),
+                    "name", role.getName()
             )).toList() : List.of();
+            // formations : liste de noms ou d'ids sous forme de String
+            List<String> formationJsons = user.getFormationList() != null ? user.getFormationList().stream()
+                    .map(f -> f.getName() != null ? f.getName() : String.valueOf(f.getId()))
+                    .toList() : List.of();
+            // tickets : titre ou id sous forme de String
+            List<String> ticketJsons = user.getTicketsList() != null ? user.getTicketsList().stream()
+                    .map(t -> t.getTitle() != null ? t.getTitle() : String.valueOf(t.getId()))
+                    .toList() : List.of();
+            // assignments : id sous forme de String
+            List<String> assignmentJsons = user.getAssignmentList() != null ? user.getAssignmentList().stream()
+                    .map(a -> String.valueOf(a.getId()))
+                    .toList() : List.of();
             return new UserDTO(
                     user.getId(),
                     user.getFirstName(),
@@ -39,12 +50,10 @@ public class UserController {
                     user.getEmail(),
                     Boolean.TRUE.equals(user.getIsValidated()),
                     roleJsons,
-                    user.getFormationList() != null ? user.getFormationList().stream().map(f -> f.toString()).toList()
-                            : List.of(),
-                    user.getTicketsList() != null ? user.getTicketsList().stream().map(t -> t.toString()).toList()
-                            : List.of(),
-                    user.getAssignmentList() != null ? user.getAssignmentList().stream().map(a -> a.toString()).toList()
-                            : List.of());
+                    formationJsons,
+                    ticketJsons,
+                    assignmentJsons
+            );
         }).toList();
     }
 
@@ -69,16 +78,22 @@ public class UserController {
     }
 
     @PutMapping(path = "/{id}/roles", consumes = "application/json")
-    public ResponseEntity<Void> updateUserRoles(@PathVariable int id, @RequestBody Map<String, List<String>> body) {
-        List<String> roles = body.get("roles");
+    public ResponseEntity<Void> updateUserRoles(@PathVariable int id, @RequestBody Map<String, List<Integer>> body) {
+        List<Integer> roles = body.get("roles");
         userService.updateUserRoles(id, roles);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping(path = "/{id}/roles", consumes = "application/json")
     public ResponseEntity<Void> removeUserRole(@PathVariable int id, @RequestBody Map<String, Integer> body) {
-        Integer idrole = body.get("idrole"); // Json key expected by FE
+        Integer idrole = body.get("idrole");
         userService.removeUserRoleById(id, idrole);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping(path = "/{id}/allroles", produces = { "application/json" })
+    public ResponseEntity<Void> removeAllUserRole(@PathVariable int id) {
+        userService.removeAllUserRole(id);
         return ResponseEntity.ok().build();
     }
 }

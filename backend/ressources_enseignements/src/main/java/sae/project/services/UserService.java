@@ -8,8 +8,10 @@ import sae.project.repositories.RoleRepository;
 import sae.project.repositories.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -31,7 +33,27 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public void deleteUser(int id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        // Supprimer les assignments liés
+        if (user.getAssignmentList() != null) {
+            user.getAssignmentList().clear();
+        }
+        // Supprimer les tickets liés
+        if (user.getTicketsList() != null) {
+            user.getTicketsList().clear();
+        }
+        // Supprimer les formations liées
+        if (user.getFormationList() != null) {
+            user.getFormationList().clear();
+        }
+        // Supprimer les rôles liés
+        if (user.getRoleList() != null) {
+            user.getRoleList().clear();
+        }
+        userRepository.save(user);
         userRepository.deleteById(id);
     }
 
@@ -40,32 +62,39 @@ public class UserService {
         return user.map(User::getRoleList).orElse(null);
     }
 
-    public void updateUserRoles(int id, List<String> roles) {
+    public void updateUserRoles(int id, List<Integer> roles) {
+        if (roles == null) {
+            throw new IllegalArgumentException("La liste des rôles ne doit pas être nulle");
+        }
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             List<Role> newRoles = roles.stream()
-                    .map(roleRepository::findByName)
-                    .filter(r -> r != null)
-                    .toList();
+                    .map(roleId -> {
+                        Optional<Role> roleOpt = roleRepository.findById(roleId);
+                        if (roleOpt.isEmpty()) {
+                            throw new IllegalArgumentException("Le rôle avec l'id " + roleId + " n'existe pas");
+                        }
+                        return roleOpt.get();
+                    })
+                    .collect(Collectors.toCollection(ArrayList::new));
             user.setRoleList(newRoles);
             userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("Utilisateur non trouvé pour l'id " + id);
         }
     }
 
-    public void removeUserRole(int id, String role) {
+    public void removeAllUserRole(int id) {
         Optional<User> userOpt = userRepository.findById(id);
-        if (userOpt.isPresent() && role != null) {
+        if (userOpt.isPresent()) {
             User user = userOpt.get();
             List<Role> roles = user.getRoleList();
-            if (roles != null) {
-
-                boolean removed = roles.removeIf(r -> r.getName() != null && r.getName().equals(role));
-                if (removed) {
-                    user.setRoleList(roles);
-                    userRepository.save(user);
-                    System.out.println("Rôle supprimé et utilisateur sauvegardé.");
-                }
+            if (roles != null && !roles.isEmpty()) {
+                roles.clear();
+                user.setRoleList(roles);
+                userRepository.save(user);
+                System.out.println("Tous les rôles supprimés et utilisateur sauvegardé.");
             }
         }
     }

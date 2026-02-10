@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sae.project.dtos.*;
+import sae.project.dtos.assignment.AssignmentGridDTO;
+import sae.project.dtos.assignment.AssignmentValidationResponseDTO;
+import sae.project.dtos.assignment.CreateAssignmentDTO;
+import sae.project.dtos.teacher.TeacherDTO;
 import sae.project.model.Assignment;
 import sae.project.services.TeacherAssignmentService;
 
@@ -50,11 +53,12 @@ public class TeacherAssignmentController {
     public ResponseEntity<AssignmentGridDTO> getAssignmentGrid(
             @RequestParam(required = false) String formation,
             @RequestParam String year,
-            @RequestParam String className) {
-        log.info("GET /api/teacher-assignment/grid?formation={}&year={}&className={}",
-                formation, year, className);
+            @RequestParam String className,
+            @RequestParam(required = false) String semester) {
+        log.info("GET /api/teacher-assignment/grid?formation={}&year={}&className={}&semester={}",
+                formation, year, className, semester);
 
-        AssignmentGridDTO grid = assignmentService.getAssignmentGrid(formation, year, className);
+        AssignmentGridDTO grid = assignmentService.getAssignmentGrid(formation, year, className, semester);
         return ResponseEntity.ok(grid);
     }
 

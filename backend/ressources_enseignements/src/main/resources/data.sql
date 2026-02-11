@@ -360,11 +360,11 @@ INSERT INTO resource_syllabus (resource_id, syllabus_id) VALUES
 -- ASSIGNMENT
 -- =========================
 INSERT INTO assignment (id, assigned_times, lesson_type, resource_id, user_id) VALUES
-(1, 20, 'CM', 1, 2),
-(2, 25, 'TD', 2, 2),
-(3, 20, 'CM', 7, 2),
-(4, 30, 'CM', 13, 2), -- Dev App Year 2
-(5, 25, 'TD', 26, 2); -- Arch Log Year 3
+(1, 20, 'CM', 1, 1),
+(2, 25, 'TD', 2, 1),
+(3, 20, 'CM', 7, 1),
+(4, 30, 'CM', 13, 1), -- Dev App Year 2
+(5, 25, 'TD', 26, 1); -- Arch Log Year 3
 
 -- =========================
 -- TICKETS

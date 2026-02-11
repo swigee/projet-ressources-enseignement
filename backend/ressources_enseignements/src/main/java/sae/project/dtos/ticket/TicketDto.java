@@ -1,4 +1,4 @@
-package sae.project.dtos;
+package sae.project.dtos.ticket;
 
 public class TicketDto {
     public String title;

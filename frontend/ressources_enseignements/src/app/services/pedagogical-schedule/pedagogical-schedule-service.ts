@@ -1,83 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface WeekHoursDTO {
-  cm: number;
-  td: number;
-  tp: number;
-  total: number;
-}
-
-export interface RessourceScheduleDTO {
-  id: number;
-  courseName: string;
-  category?: string;
-  isHighlighted: boolean;
-  hoursPerWeek: { [key: string]: WeekHoursDTO };
-  hoursPerHalfGroup: number;
-  totalHours: number;
-  totalCM?: number;
-  totalTD?: number;
-  totalTP?: number;
-}
-
-export interface ProjectScheduleDTO {
-  id: string;
-  name: string;
-  hoursPerWeek: { [key: string]: WeekHoursDTO };
-  hoursPerHalfGroup: number;
-  totalHours: number;
-}
-
-export interface WeekDTO {
-  num: number;
-  date: string;
-  type: string; // 'E' or 'S'
-}
-
-export interface MonthDTO {
-  month: string;
-  weeks: WeekDTO[];
-}
-
-export interface ScheduleStatisticsDTO {
-  totalResources: number;
-  totalWithProject: number;
-  companyWeeksCount: number;
-  weeklyTotals: { [key: number]: number };
-  weeklyTotalsWithProject: { [key: number]: number };
-}
-
-export interface PedagogicalScheduleDTO {
-  selectedYear: string;
-  selectedClass: string;
-  selectedSemester: string;
-  scheduleData: RessourceScheduleDTO[];
-  projectData: ProjectScheduleDTO;
-  weeks: MonthDTO[];
-  statistics: ScheduleStatisticsDTO;
-}
-
-export interface UpdateHoursDTO {
-  ressourceId: number;
-  hoursPerWeek: { [key: string]: WeekHoursDTO };
-  hoursPerHalfGroup: number;
-}
-
-export interface ValidationRequestDTO {
-  selectedYear: string;
-  selectedClass: string;
-  selectedSemester: string;
-  ressources: UpdateHoursDTO[];
-  project: UpdateHoursDTO;
-}
-
-export interface ValidationResponseDTO {
-  success: boolean;
-  message: string;
-  errors?: string[];
-}
+import {
+  RessourceSchedule,
+  ValidationResponse,
+  ValidationRequest,
+  UpdateHours,
+  PedagogicalSchedule,
+} from '../../models/schedule/schedule.model';
 
 @Injectable({
   providedIn: 'root'
@@ -91,30 +21,30 @@ export class PedagogicalScheduleService {
     return this.http.get<any[]>(`${this.apiUrl}/ressources`);
   }
 
-  getAllRessourcesDTO(): Observable<RessourceScheduleDTO[]> {
-    return this.http.get<RessourceScheduleDTO[]>(`${this.apiUrl}/ressources/dto`);
+  getAllRessourcesDTO(): Observable<RessourceSchedule[]> {
+    return this.http.get<RessourceSchedule[]>(`${this.apiUrl}/ressources/dto`);
   }
 
   getRessourceById(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/ressources/${id}`);
   }
 
-  getRessourcesByFilter(year: string, className: string, semester: string): Observable<RessourceScheduleDTO[]> {
+  getRessourcesByFilter(year: string, className: string, semester: string): Observable<RessourceSchedule[]> {
     const params = new HttpParams()
       .set('year', year)
       .set('className', className)
       .set('semester', semester);
 
-    return this.http.get<RessourceScheduleDTO[]>(`${this.apiUrl}/ressources/filter`, { params });
+    return this.http.get<RessourceSchedule[]>(`${this.apiUrl}/ressources/filter`, { params });
   }
 
-  getCompleteSchedule(year: string, className: string, semester: string): Observable<PedagogicalScheduleDTO> {
+  getCompleteSchedule(year: string, className: string, semester: string): Observable<PedagogicalSchedule> {
     const params = new HttpParams()
       .set('year', year)
       .set('className', className)
       .set('semester', semester);
 
-    return this.http.get<PedagogicalScheduleDTO>(`${this.apiUrl}/schedule`, { params });
+    return this.http.get<PedagogicalSchedule>(`${this.apiUrl}/schedule`, { params });
   }
 
   createRessource(ressource: any): Observable<any> {
@@ -125,21 +55,21 @@ export class PedagogicalScheduleService {
     return this.http.put<any>(`${this.apiUrl}/ressources/${id}`, ressource);
   }
 
-  updateRessourceHours(id: number, updateDTO: UpdateHoursDTO): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}/ressources/${id}/hours`, updateDTO);
+  updateRessourceHours(id: number, update: UpdateHours): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/ressources/${id}/hours`, update);
   }
 
-  validateSchedule(validationRequest: ValidationRequestDTO): Observable<ValidationResponseDTO> {
-    return this.http.post<ValidationResponseDTO>(`${this.apiUrl}/schedule/validate`, validationRequest);
+  validateSchedule(validationRequest: ValidationRequest): Observable<ValidationResponse> {
+    return this.http.post<ValidationResponse>(`${this.apiUrl}/schedule/validate`, validationRequest);
   }
 
   deleteRessource(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/ressources/${id}`);
   }
 
-  searchRessources(keyword: string): Observable<RessourceScheduleDTO[]> {
+  searchRessources(keyword: string): Observable<RessourceSchedule[]> {
     const params = new HttpParams().set('keyword', keyword);
-    return this.http.get<RessourceScheduleDTO[]>(`${this.apiUrl}/ressources/search`, { params });
+    return this.http.get<RessourceSchedule[]>(`${this.apiUrl}/ressources/search`, { params });
   }
 
   healthCheck(): Observable<string> {

@@ -1,23 +1,23 @@
-export interface RessourceRowDTO {
+export interface RessourceRow {
   id: number;
   moduleName: string;
   category?: string;
-  heuresPrevisionnelles: number;
-  heuresReelles: number;
-  heuresTD: number;
-  heuresTP: number;
-  heuresCM: number;
+  plannedHours: number;
+  actualHours: number;
+  TDHours: number;
+  TPHours: number;
+  CMHours: number;
   isHighlighted: boolean;
-  assignedTeachers: TeacherBadgeDTO[];
+  assignedTeachers: TeacherBadge[];
 }
 
-export interface TeacherBadgeDTO {
+export interface TeacherBadge {
   teacherId: number;
   fullName: string;  // "MARTIN Louis"
   assignedHours: number;
 }
 
-export interface ScheduleConflictDTO {
+export interface ScheduleConflict {
   teacherId: number;
   teacherName: string;
   conflictingModules: string[];
@@ -25,16 +25,16 @@ export interface ScheduleConflictDTO {
   timeSlot: string;
 }
 
-export interface RessourcesTotalsDTO {
-  totalHeuresPrevisionnelles: number;
-  totalHeuresReelles: number;
-  totalHeuresTD: number;
-  totalHeuresTP: number;
-  totalHeuresCM: number;
+export interface RessourcesTotals {
+  totalPlannedHours: number;
+  totalActualHours: number;
+  totalTDHours: number;
+  totalTPHours: number;
+  totalCMHours: number;
 }
 
-export interface RessourcesTableResponseDTO {
-  ressources: RessourceRowDTO[];
-  availableTeachers: TeacherBadgeDTO[];
-  conflicts: ScheduleConflictDTO[];
+export interface RessourcesTableResponse {
+  ressources: RessourceRow[];
+  availableTeachers: TeacherBadge[];
+  conflicts: ScheduleConflict[];
 }

@@ -1,29 +1,14 @@
-// src/app/models/teacher.model.ts
-// Note: Ces interfaces sont maintenant définies dans le service
-// Ce fichier est optionnel si vous préférez centraliser les types
-
 export interface Teacher {
   id: number;
   name: string;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
   subject: string;
   status: string;
-  hours?: string;
-  totalHours?: number;
-  remainingHours?: number;
+  totalHours: number;
+  remainingHours: number;
   statusColor: string;
   roles?: string[];
-}
-
-export interface AffectationRow {
-  id?: string; // Pour compatibilité avec l'ancien code
-  ressourceId?: number; // ID de la ressource (backend)
-  module: string;
-  td: string;
-  tp: string;
-  cm: string;
-  teachers: string[] | TeacherAssignment[]; // Flexible pour les deux formats
 }
 
 export interface TeacherAssignment {
@@ -34,11 +19,20 @@ export interface TeacherAssignment {
   assignedHours: number;
 }
 
-export interface DragData {
-  type: 'teacher';
-  teacherId: number;
-  teacherName: string;
+export interface AffectationRow {
+  resourceId: number;
+  module: string;
+  td: string;
+  tp: string;
+  cm: string;
+  tdHours?: number;
+  tpHours?: number;
+  cmHours?: number;
+  tdTeachers: TeacherAssignment[];
+  tpTeachers: TeacherAssignment[];
+  cmTeachers: TeacherAssignment[];
 }
+
 
 export interface AssignmentStatistics {
   totalTeachers: number;
@@ -47,4 +41,27 @@ export interface AssignmentStatistics {
   unassignedModules: number;
   hoursByLessonType: { [key: string]: number };
   hoursByTeacher: { [key: string]: number };
+}
+
+export interface AssignmentGrid {
+  selectedFormation: string;
+  selectedYear: string;
+  selectedSemester?: string;
+  availableTeachers: Teacher[];
+  affectationGrid: AffectationRow[];
+  statistics: AssignmentStatistics;
+}
+
+export interface CreateAssignment {
+  userId: number;
+  resourceId: number;
+  lessonType: string;
+  assignedTimes: number;
+}
+
+export interface AssignmentValidationResponse {
+  success: boolean;
+  message: string;
+  errors?: string[];
+  warnings?: string[];
 }

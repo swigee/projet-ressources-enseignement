@@ -220,27 +220,27 @@
 
                     <!-- Heures Previsionnelles -->
                     <td class="px-4 py-3 text-center">
-                      {{ row.heuresPrevisionnelles }}h
+                      {{ row.plannedHours }}h
                     </td>
 
                     <!-- Heures Reelles -->
                     <td class="px-4 py-3 text-center">
-                      {{ row.heuresReelles }}h
+                      {{ row.actualHours }}h
                     </td>
 
                     <!-- Heures TD -->
                     <td class="px-4 py-3 text-center font-medium" style="color: #4ecdc4">
-                      {{ row.heuresTD }}h
+                      {{ row.TDHours }}h
                     </td>
 
                     <!-- Heures TP -->
                     <td class="px-4 py-3 text-center font-medium" style="color: #a864a8">
-                      {{ row.heuresTP }}h
+                      {{ row.TPHours }}h
                     </td>
 
                     <!-- Heures CM -->
                     <td class="px-4 py-3 text-center font-medium" style="color: #ff6b6b">
-                      {{ row.heuresCM }}h
+                      {{ row.CMHours }}h
                     </td>
 
                     <!-- Enseignants badges -->
@@ -282,11 +282,11 @@
             <tfoot>
             <tr class="bg-gray-100 border-t-2 border-gray-400 font-semibold">
               <td class="px-4 py-3">Total</td>
-              <td class="px-4 py-3 text-center">{{ calculatedTotals().totalHeuresPrevisionnelles }}h</td>
-              <td class="px-4 py-3 text-center">{{ calculatedTotals().totalHeuresReelles }}h</td>
-              <td class="px-4 py-3 text-center" style="color: #4ecdc4">{{ calculatedTotals().totalHeuresTD }}h</td>
-              <td class="px-4 py-3 text-center" style="color: #a864a8">{{ calculatedTotals().totalHeuresTP }}h</td>
-              <td class="px-4 py-3 text-center" style="color: #ff6b6b">{{ calculatedTotals().totalHeuresCM }}h</td>
+              <td class="px-4 py-3 text-center">{{ calculatedTotals().totalPlannedHours }}h</td>
+              <td class="px-4 py-3 text-center">{{ calculatedTotals().totalActualHours }}h</td>
+              <td class="px-4 py-3 text-center" style="color: #4ecdc4">{{ calculatedTotals().totalTDHours }}h</td>
+              <td class="px-4 py-3 text-center" style="color: #a864a8">{{ calculatedTotals().totalTPHours }}h</td>
+              <td class="px-4 py-3 text-center" style="color: #ff6b6b">{{ calculatedTotals().totalCMHours }}h</td>
               <td class="px-4 py-3" colspan="2"></td>
             </tr>
             </tfoot>
@@ -319,23 +319,23 @@
           <div class="grid grid-cols-5 gap-4">
             <div>
               <div class="text-sm text-gray-600">Total Prev.</div>
-              <div class="text-xl font-bold text-gray-800">{{ calculatedTotals().totalHeuresPrevisionnelles }}h</div>
+              <div class="text-xl font-bold text-gray-800">{{ calculatedTotals().totalPlannedHours }}h</div>
             </div>
             <div>
               <div class="text-sm text-gray-600">Total Reelles</div>
-              <div class="text-xl font-bold text-blue-600">{{ calculatedTotals().totalHeuresReelles }}h</div>
+              <div class="text-xl font-bold text-blue-600">{{ calculatedTotals().totalActualHours }}h</div>
             </div>
             <div>
               <div class="text-sm text-gray-600">Total TD</div>
-              <div class="text-xl font-bold" style="color: #4ecdc4">{{ calculatedTotals().totalHeuresTD }}h</div>
+              <div class="text-xl font-bold" style="color: #4ecdc4">{{ calculatedTotals().totalTDHours }}h</div>
             </div>
             <div>
               <div class="text-sm text-gray-600">Total TP</div>
-              <div class="text-xl font-bold" style="color: #a864a8">{{ calculatedTotals().totalHeuresTP }}h</div>
+              <div class="text-xl font-bold" style="color: #a864a8">{{ calculatedTotals().totalTPHours }}h</div>
             </div>
             <div>
               <div class="text-sm text-gray-600">Total CM</div>
-              <div class="text-xl font-bold" style="color: #ff6b6b">{{ calculatedTotals().totalHeuresCM }}h</div>
+              <div class="text-xl font-bold" style="color: #ff6b6b">{{ calculatedTotals().totalCMHours }}h</div>
             </div>
           </div>
         </div>
@@ -741,8 +741,8 @@
           <!-- Etape 1 : Envoyé -->
           <div class="flex flex-col items-center relative">
             <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300"
-              [class]="(validationStatus() === 'SUBMITTED' || validationStatus() === 'VALIDATED') 
-                  ? 'bg-green-100 border-green-500 text-green-600' 
+              [class]="(validationStatus() === 'SUBMITTED' || validationStatus() === 'VALIDATED')
+                  ? 'bg-green-100 border-green-500 text-green-600'
                   : 'bg-gray-100 border-gray-300 text-gray-400'">
               <i class="fa-solid fa-paper-plane text-xl"></i>
             </div>
@@ -758,8 +758,8 @@
           <!-- Etape 2 : Validé -->
           <div class="flex flex-col items-center relative">
             <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300"
-              [class]="validationStatus() === 'VALIDATED' 
-                  ? 'bg-green-100 border-green-500 text-green-600' 
+              [class]="validationStatus() === 'VALIDATED'
+                  ? 'bg-green-100 border-green-500 text-green-600'
                   : 'bg-gray-100 border-gray-300 text-gray-400'">
               <i class="fa-solid fa-circle-check text-xl"></i>
             </div>

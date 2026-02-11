@@ -2,21 +2,21 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { RessourcesService } from '../../services/ressources/ressources-service';
+import {PedagogicalScheduleService} from '../../services/pedagogical-schedule/pedagogical-schedule-service';
 import {
-  RessourceRowDTO, RessourcesTotalsDTO,
-  ScheduleConflictDTO,
-  TeacherBadgeDTO
+  RessourceRow, RessourcesTotals,
+  ScheduleConflict,
+  TeacherBadge
 } from '../../models/ressources/ressources.model';
 import {
-  PedagogicalScheduleService,
-  RessourceScheduleDTO,
-  ProjectScheduleDTO,
-  MonthDTO,
-  WeekDTO,
-  WeekHoursDTO,
-  ValidationRequestDTO,
-  UpdateHoursDTO
-} from '../../services/pedagogical-schedule/pedagogical-schedule-service';
+  RessourceSchedule,
+  ProjectSchedule,
+  Month,
+  Week,
+  WeekHours,
+  ValidationRequest,
+  UpdateHours
+} from '../../models/schedule/schedule.model';
 import { UserService } from '../../services/user/user-service';
 import { Router } from '@angular/router';
 import { PLATFORM_ID } from '@angular/core';
@@ -37,7 +37,6 @@ import { Observable, of } from 'rxjs';
     NgFor
   ],
   templateUrl: './ressource.html',
-  styleUrl: './ressource.css',
 })
 export class Ressource implements OnInit {
   private readonly ressourcesTableService = inject(RessourcesService);
@@ -80,19 +79,19 @@ export class Ressource implements OnInit {
   selectedSemester = signal<string>('1');
 
   // Data state
-  ressources = signal<RessourceRowDTO[]>([]);
-  availableTeachers = signal<TeacherBadgeDTO[]>([]);
-  conflicts = signal<ScheduleConflictDTO[]>([]);
+  ressources = signal<RessourceRow[]>([]);
+  availableTeachers = signal<TeacherBadge[]>([]);
+  conflicts = signal<ScheduleConflict[]>([]);
   isLoading = signal<boolean>(false);
   errorMessage = signal<string>('');
   successMessage = signal<string>('');
 
   // Maquette-specific state
-  scheduleData = signal<RessourceScheduleDTO[]>([]);
-  projectData = signal<ProjectScheduleDTO>({
+  scheduleData = signal<RessourceSchedule[]>([]);
+  projectData = signal<ProjectSchedule>({
     id: 'project-sae', name: 'Projet SAE', hoursPerWeek: {}, hoursPerHalfGroup: 0, totalHours: 0
   });
-  weeks = signal<MonthDTO[]>([]);
+  weeks = signal<Month[]>([]);
   isEditing = signal<boolean>(false);
 
   // Class data
@@ -127,14 +126,14 @@ export class Ressource implements OnInit {
   });
 
   // Auto-updating totals
-  calculatedTotals = computed<RessourcesTotalsDTO>(() => {
+  calculatedTotals = computed<RessourcesTotals>(() => {
     const filtered = this.filteredRessources();
     return {
-      totalHeuresPrevisionnelles: filtered.reduce((sum, r) => sum + r.heuresPrevisionnelles, 0),
-      totalHeuresReelles: filtered.reduce((sum, r) => sum + r.heuresReelles, 0),
-      totalHeuresTD: filtered.reduce((sum, r) => sum + r.heuresTD, 0),
-      totalHeuresTP: filtered.reduce((sum, r) => sum + r.heuresTP, 0),
-      totalHeuresCM: filtered.reduce((sum, r) => sum + r.heuresCM, 0)
+      totalPlannedHours: filtered.reduce((sum, r) => sum + r.plannedHours, 0),
+      totalActualHours: filtered.reduce((sum, r) => sum + r.actualHours, 0),
+      totalTDHours: filtered.reduce((sum, r) => sum + r.TDHours, 0),
+      totalTPHours: filtered.reduce((sum, r) => sum + r.TPHours, 0),
+      totalCMHours: filtered.reduce((sum, r) => sum + r.CMHours, 0)
     };
   });
 
@@ -285,12 +284,12 @@ export class Ressource implements OnInit {
     setTimeout(() => this.showTeacherDropdown.set(false), 200);
   }
 
-  hasConflict(ressource: RessourceRowDTO): boolean {
+  hasConflict(ressource: RessourceRow): boolean {
     const conflictingModules = this.conflicts().flatMap(c => c.conflictingModules);
     return conflictingModules.includes(ressource.moduleName);
   }
 
-  getConflictDetails(ressource: RessourceRowDTO): ScheduleConflictDTO | undefined {
+  getConflictDetails(ressource: RessourceRow): ScheduleConflict | undefined {
     return this.conflicts().find(c => c.conflictingModules.includes(ressource.moduleName));
   }
 
@@ -309,24 +308,24 @@ export class Ressource implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    const ressourcesDTO: UpdateHoursDTO[] = this.scheduleData().map(row => ({
+    const ressources: UpdateHours[] = this.scheduleData().map(row => ({
       ressourceId: row.id,
       hoursPerWeek: row.hoursPerWeek,
       hoursPerHalfGroup: row.hoursPerHalfGroup
     }));
 
-    const projectDTO: UpdateHoursDTO = {
+    const project: UpdateHours = {
       ressourceId: 0,
       hoursPerWeek: this.projectData().hoursPerWeek,
       hoursPerHalfGroup: this.projectData().hoursPerHalfGroup
     };
 
-    const validationRequest: ValidationRequestDTO = {
+    const validationRequest: ValidationRequest = {
       selectedYear: this.selectedYear(),
       selectedClass: this.selectedClass(),
       selectedSemester: this.selectedSemester(),
-      ressources: ressourcesDTO,
-      project: projectDTO
+      ressources: ressources,
+      project: project
     };
 
     this.pedagogicalScheduleService.validateSchedule(validationRequest)
@@ -360,26 +359,26 @@ export class Ressource implements OnInit {
   }
 
   // Maquette calculation methods
-  getAllWeeks(): WeekDTO[] {
+  getAllWeeks(): Week[] {
     return this.weeks().flatMap(month => month.weeks);
   }
 
-  calculateTotalHours(row: RessourceScheduleDTO): number {
+  calculateTotalHours(row: RessourceSchedule): number {
     if (!row.hoursPerWeek) return 0;
     return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.cm || 0) + (w.td || 0) + (w.tp || 0), 0);
   }
 
-  calculateTotalCM(row: RessourceScheduleDTO): number {
+  calculateTotalCM(row: RessourceSchedule): number {
     if (!row.hoursPerWeek) return 0;
     return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.cm || 0), 0);
   }
 
-  calculateTotalTD(row: RessourceScheduleDTO): number {
+  calculateTotalTD(row: RessourceSchedule): number {
     if (!row.hoursPerWeek) return 0;
     return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.td || 0), 0);
   }
 
-  calculateTotalTP(row: RessourceScheduleDTO): number {
+  calculateTotalTP(row: RessourceSchedule): number {
     if (!row.hoursPerWeek) return 0;
     return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.tp || 0), 0);
   }
@@ -468,7 +467,7 @@ export class Ressource implements OnInit {
     });
   }
 
-  getWeekTotal(hoursPerWeek: { [key: string]: WeekHoursDTO }, weekNum: number): number {
+  getWeekTotal(hoursPerWeek: { [key: string]: WeekHours }, weekNum: number): number {
     const w = hoursPerWeek[weekNum.toString()];
     return w ? (w.cm || 0) + (w.td || 0) + (w.tp || 0) : 0;
   }

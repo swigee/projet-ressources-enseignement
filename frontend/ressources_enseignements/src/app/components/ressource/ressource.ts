@@ -7,15 +7,9 @@ import {
   ScheduleConflictDTO,
   TeacherBadgeDTO
 } from '../../models/ressources/ressources.model';
+import {MonthDTO,WeekDTO,ValidationRequestDTO,WeekHoursDTO,UpdateHoursDTO,ValidationResponseDTO,ScheduleStatisticsDTO,RessourceScheduleDTO,PedagogicalScheduleDTO,ProjectScheduleDTO} from '../../models/schedule/schedule.model';
 import {
-  PedagogicalScheduleService,
-  RessourceScheduleDTO,
-  ProjectScheduleDTO,
-  MonthDTO,
-  WeekDTO,
-  WeekHoursDTO,
-  ValidationRequestDTO,
-  UpdateHoursDTO
+  PedagogicalScheduleService
 } from '../../services/pedagogical-schedule/pedagogical-schedule-service';
 import { UserService } from '../../services/user/user-service';
 import { Router } from '@angular/router';

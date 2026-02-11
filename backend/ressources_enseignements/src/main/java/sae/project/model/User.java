@@ -67,17 +67,17 @@ public class User implements Serializable {
     @Column(name = "validation_status")
     private String validationStatus = "NONE"; // NONE, SUBMITTED, VALIDATED
 
-    @ManyToMany(mappedBy = "usersList")
+    @ManyToMany(mappedBy = "usersList", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Formation> formationList;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roleList;
 
-    @OneToMany(mappedBy = "user")
-    private List<Ticket> ticketsList; // Will fix Tickets relation later
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Ticket> ticketsList;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Assignment> assignmentList; // Will fix Assignment relation later
 
     // Lombok handles Getters/Setters/Constructors/toString/Data

@@ -72,8 +72,10 @@ export class UserManager {
   }
 
   removeUser(id: number) {
+    console.log(id);
     this.userService.deleteUser(id).subscribe(() => {
       this.loadUsers();
+
     });
   }
 

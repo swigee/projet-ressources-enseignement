@@ -1,9 +1,11 @@
 package sae.project.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import sae.project.model.Formation;
 
 import java.util.List;
@@ -31,4 +33,9 @@ public interface FormationRepository extends JpaRepository<Formation, Integer> {
     // Rechercher toutes les classes pour une année
     @Query("SELECT DISTINCT f.className FROM Formation f WHERE f.year = :year ORDER BY f.className")
     List<String> findClassesByYear(@Param("year") String year);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM user_formation uf WHERE uf.user_id = :userId", nativeQuery = true)
+    void deleteByUserId(@Param("userId") int userId);
 }

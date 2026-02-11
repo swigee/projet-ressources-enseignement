@@ -2,10 +2,10 @@ package sae.project.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sae.project.model.Formation;
 import sae.project.model.Role;
 import sae.project.model.User;
-import sae.project.repositories.RoleRepository;
-import sae.project.repositories.UserRepository;
+import sae.project.repositories.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -20,6 +20,18 @@ public class UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private TeacherAssignmentRepository teacherAssignmentRepository;
+
+    @Autowired
+    private TicketRepository ticketRepository;
+
+    @Autowired
+    private FormationRepository formationRepository;
+
+    @Autowired
+    private FormationRepository userFormationRepository;
 
     public List<User> userList() {
         return userRepository.findAll();
@@ -37,19 +49,23 @@ public class UserService {
     public void deleteUser(int id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        // Supprimer les assignments liés
+        teacherAssignmentRepository.deleteByUserId(id);
+        ticketRepository.deleteByUserId(id);
+        formationRepository.deleteByUserId(id);
         if (user.getAssignmentList() != null) {
             user.getAssignmentList().clear();
         }
-        // Supprimer les tickets liés
         if (user.getTicketsList() != null) {
             user.getTicketsList().clear();
         }
-        // Supprimer les formations liées
         if (user.getFormationList() != null) {
+            for (Formation formation : user.getFormationList()) {
+                if (formation.getUsersList() != null) {
+                    formation.getUsersList().remove(user);
+                }
+            }
             user.getFormationList().clear();
         }
-        // Supprimer les rôles liés
         if (user.getRoleList() != null) {
             user.getRoleList().clear();
         }

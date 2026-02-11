@@ -118,11 +118,11 @@ export class Ressource implements OnInit {
   calculatedTotals = computed<RessourcesTotals>(() => {
     const filtered = this.filteredRessources();
     return {
-      totalPlannedHours: filtered.reduce((sum, r) => sum + r.plannedHours, 0),
-      totalActualHours: filtered.reduce((sum, r) => sum + r.actualHours, 0),
-      totalTDHours: filtered.reduce((sum, r) => sum + r.TDHours, 0),
-      totalTPHours: filtered.reduce((sum, r) => sum + r.TPHours, 0),
-      totalCMHours: filtered.reduce((sum, r) => sum + r.CMHours, 0)
+      totalPlannedHours: filtered.reduce((sum, r) => sum + r.heuresPrevisionnelles, 0),
+      totalActualHours: filtered.reduce((sum, r) => sum + r.heuresReelles, 0),
+      totalTDHours: filtered.reduce((sum, r) => sum + r.heuresTD, 0),
+      totalTPHours: filtered.reduce((sum, r) => sum + r.heuresTP, 0),
+      totalCMHours: filtered.reduce((sum, r) => sum + r.heuresCM, 0)
     };
   });
 
@@ -469,7 +469,7 @@ export class Ressource implements OnInit {
   }
 
   // Validation methods
-  loadValidationStatus(): void {
+   loadValidationStatus(): void {
     if (isPlatformBrowser(this.platformId)) {
       const userId = Number(localStorage.getItem('userId'));
       if (userId) {

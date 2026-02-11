@@ -29,8 +29,6 @@ public class RessourcesService {
     @Autowired
     private TeacherAssignmentRepository assignmentRepository;
 
-    @Autowired
-    private UserRepository userRepository;
 
     /**
      * Récupérer les données du tableau de ressources pour une année, classe et semestre

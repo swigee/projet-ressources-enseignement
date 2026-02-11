@@ -20,11 +20,11 @@ import {
 import { UserService } from '../../services/user/user-service';
 import { Router } from '@angular/router';
 import { PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser, AsyncPipe, NgIf, NgFor } from '@angular/common'; // added AsyncPipe, NgIf, NgFor
+import { isPlatformBrowser, AsyncPipe, NgIf, NgFor } from '@angular/common';
 import { TicketService, CreateTicketDTO } from '../../services/ticket/ticket.service';
 import { ServiceSheetService } from '../../services/professor-service/service-sheet.service';
 import { ServiceSummary } from '../../models/service-summary.model';
-import { Observable, of } from 'rxjs';
+
 
 @Component({
   selector: 'app-ressource',
@@ -32,11 +32,8 @@ import { Observable, of } from 'rxjs';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    NgIf,
-    NgFor
   ],
-  templateUrl: './ressource.html',
-  styleUrl: './ressource.css',
+  templateUrl: './ressource.html'
 })
 export class Ressource implements OnInit {
   private readonly ressourcesTableService = inject(RessourcesService);
@@ -47,10 +44,10 @@ export class Ressource implements OnInit {
   private readonly serviceSheetService = inject(ServiceSheetService);
   private readonly ticketService = inject(TicketService);
 
-  // Tab state
+
   activeTab = signal<string>('ressources');
 
-  // Validation state
+
   validationStatus = signal<string>('NONE'); // NONE, SUBMITTED, VALIDATED
   showValidationConfirm = signal<boolean>(false);
   services = signal<ServiceSummary[]>([]);
@@ -58,11 +55,9 @@ export class Ressource implements OnInit {
   filteredServices = computed(() => {
     const allServices = this.services();
     const year = this.selectedYear();
-    // Filter services that match the selected year
     return allServices.filter(service => service.year === year);
   });
 
-  // Ticket Modal state
   showModal = false;
   ticketData: CreateTicketDTO = {
     title: '',

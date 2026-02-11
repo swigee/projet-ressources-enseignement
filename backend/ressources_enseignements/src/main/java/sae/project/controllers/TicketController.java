@@ -2,7 +2,8 @@ package sae.project.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import sae.project.dtos.TicketDto;
+
+import sae.project.dtos.ticket.TicketDto;
 import sae.project.services.TicketService;
 
 @RestController

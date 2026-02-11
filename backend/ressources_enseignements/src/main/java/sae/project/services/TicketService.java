@@ -2,7 +2,8 @@ package sae.project.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sae.project.dtos.TicketDto;
+
+import sae.project.dtos.ticket.TicketDto;
 import sae.project.model.Ticket;
 import sae.project.model.User;
 import sae.project.repositories.TicketRepository;

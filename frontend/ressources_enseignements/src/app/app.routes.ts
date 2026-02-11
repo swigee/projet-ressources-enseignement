@@ -6,39 +6,43 @@ import { EducationManagerCreation } from './components/education-manager-creatio
 import { TeacherAssignmentComponent } from './components/teacher-assignment/teacher-assignment';
 import { UserManager } from './components/user-manager/user-manager';
 import { Ressource } from './components/ressource/ressource';
+import { authGuard } from './services/auth/auth.guard';
+import { roleGuard } from './services/auth/role.guard';
 
 export const routes: Routes = [
     // {
     //   path:'',
     //   redirectTo:'login',
     //   pathMatch:'full',
-
     // },
-    // {
-    //   path:'login',
-    //   component: Login
-    // },
-    {
-        path:'',
-        component: Dashboard
-    },
-    {
-        path:'syllabus',
-        component: Dashboard
-    },
-    {
-        path:'educational-model',
-        component: Ressource
-    },
-    {
-        path:'service-sheet',
-        component: Dashboard
-    },
-    {
-      path:'teacher-assignment',
-      component: TeacherAssignmentComponent
-    },
-    {
+  {
+    path: 'login',
+    component: Login
+  },
+  {
+    path: 'dashboard',
+    component: Dashboard,
+    canActivate: [authGuard] 
+  },
+  {
+    path: 'syllabus',
+    component: Dashboard, 
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['STUDENT', 'TEACHER'] }
+  },
+  {
+    path: 'educational-model',
+    component: Ressource,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['TEACHER', 'ADMIN'] }
+  },
+  {
+    path: 'teacher-assignment',
+    component: TeacherAssignmentComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
+  },
+  {
         path:'education-manager',
         component: EducationalManager
     },
@@ -50,13 +54,17 @@ export const routes: Routes = [
         path:'education-manager/edit/:id',
         component: EducationManagerCreation
     },
-    {
-      path:'user-manager',
-      component: UserManager
-    },
-    {
-      path: 'ressource',
-      component: Ressource
-    }
+  {
+    path: 'user-manager',
+    component: UserManager,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
+  },
+  {
+    path: 'ressource',
+    component: Ressource,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['TEACHER'] }
+  }
 
 ];

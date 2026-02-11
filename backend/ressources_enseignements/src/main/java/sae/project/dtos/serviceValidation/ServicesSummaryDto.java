@@ -1,4 +1,4 @@
-package sae.project.dtos;
+package sae.project.dtos.serviceValidation;
 
 public class ServicesSummaryDto {
     private String resourceTitle;

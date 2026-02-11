@@ -35,9 +35,6 @@ public interface TeacherAssignmentRepository extends JpaRepository<Assignment, I
             @Param("resourceId") Integer resourceId,
             @Param("lessonType") String lessonType);
 
-    // Trouver par type de cours
-    List<Assignment> findByLessonType(String lessonType);
-
     // Trouver les affectations par formation (via ressource)
     @Query("SELECT a FROM Assignment a " +
             "JOIN a.resource r " +
@@ -46,24 +43,6 @@ public interface TeacherAssignmentRepository extends JpaRepository<Assignment, I
     List<Assignment> findByFormation(
             @Param("year") String year,
             @Param("className") String className);
-
-    // Calculer le total des heures pour un enseignant
-    @Query("SELECT COALESCE(SUM(a.assignedTimes), 0) FROM Assignment a WHERE a.user.id = :userId")
-    Integer getTotalHoursByUserId(@Param("userId") Integer userId);
-
-    // Trouver les ressources non affectées pour une formation
-    @Query("SELECT r FROM Resource r " +
-            "JOIN r.formationList f " +
-            "WHERE f.year = :year AND f.className = :className " +
-            "AND r.id NOT IN (SELECT a.resource.id FROM Assignment a)")
-    List<Object> findUnassignedResources(
-            @Param("year") String year,
-            @Param("className") String className);
-
-    // Statistiques par type de cours
-    @Query("SELECT a.lessonType, COUNT(a), SUM(a.assignedTimes) " +
-            "FROM Assignment a GROUP BY a.lessonType")
-    List<Object[]> getStatisticsByLessonType();
 
     // Enseignants avec leurs heures (exclure les étudiants)
     @Query("SELECT u.id, u.firstName, u.lastName, COALESCE(SUM(a.assignedTimes), 0) " +

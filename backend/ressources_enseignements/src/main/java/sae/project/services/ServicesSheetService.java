@@ -2,7 +2,8 @@ package sae.project.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sae.project.dtos.ServicesSummaryDto;
+
+import sae.project.dtos.serviceValidation.ServicesSummaryDto;
 import sae.project.model.Assignment;
 import sae.project.repositories.TeacherAssignmentRepository;
 

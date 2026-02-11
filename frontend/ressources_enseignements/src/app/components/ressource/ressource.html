@@ -1,14 +1,12 @@
 <div class="min-h-screen bg-gray-50 p-6">
   <div class="max-w-7xl mx-auto bg-white rounded-lg shadow-lg">
 
-    <!-- En-tete -->
     <div class="border-b border-gray-200 p-6">
       <h1 class="text-2xl font-semibold text-gray-800">
         Tableau des ressources
       </h1>
     </div>
 
-    <!-- Onglets -->
     <div class="flex border-b border-gray-300">
       <button
         (click)="setActiveTab('ressources')"
@@ -36,7 +34,6 @@
       </button>
     </div>
 
-    <!-- Selecteurs Annee et Classe -->
     <div class="border-b border-gray-200 p-6">
       <div class="flex gap-4">
         <div class="flex-1">
@@ -89,10 +86,8 @@
       </div>
     </div>
 
-    <!-- Barre de recherche et filtres enseignants (Ressources tab only) -->
     @if (activeTab() === 'ressources') {
       <div class="p-6 border-b border-gray-200">
-        <!-- Search bar -->
         <div class="relative mb-4">
           <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -106,7 +101,6 @@
           />
         </div>
 
-        <!-- Teacher search autocomplete -->
         <div class="relative">
           <span class="text-sm font-medium text-gray-700 mb-2 block">Filtrer par enseignant:</span>
           <div class="relative">
@@ -121,7 +115,6 @@
               (blur)="closeTeacherDropdown()"
               class="w-full pl-9 pr-4 py-2 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
             />
-            <!-- Dropdown -->
             @if (showTeacherDropdown() && filteredTeacherSuggestions().length > 0) {
               <div class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-48 overflow-y-auto">
                 @for (teacher of filteredTeacherSuggestions(); track teacher.teacherId) {
@@ -141,7 +134,6 @@
             }
           </div>
 
-          <!-- Selected teacher badges -->
           @if (selectedTeacherIds().length > 0) {
             <div class="flex flex-wrap gap-2 mt-3 items-center">
               @for (teacherId of selectedTeacherIds(); track teacherId) {
@@ -153,7 +145,6 @@
             </div>
           }
 
-          <!-- Clear filters button -->
           @if (selectedTeacherIds().length > 0 || searchQuery()) {
             <button
               (click)="clearFilters()"
@@ -166,22 +157,18 @@
       </div>
     }
 
-
-    <!-- Loading indicator -->
     @if (isLoading()) {
       <div class="flex justify-center items-center p-12">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     }
 
-    <!-- Error message -->
     @if (errorMessage()) {
       <div class="p-4 m-6 bg-red-50 border border-red-200 rounded-lg">
         <p class="text-sm text-red-800">{{ errorMessage() }}</p>
       </div>
     }
 
-    <!-- Contenu du tableau - Ressources tab -->
     @if (activeTab() === 'ressources' && !isLoading()) {
       <div class="p-6">
         <div class="overflow-x-auto border border-gray-300 rounded-lg">
@@ -208,7 +195,7 @@
               } @else {
                 @for (row of filteredRessources(); track row.id) {
                   <tr [class]="(row.isHighlighted ? 'bg-blue-100' : 'bg-white') + ' border-b border-gray-300 hover:bg-blue-50'">
-                    <!-- Module Name -->
+
                     <td [class]="'px-4 py-3 font-medium ' + (row.isHighlighted ? 'bg-blue-100' : '')">
                       {{ row.moduleName }}
                       @if (row.category) {
@@ -218,32 +205,26 @@
                       }
                     </td>
 
-                    <!-- Heures Previsionnelles -->
                     <td class="px-4 py-3 text-center">
-                      {{ row.heuresPrevisionnelles }}h
+                      {{ row.plannedHours }}h
                     </td>
 
-                    <!-- Heures Reelles -->
                     <td class="px-4 py-3 text-center">
-                      {{ row.heuresReelles }}h
+                      {{ row.actualHours }}h
                     </td>
 
-                    <!-- Heures TD -->
                     <td class="px-4 py-3 text-center font-medium" style="color: #4ecdc4">
-                      {{ row.heuresTD }}h
+                      {{ row.TDHours }}h
                     </td>
 
-                    <!-- Heures TP -->
                     <td class="px-4 py-3 text-center font-medium" style="color: #a864a8">
-                      {{ row.heuresTP }}h
+                      {{ row.TPHours }}h
                     </td>
 
-                    <!-- Heures CM -->
                     <td class="px-4 py-3 text-center font-medium" style="color: #ff6b6b">
-                      {{ row.heuresCM }}h
+                      {{ row.CMHours }}h
                     </td>
 
-                    <!-- Enseignants badges -->
                     <td class="px-4 py-3">
                       <div class="flex flex-wrap gap-1">
                         @for (teacher of row.assignedTeachers; track teacher.teacherId) {
@@ -257,7 +238,7 @@
                       </div>
                     </td>
 
-                    <!-- Statut / Conflict indicator -->
+
                     <td class="px-4 py-3 text-center">
                       @if (hasConflict(row)) {
                         <div class="flex items-center justify-center" title="Conflit d'emploi du temps detecte">
@@ -278,22 +259,22 @@
               }
             </tbody>
 
-            <!-- Footer with totals -->
+
             <tfoot>
             <tr class="bg-gray-100 border-t-2 border-gray-400 font-semibold">
               <td class="px-4 py-3">Total</td>
-              <td class="px-4 py-3 text-center">{{ calculatedTotals().totalHeuresPrevisionnelles }}h</td>
-              <td class="px-4 py-3 text-center">{{ calculatedTotals().totalHeuresReelles }}h</td>
-              <td class="px-4 py-3 text-center" style="color: #4ecdc4">{{ calculatedTotals().totalHeuresTD }}h</td>
-              <td class="px-4 py-3 text-center" style="color: #a864a8">{{ calculatedTotals().totalHeuresTP }}h</td>
-              <td class="px-4 py-3 text-center" style="color: #ff6b6b">{{ calculatedTotals().totalHeuresCM }}h</td>
+              <td class="px-4 py-3 text-center">{{ calculatedTotals().totalPlannedHours }}h</td>
+              <td class="px-4 py-3 text-center">{{ calculatedTotals().totalActualHours }}h</td>
+              <td class="px-4 py-3 text-center" style="color: #4ecdc4">{{ calculatedTotals().totalTDHours }}h</td>
+              <td class="px-4 py-3 text-center" style="color: #a864a8">{{ calculatedTotals().totalTPHours }}h</td>
+              <td class="px-4 py-3 text-center" style="color: #ff6b6b">{{ calculatedTotals().totalCMHours }}h</td>
               <td class="px-4 py-3" colspan="2"></td>
             </tr>
             </tfoot>
           </table>
         </div>
 
-        <!-- Conflict summary panel -->
+
         @if (filteredConflicts().length > 0) {
           <div class="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
             <h3 class="text-sm font-semibold text-orange-800 mb-2">
@@ -314,41 +295,41 @@
           </div>
         }
 
-        <!-- Statistics -->
+
         <div class="mt-4 p-4 bg-blue-50 rounded-lg">
           <div class="grid grid-cols-5 gap-4">
             <div>
               <div class="text-sm text-gray-600">Total Prev.</div>
-              <div class="text-xl font-bold text-gray-800">{{ calculatedTotals().totalHeuresPrevisionnelles }}h</div>
+              <div class="text-xl font-bold text-gray-800">{{ calculatedTotals().totalPlannedHours }}h</div>
             </div>
             <div>
               <div class="text-sm text-gray-600">Total Reelles</div>
-              <div class="text-xl font-bold text-blue-600">{{ calculatedTotals().totalHeuresReelles }}h</div>
+              <div class="text-xl font-bold text-blue-600">{{ calculatedTotals().totalActualHours }}h</div>
             </div>
             <div>
               <div class="text-sm text-gray-600">Total TD</div>
-              <div class="text-xl font-bold" style="color: #4ecdc4">{{ calculatedTotals().totalHeuresTD }}h</div>
+              <div class="text-xl font-bold" style="color: #4ecdc4">{{ calculatedTotals().totalTDHours }}h</div>
             </div>
             <div>
               <div class="text-sm text-gray-600">Total TP</div>
-              <div class="text-xl font-bold" style="color: #a864a8">{{ calculatedTotals().totalHeuresTP }}h</div>
+              <div class="text-xl font-bold" style="color: #a864a8">{{ calculatedTotals().totalTPHours }}h</div>
             </div>
             <div>
               <div class="text-sm text-gray-600">Total CM</div>
-              <div class="text-xl font-bold" style="color: #ff6b6b">{{ calculatedTotals().totalHeuresCM }}h</div>
+              <div class="text-xl font-bold" style="color: #ff6b6b">{{ calculatedTotals().totalCMHours }}h</div>
             </div>
           </div>
         </div>
       </div>
     }
 
-    <!-- Maquette tab content - Card-based Layout -->
+
     @if (activeTab() === 'maquette' && !isLoading()) {
       <div class="p-6 space-y-6">
 
-        <!-- Edit Controls Bar -->
+
         <div class="flex items-center justify-between gap-3 sticky top-0 z-50 bg-white py-3 border-b border-gray-200 shadow-sm -mx-6 px-6">
-          <!-- Editing indicator -->
+
           <div>
             @if (isEditing()) {
               <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm font-medium">
@@ -392,7 +373,7 @@
           </div>
         </div>
 
-        <!-- Success banner -->
+
         @if (successMessage()) {
           <div class="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg">
             <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -402,7 +383,7 @@
           </div>
         }
 
-        <!-- Stats Cards Row -->
+
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 border-l-4" style="border-left-color: #667eea">
             <div class="text-sm text-gray-600">Total heures</div>
@@ -422,7 +403,7 @@
           </div>
         </div>
 
-        <!-- Legend Bar -->
+
         <div class="bg-gray-50 rounded-lg px-4 py-3 flex flex-wrap items-center gap-4">
           <span class="text-sm font-medium text-gray-700">Legende :</span>
           <span class="flex items-center gap-1.5">
@@ -443,10 +424,10 @@
           </span>
         </div>
 
-        <!-- Modules Loop -->
+
         @for (row of scheduleData(); track row.id) {
           <div class="space-y-3">
-            <!-- Module Header Card -->
+
             <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200 border-l-4 p-4 hover:shadow-lg transition-shadow duration-200" style="border-left-color: #667eea">
               <div class="flex flex-wrap items-center justify-between gap-4">
                 <div>
@@ -488,11 +469,11 @@
               </div>
             </div>
 
-            <!-- Weekly Grid -->
+
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-4">
               @for (week of getAllWeeks(); track $index) {
                 @if (week.type === 'S') {
-                  <!-- Company week -->
+
                   <div class="bg-amber-50 border border-amber-300 rounded-lg p-4 text-center hover:shadow-lg transition-shadow duration-200">
                     <div class="font-bold text-amber-700 mb-3 pb-2 border-b border-amber-200 text-sm">S{{ week.num }}
                       <span class="text-xs text-amber-500 font-normal ml-1">{{ week.date }}</span>
@@ -500,13 +481,13 @@
                     <div class="text-xs text-amber-600 font-medium">Entreprise</div>
                   </div>
                 } @else {
-                  <!-- Education week -->
+
                   <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
                     <div class="font-bold text-gray-800 mb-3 pb-2 border-b border-gray-200 text-sm">S{{ week.num }}
                       <span class="text-xs text-gray-500 font-normal ml-1">{{ week.date }}</span>
                     </div>
                     <div class="space-y-2">
-                      <!-- CM input -->
+
                       <div class="flex justify-between items-center text-sm">
                         <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #ffe8e8; color: #ff6b6b">CM</span>
                         <input type="number" min="0"
@@ -515,7 +496,7 @@
                           [readonly]="!isEditing()"
                           class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-red-500 focus:outline-none text-sm">
                       </div>
-                      <!-- TD input -->
+
                       <div class="flex justify-between items-center text-sm">
                         <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #e0f7f6; color: #4ecdc4">TD</span>
                         <input type="number" min="0"
@@ -524,7 +505,7 @@
                           [readonly]="!isEditing()"
                           class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:outline-none text-sm">
                       </div>
-                      <!-- TP input -->
+
                       <div class="flex justify-between items-center text-sm">
                         <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #f3e5f3; color: #a864a8">TP</span>
                         <input type="number" min="0"
@@ -533,7 +514,7 @@
                           [readonly]="!isEditing()"
                           class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
                       </div>
-                      <!-- Week total -->
+
                       <div class="flex justify-between items-center text-sm pt-2 border-t border-gray-200">
                         <span class="text-gray-600 font-semibold">Total</span>
                         <span class="font-bold text-gray-800">{{ getWeekTotal(row.hoursPerWeek, week.num) }}h</span>
@@ -546,9 +527,7 @@
           </div>
         }
 
-        <!-- Projet SAE Section -->
         <div class="space-y-3">
-          <!-- Project Header Card -->
           <div class="bg-green-50 rounded-lg shadow-sm border border-gray-200 border-l-4 border-green-500 p-4 hover:shadow-lg transition-shadow duration-200">
             <div class="flex flex-wrap items-center justify-between gap-4">
               <div>
@@ -576,7 +555,6 @@
             </div>
           </div>
 
-          <!-- Project Weekly Grid -->
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-4">
             @for (week of getAllWeeks(); track $index) {
               @if (week.type === 'S') {
@@ -592,7 +570,6 @@
                     <span class="text-xs text-green-500 font-normal ml-1">{{ week.date }}</span>
                   </div>
                   <div class="space-y-2">
-                    <!-- CM input -->
                     <div class="flex justify-between items-center text-sm">
                       <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #ffe8e8; color: #ff6b6b">CM</span>
                       <input type="number" min="0"
@@ -601,7 +578,6 @@
                         [readonly]="!isEditing()"
                         class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-red-500 focus:outline-none text-sm">
                     </div>
-                    <!-- TD input -->
                     <div class="flex justify-between items-center text-sm">
                       <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #e0f7f6; color: #4ecdc4">TD</span>
                       <input type="number" min="0"
@@ -610,7 +586,6 @@
                         [readonly]="!isEditing()"
                         class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
                     </div>
-                    <!-- TP input -->
                     <div class="flex justify-between items-center text-sm">
                       <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #f3e5f3; color: #a864a8">TP</span>
                       <input type="number" min="0"
@@ -619,7 +594,6 @@
                         [readonly]="!isEditing()"
                         class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
                     </div>
-                    <!-- Week total -->
                     <div class="flex justify-between items-center text-sm pt-2 border-t border-green-200">
                       <span class="text-green-700 font-semibold">Total</span>
                       <span class="font-bold text-green-800">{{ getWeekTotal(projectData().hoursPerWeek, week.num) }}h</span>
@@ -631,9 +605,7 @@
           </div>
         </div>
 
-        <!-- Totals Summary Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Total hors projet -->
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
             <div class="flex items-center justify-between mb-3">
               <h3 class="text-sm font-semibold text-gray-700">Total hors projet</h3>
@@ -656,7 +628,6 @@
             </div>
           </div>
 
-          <!-- Total avec projet -->
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
             <div class="flex items-center justify-between mb-3">
               <h3 class="text-sm font-semibold text-gray-700">Total avec projet</h3>
@@ -680,7 +651,6 @@
           </div>
         </div>
 
-        <!-- Statistics Footer -->
         <div class="bg-blue-50 rounded-lg p-4">
           <div class="grid grid-cols-3 gap-4">
             <div>
@@ -701,11 +671,9 @@
       </div>
     }
 
-    <!-- Validation tab content -->
     @if (activeTab() === 'validation' && !isLoading()) {
     <div class="p-6">
 
-      <!-- Service Summary Table -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
         <div class="grid grid-cols-12 gap-4 border-b border-gray-200 pb-4 mb-4 text-gray-500 text-sm font-medium">
           <div class="col-span-4">Module / Ressource</div>
@@ -715,34 +683,35 @@
           <div class="col-span-2 text-center">TP</div>
         </div>
 
-        <!-- Service Summary Table Content -->
         <div>
-          <div *ngIf="filteredServices().length === 0" class="text-center py-10 text-gray-400 italic">
-            Aucun service trouvé pour cette année.
-          </div>
-
-          <div *ngFor="let service of filteredServices()"
-            class="py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition">
-            <div class="grid grid-cols-12 gap-4 items-center">
-              <div class="col-span-4 font-bold text-gray-800">{{ service.resourceTitle }}</div>
-              <div class="col-span-2 text-center font-bold text-blue-600">{{ service.totalHours }}h</div>
-              <div class="col-span-2 text-center">{{ service.hoursCM > 0 ? service.hoursCM + 'h' : '-' }}</div>
-              <div class="col-span-2 text-center">{{ service.hoursTD > 0 ? service.hoursTD + 'h' : '-' }}</div>
-              <div class="col-span-2 text-center">{{ service.hoursTP > 0 ? service.hoursTP + 'h' : '-' }}</div>
+          @if (filteredServices().length === 0){
+            <div class="text-center py-10 text-gray-400 italic">
+              Aucun service trouvé pour cette année.
             </div>
-          </div>
+          }
+
+          @for(service of filteredServices(); track $index ){
+
+            <div class="py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition">
+              <div class="grid grid-cols-12 gap-4 items-center">
+                <div class="col-span-4 font-bold text-gray-800">{{ service.resourceTitle }}</div>
+                <div class="col-span-2 text-center font-bold text-blue-600">{{ service.totalHours }}h</div>
+                <div class="col-span-2 text-center">{{ service.hoursCM > 0 ? service.hoursCM + 'h' : '-' }}</div>
+                <div class="col-span-2 text-center">{{ service.hoursTD > 0 ? service.hoursTD + 'h' : '-' }}</div>
+                <div class="col-span-2 text-center">{{ service.hoursTP > 0 ? service.hoursTP + 'h' : '-' }}</div>
+              </div>
+            </div>
+          }
         </div>
       </div>
 
-      <!-- Status Stepper -->
       <div class="flex justify-center w-full mb-12 mt-8">
         <div class="flex items-center w-full max-w-2xl">
 
-          <!-- Etape 1 : Envoyé -->
           <div class="flex flex-col items-center relative">
             <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300"
-              [class]="(validationStatus() === 'SUBMITTED' || validationStatus() === 'VALIDATED') 
-                  ? 'bg-green-100 border-green-500 text-green-600' 
+              [class]="(validationStatus() === 'SUBMITTED' || validationStatus() === 'VALIDATED')
+                  ? 'bg-green-100 border-green-500 text-green-600'
                   : 'bg-gray-100 border-gray-300 text-gray-400'">
               <i class="fa-solid fa-paper-plane text-xl"></i>
             </div>
@@ -750,16 +719,14 @@
               envoyée</span>
           </div>
 
-          <!-- Ligne de connexion -->
           <div class="flex-1 h-1 mx-4 rounded transition-all duration-300"
             [class]="validationStatus() === 'VALIDATED' ? 'bg-green-500' : 'bg-gray-200'">
           </div>
 
-          <!-- Etape 2 : Validé -->
           <div class="flex flex-col items-center relative">
             <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300"
-              [class]="validationStatus() === 'VALIDATED' 
-                  ? 'bg-green-100 border-green-500 text-green-600' 
+              [class]="validationStatus() === 'VALIDATED'
+                  ? 'bg-green-100 border-green-500 text-green-600'
                   : 'bg-gray-100 border-gray-300 text-gray-400'">
               <i class="fa-solid fa-circle-check text-xl"></i>
             </div>
@@ -770,108 +737,108 @@
         </div>
       </div>
 
-      <!-- Action Buttons (Only if NONE) -->
       @if (validationStatus() === 'NONE') {
-      <div class="flex justify-center gap-6 mt-16">
-        <button
-          class="px-8 py-4 bg-red-100 text-red-700 font-semibold rounded-xl hover:bg-red-200 transition duration-200 shadow-sm flex items-center gap-2"
-          (click)="openTicketModal()">
-          <i class="fa-regular fa-circle-exclamation"></i>
-          Signaler un problème
-        </button>
-        <button (click)="requestValidation()"
-          class="px-8 py-4 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition duration-200 shadow-md flex items-center gap-2 transform hover:scale-105">
-          <i class="fa-solid fa-check"></i>
-          Valider le service
-        </button>
-      </div>
-      } @else {
-      <div class="text-center mt-12 p-6 bg-blue-50 rounded-xl border border-blue-100 max-w-2xl mx-auto">
-        <p class="text-blue-800 font-medium">
-          <i class="fa-solid fa-info-circle mr-2"></i>
-          Votre service a été transmis pour validation. Vous serez notifié dès qu'il sera validé par le chef de
-          département.
-        </p>
-      </div>
-      }
-    </div>
-    }
-
-    <!-- Validation Confirmation Pop-up -->
-    @if (showValidationConfirm()) {
-    <div class="fixed bottom-6 right-6 z-50 animate-bounce-in">
-      <div class="bg-white rounded-lg shadow-2xl border border-gray-200 p-6 max-w-sm flex flex-col gap-4">
-        <div>
-          <h3 class="font-bold text-gray-800 text-lg mb-2">Confirmer la validation</h3>
-          <p class="text-sm text-gray-600">
-            Une fois validé, vous ne pourrez plus signaler de problèmes. Êtes-vous sûr de vouloir envoyer votre service
-            au
-            chef de département ?
+        <div class="flex justify-center gap-6 mt-16">
+          <button
+            class="px-8 py-4 bg-red-100 text-red-700 font-semibold rounded-xl hover:bg-red-200 transition duration-200 shadow-sm flex items-center gap-2"
+            (click)="openTicketModal()">
+            <i class="fa-regular fa-circle-exclamation"></i>
+            Signaler un problème
+          </button>
+          <button (click)="requestValidation()"
+            class="px-8 py-4 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition duration-200 shadow-md flex items-center gap-2 transform hover:scale-105">
+            <i class="fa-solid fa-check"></i>
+            Valider le service
+          </button>
+        </div>
+        } @else {
+        <div class="text-center mt-12 p-6 bg-blue-50 rounded-xl border border-blue-100 max-w-2xl mx-auto">
+          <p class="text-blue-800 font-medium">
+            <i class="fa-solid fa-info-circle mr-2"></i>
+            Votre service a été transmis pour validation. Vous serez notifié dès qu'il sera validé par le chef de
+            département.
           </p>
         </div>
-        <div class="flex justify-end gap-3">
-          <button (click)="cancelValidation()"
-            class="px-4 py-2 bg-gray-100 text-gray-600 font-medium rounded hover:bg-gray-200 transition">
-            Abandonner
-          </button>
-          <button (click)="confirmValidation()"
-            class="px-4 py-2 bg-green-600 text-white font-medium rounded hover:bg-green-700 transition shadow-sm">
-            Envoyer
-          </button>
-        </div>
+        }
       </div>
-    </div>
     }
 
-    <!-- Ticket Modal -->
-    <div *ngIf="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-
-      <div class="bg-white rounded-xl shadow-2xl overflow-hidden w-full max-w-lg mx-4 transform transition-all">
-
-        <div class="px-8 py-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+    @if (showValidationConfirm()) {
+      <div class="fixed bottom-6 right-6 z-50 animate-bounce-in">
+        <div class="bg-white rounded-lg shadow-2xl border border-gray-200 p-6 max-w-sm flex flex-col gap-4">
           <div>
-            <h2 class="text-xl font-bold text-gray-800">Reporter un problème</h2>
-            <p class="mt-1 text-sm text-gray-500">Décrivez l'erreur constatée dans vos services.</p>
+            <h3 class="font-bold text-gray-800 text-lg mb-2">Confirmer la validation</h3>
+            <p class="text-sm text-gray-600">
+              Une fois validé, vous ne pourrez plus signaler de problèmes. Êtes-vous sûr de vouloir envoyer votre service
+              au
+              chef de département ?
+            </p>
           </div>
-          <button (click)="closeTicketModal()" class="text-gray-400 hover:text-gray-600">
-            <i class="fa-solid fa-xmark text-xl"></i>
-          </button>
-        </div>
-
-        <div class="px-8 py-6 space-y-6">
-
-          <div class="relative">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Sujet du problème <span class="text-red-500">*</span>
-            </label>
-            <input type="text" [(ngModel)]="ticketData.title"
-              class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              placeholder="Ex: Erreur d'heures sur le module Java">
-          </div>
-
-          <div class="relative">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Description détaillée <span class="text-red-500">*</span>
-            </label>
-            <textarea rows="4" [(ngModel)]="ticketData.description"
-              class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
-              placeholder="Décrivez précisément le problème..."></textarea>
-          </div>
-
-          <div class="flex justify-end gap-3 mt-4">
-            <button (click)="closeTicketModal()"
-              class="px-6 py-2.5 text-gray-700 font-medium hover:bg-gray-100 rounded-lg transition">
-              Annuler
+          <div class="flex justify-end gap-3">
+            <button (click)="cancelValidation()"
+              class="px-4 py-2 bg-gray-100 text-gray-600 font-medium rounded hover:bg-gray-200 transition">
+              Abandonner
             </button>
-            <button (click)="submitTicket()"
-              class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md font-medium flex items-center gap-2">
-              Envoyer le ticket <i class="fa-regular fa-paper-plane"></i>
+            <button (click)="confirmValidation()"
+              class="px-4 py-2 bg-green-600 text-white font-medium rounded hover:bg-green-700 transition shadow-sm">
+              Envoyer
             </button>
           </div>
-
         </div>
       </div>
-    </div>
+    }
+
+    @if(showModal){
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+
+        <div class="bg-white rounded-xl shadow-2xl overflow-hidden w-full max-w-lg mx-4 transform transition-all">
+
+          <div class="px-8 py-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-bold text-gray-800">Reporter un problème</h2>
+              <p class="mt-1 text-sm text-gray-500">Décrivez l'erreur constatée dans vos services.</p>
+            </div>
+            <button (click)="closeTicketModal()" class="text-gray-400 hover:text-gray-600">
+              <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+          </div>
+
+          <div class="px-8 py-6 space-y-6">
+
+            <div class="relative">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Sujet du problème <span class="text-red-500">*</span>
+              </label>
+              <input type="text" [(ngModel)]="ticketData.title"
+                     class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                     placeholder="Ex: Erreur d'heures sur le module Java">
+            </div>
+
+            <div class="relative">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Description détaillée <span class="text-red-500">*</span>
+              </label>
+              <textarea rows="4" [(ngModel)]="ticketData.description"
+                        class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+                        placeholder="Décrivez précisément le problème..."></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-4">
+              <button (click)="closeTicketModal()"
+                      class="px-6 py-2.5 text-gray-700 font-medium hover:bg-gray-100 rounded-lg transition">
+                Annuler
+              </button>
+              <button (click)="submitTicket()"
+                      class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md font-medium flex items-center gap-2">
+                Envoyer le ticket <i class="fa-regular fa-paper-plane"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    }
+
 
   </div>
 </div>

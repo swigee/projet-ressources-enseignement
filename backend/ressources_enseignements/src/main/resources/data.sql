@@ -22,7 +22,7 @@ INSERT INTO position (id, name, is_active) VALUES
 -- USERS
 -- =========================
 INSERT INTO user (id, address, email, first_name, last_name, password, phone_number, validation_status, username) VALUES
-(1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', 'admin123', '0101010101', 'VALIDATED', 'admin'),
+(1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', 'admin123', '0101010101', 'NONE', 'admin'),
 (2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', 'prof123', '0202020202', 'VALIDATED', 'prof'),
 (3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', 'student123', '0303030303', 'NONE', 'student'),
 (4, '10 rue des Lilas', 'martin.dupont@univ.fr', 'Martin', 'Dupont', 'pass123', '0604010101', 'NONE', 'mdupont'),
@@ -360,11 +360,11 @@ INSERT INTO resource_syllabus (resource_id, syllabus_id) VALUES
 -- ASSIGNMENT
 -- =========================
 INSERT INTO assignment (id, assigned_times, lesson_type, resource_id, user_id) VALUES
-(1, 20, 'CM', 1, 2),
-(2, 25, 'TD', 2, 2),
-(3, 20, 'CM', 7, 2),
-(4, 30, 'CM', 13, 2), -- Dev App Year 2
-(5, 25, 'TD', 26, 2); -- Arch Log Year 3
+(1, 20, 'CM', 1, 1),
+(2, 25, 'TD', 2, 1),
+(3, 20, 'CM', 7, 1),
+(4, 30, 'CM', 13, 1), -- Dev App Year 2
+(5, 25, 'TD', 26, 1); -- Arch Log Year 3
 
 -- =========================
 -- TICKETS

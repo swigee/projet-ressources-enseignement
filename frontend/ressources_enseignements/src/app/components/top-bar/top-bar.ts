@@ -12,7 +12,27 @@ export class TopBar {
   authService = inject(Auth);
   title = this.pageTitleService.title;
 
+  readonly currentUser = signal<any>(null);
+
+  constructor() {
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser.set(user);
+    });
+  }
+
+  getRole() {
+    if (this.currentUser().roleList.length != 0) {
+      return this.currentUser().roleList[0].name;
+    }
+    return "";
+  }
+
+  isConnected() {
+    return this.currentUser() != null
+  }
+
   logout() {
     this.authService.logout();
   }
+
 }

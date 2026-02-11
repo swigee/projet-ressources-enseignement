@@ -9,4 +9,6 @@ export interface Lesson{
   tp_state_hours: number;
   tp_iut_hours: number;
   category: string;
+  hours_per_week: number;
+  hours_per_half_group: number;
 }

@@ -18,9 +18,6 @@ public interface PedagogicalScheduleRepository extends JpaRepository<Resource, I
         // Rechercher par catégorie
         List<Resource> findByCategory(String category);
 
-        // Rechercher les ressources en surbrillance
-        List<Resource> findByIsHighlighted(Boolean isHighlighted);
-
         // Rechercher par formation
         @Query("SELECT r FROM Resource r JOIN r.formationList f WHERE f.id = :formationId")
         List<Resource> findByFormationId(@Param("formationId") Integer formationId);

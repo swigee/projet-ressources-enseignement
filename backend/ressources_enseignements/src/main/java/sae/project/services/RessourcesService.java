@@ -184,7 +184,6 @@ public class RessourcesService {
                 .heuresTD(resource.getTdStateHours() != null ? resource.getTdStateHours() : 0)
                 .heuresTP(resource.getTpStateHours() != null ? resource.getTpStateHours() : 0)
                 .heuresCM(resource.getCmStateHours() != null ? resource.getCmStateHours() : 0)
-                .isHighlighted(resource.getIsHighlighted() != null ? resource.getIsHighlighted() : false)
                 .assignedTeachers(assignedTeachers)
                 .build();
     }

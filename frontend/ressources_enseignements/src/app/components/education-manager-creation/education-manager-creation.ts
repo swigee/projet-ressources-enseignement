@@ -45,6 +45,7 @@ export class EducationManagerCreation {
       this.selectedLessons = allLessons.filter(l =>
         edu.lessons?.some(el => el.id === l.id)
       );
+      console.log(this.selectedLessons);
     });
   }
   }
@@ -54,13 +55,19 @@ export class EducationManagerCreation {
   }
 
   toggleLesson(l: Lesson) {
-    if (this.selectedLessons.includes(l)) {
-      this.selectedLessons = this.selectedLessons.filter(r => r !== l);
-    }
-    else {
+    const index = this.selectedLessons.findIndex(sl => sl.id === l.id);
+
+    if (index !== -1) {
+      this.selectedLessons.splice(index, 1);
+    } else {
       this.selectedLessons.push(l);
     }
   }
+
+  isSelected(l: Lesson): boolean {
+    return this.selectedLessons.some(sl => sl.id === l.id);
+  }
+
 
   submit() {
     if (this.form.invalid) return;

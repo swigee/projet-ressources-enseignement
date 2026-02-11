@@ -94,198 +94,198 @@ INSERT INTO user_formation (formation_id, user_id) VALUES
 -- RESSOURCES (37 modules BUT Informatique)
 -- =========================
 INSERT INTO resource (
-    id, title, description, category, is_highlighted,
+    id, title, description, category,
     cm_state_hours, cm_iut_hours, td_state_hours, td_iut_hours, tp_state_hours, tp_iut_hours,
     hours_per_week, hours_per_half_group, semester
 ) VALUES
 
 -- ========== ANNEE 1 - SEMESTRE 1 (6 modules) ==========
-(1, 'Initiation au developpement', 'Apprentissage des bases de la programmation', 'Programmation', false,
+(1, 'Initiation au developpement', 'Apprentissage des bases de la programmation', 'Programmation',
  20, 0, 30, 0, 50, 0,
  '{"1":{"cm":1,"td":2,"tp":3,"total":6},"2":{"cm":1,"td":2,"tp":3,"total":6},"3":{"cm":1,"td":2,"tp":3,"total":6},"4":{"cm":1,"td":2,"tp":3,"total":6},"5":{"cm":1,"td":2,"tp":3,"total":6},"6":{"cm":1,"td":2,"tp":3,"total":6},"7":{"cm":1,"td":2,"tp":3,"total":6},"8":{"cm":1,"td":2,"tp":3,"total":6},"9":{"cm":1,"td":2,"tp":3,"total":6},"10":{"cm":1,"td":2,"tp":3,"total":6},"11":{"cm":1,"td":1,"tp":2,"total":4},"12":{"cm":1,"td":1,"tp":2,"total":4},"13":{"cm":1,"td":1,"tp":2,"total":4},"14":{"cm":1,"td":1,"tp":2,"total":4},"15":{"cm":1,"td":1,"tp":2,"total":4},"16":{"cm":1,"td":1,"tp":2,"total":4},"17":{"cm":1,"td":1,"tp":2,"total":4},"18":{"cm":1,"td":1,"tp":2,"total":4},"19":{"cm":1,"td":1,"tp":2,"total":4},"20":{"cm":1,"td":1,"tp":2,"total":4}}',
  0, 1),
 
-(2, 'Bases de donnees', 'Introduction aux bases de donnees relationnelles', 'Data', false,
+(2, 'Bases de donnees', 'Introduction aux bases de donnees relationnelles', 'Data',
  15, 0, 25, 0, 40, 0,
  '{"1":{"cm":1,"td":2,"tp":2,"total":5},"2":{"cm":1,"td":2,"tp":2,"total":5},"3":{"cm":1,"td":2,"tp":2,"total":5},"4":{"cm":1,"td":2,"tp":2,"total":5},"5":{"cm":1,"td":2,"tp":2,"total":5},"6":{"cm":1,"td":1,"tp":2,"total":4},"7":{"cm":1,"td":1,"tp":2,"total":4},"8":{"cm":1,"td":1,"tp":2,"total":4},"9":{"cm":1,"td":1,"tp":2,"total":4},"10":{"cm":1,"td":1,"tp":2,"total":4},"11":{"cm":1,"td":1,"tp":2,"total":4},"12":{"cm":1,"td":1,"tp":2,"total":4},"13":{"cm":1,"td":1,"tp":2,"total":4},"14":{"cm":1,"td":1,"tp":2,"total":4},"15":{"cm":1,"td":1,"tp":2,"total":4},"16":{"cm":0,"td":1,"tp":2,"total":3},"17":{"cm":0,"td":1,"tp":2,"total":3},"18":{"cm":0,"td":1,"tp":2,"total":3},"19":{"cm":0,"td":1,"tp":2,"total":3},"20":{"cm":0,"td":1,"tp":2,"total":3}}',
  0, 1),
 
-(3, 'Architecture des ordinateurs', 'Fonctionnement interne des ordinateurs', 'Systemes', false,
+(3, 'Architecture des ordinateurs', 'Fonctionnement interne des ordinateurs', 'Systemes',
  20, 0, 20, 0, 20, 0,
  '{"1":{"cm":1,"td":1,"tp":1,"total":3},"2":{"cm":1,"td":1,"tp":1,"total":3},"3":{"cm":1,"td":1,"tp":1,"total":3},"4":{"cm":1,"td":1,"tp":1,"total":3},"5":{"cm":1,"td":1,"tp":1,"total":3},"6":{"cm":1,"td":1,"tp":1,"total":3},"7":{"cm":1,"td":1,"tp":1,"total":3},"8":{"cm":1,"td":1,"tp":1,"total":3},"9":{"cm":1,"td":1,"tp":1,"total":3},"10":{"cm":1,"td":1,"tp":1,"total":3},"11":{"cm":1,"td":1,"tp":1,"total":3},"12":{"cm":1,"td":1,"tp":1,"total":3},"13":{"cm":1,"td":1,"tp":1,"total":3},"14":{"cm":1,"td":1,"tp":1,"total":3},"15":{"cm":1,"td":1,"tp":1,"total":3},"16":{"cm":1,"td":1,"tp":1,"total":3},"17":{"cm":1,"td":1,"tp":1,"total":3},"18":{"cm":1,"td":1,"tp":1,"total":3},"19":{"cm":1,"td":1,"tp":1,"total":3},"20":{"cm":1,"td":1,"tp":1,"total":3}}',
  0, 1),
 
-(4, 'Mathematiques discretes', 'Logique, ensembles, graphes', 'Mathematiques', false,
+(4, 'Mathematiques discretes', 'Logique, ensembles, graphes', 'Mathematiques',
  30, 0, 40, 0, 10, 0,
  '{"1":{"cm":2,"td":2,"tp":1,"total":5},"2":{"cm":2,"td":2,"tp":1,"total":5},"3":{"cm":2,"td":2,"tp":1,"total":5},"4":{"cm":2,"td":2,"tp":1,"total":5},"5":{"cm":2,"td":2,"tp":1,"total":5},"6":{"cm":2,"td":2,"tp":1,"total":5},"7":{"cm":2,"td":2,"tp":1,"total":5},"8":{"cm":2,"td":2,"tp":1,"total":5},"9":{"cm":2,"td":2,"tp":1,"total":5},"10":{"cm":2,"td":2,"tp":1,"total":5},"11":{"cm":1,"td":2,"tp":0,"total":3},"12":{"cm":1,"td":2,"tp":0,"total":3},"13":{"cm":1,"td":2,"tp":0,"total":3},"14":{"cm":1,"td":2,"tp":0,"total":3},"15":{"cm":1,"td":2,"tp":0,"total":3},"16":{"cm":1,"td":2,"tp":0,"total":3},"17":{"cm":1,"td":2,"tp":0,"total":3},"18":{"cm":1,"td":2,"tp":0,"total":3},"19":{"cm":1,"td":2,"tp":0,"total":3},"20":{"cm":1,"td":2,"tp":0,"total":3}}',
  0, 1),
 
-(5, 'Introduction aux systemes', 'Systemes d''exploitation et ligne de commande', 'Systemes', false,
+(5, 'Introduction aux systemes', 'Systemes d''exploitation et ligne de commande', 'Systemes',
  10, 0, 15, 0, 25, 0,
  '{"1":{"cm":1,"td":1,"tp":2,"total":4},"2":{"cm":1,"td":1,"tp":2,"total":4},"3":{"cm":1,"td":1,"tp":2,"total":4},"4":{"cm":1,"td":1,"tp":2,"total":4},"5":{"cm":1,"td":1,"tp":2,"total":4},"6":{"cm":1,"td":1,"tp":1,"total":3},"7":{"cm":1,"td":1,"tp":1,"total":3},"8":{"cm":1,"td":1,"tp":1,"total":3},"9":{"cm":1,"td":1,"tp":1,"total":3},"10":{"cm":1,"td":1,"tp":1,"total":3},"11":{"cm":0,"td":1,"tp":1,"total":2},"12":{"cm":0,"td":1,"tp":1,"total":2},"13":{"cm":0,"td":1,"tp":1,"total":2},"14":{"cm":0,"td":1,"tp":1,"total":2},"15":{"cm":0,"td":1,"tp":1,"total":2},"16":{"cm":0,"td":0,"tp":1,"total":1},"17":{"cm":0,"td":0,"tp":1,"total":1},"18":{"cm":0,"td":0,"tp":1,"total":1},"19":{"cm":0,"td":0,"tp":1,"total":1},"20":{"cm":0,"td":0,"tp":1,"total":1}}',
  0, 1),
 
-(6, 'Gestion de projet', 'Methodes de gestion de projet informatique', 'Transversal', false,
+(6, 'Gestion de projet', 'Methodes de gestion de projet informatique', 'Transversal',
  10, 0, 20, 0, 10, 0,
  '{"1":{"cm":1,"td":1,"tp":1,"total":3},"2":{"cm":1,"td":1,"tp":1,"total":3},"3":{"cm":1,"td":1,"tp":1,"total":3},"4":{"cm":1,"td":1,"tp":1,"total":3},"5":{"cm":1,"td":1,"tp":1,"total":3},"6":{"cm":1,"td":1,"tp":1,"total":3},"7":{"cm":1,"td":1,"tp":1,"total":3},"8":{"cm":1,"td":1,"tp":1,"total":3},"9":{"cm":1,"td":1,"tp":1,"total":3},"10":{"cm":1,"td":1,"tp":1,"total":3},"11":{"cm":0,"td":1,"tp":0,"total":1},"12":{"cm":0,"td":1,"tp":0,"total":1},"13":{"cm":0,"td":1,"tp":0,"total":1},"14":{"cm":0,"td":1,"tp":0,"total":1},"15":{"cm":0,"td":1,"tp":0,"total":1},"16":{"cm":0,"td":1,"tp":0,"total":1},"17":{"cm":0,"td":1,"tp":0,"total":1},"18":{"cm":0,"td":1,"tp":0,"total":1},"19":{"cm":0,"td":1,"tp":0,"total":1},"20":{"cm":0,"td":1,"tp":0,"total":1}}',
  0, 1),
 
 -- ========== ANNEE 1 - SEMESTRE 2 (6 modules) ==========
-(7, 'Programmation orientee objet', 'Concepts OOP en Java', 'Programmation', false,
+(7, 'Programmation orientee objet', 'Concepts OOP en Java', 'Programmation',
  25, 0, 35, 0, 60, 0,
  '{"21":{"cm":2,"td":2,"tp":3,"total":7},"22":{"cm":2,"td":2,"tp":3,"total":7},"23":{"cm":2,"td":2,"tp":3,"total":7},"24":{"cm":2,"td":2,"tp":3,"total":7},"25":{"cm":2,"td":2,"tp":3,"total":7},"26":{"cm":1,"td":2,"tp":3,"total":6},"27":{"cm":1,"td":2,"tp":3,"total":6},"28":{"cm":1,"td":2,"tp":3,"total":6},"29":{"cm":1,"td":2,"tp":3,"total":6},"30":{"cm":1,"td":2,"tp":3,"total":6},"31":{"cm":1,"td":2,"tp":3,"total":6},"32":{"cm":1,"td":2,"tp":3,"total":6},"33":{"cm":1,"td":2,"tp":3,"total":6},"34":{"cm":1,"td":2,"tp":3,"total":6},"35":{"cm":1,"td":2,"tp":3,"total":6},"36":{"cm":1,"td":1,"tp":3,"total":5},"37":{"cm":1,"td":1,"tp":3,"total":5},"38":{"cm":1,"td":1,"tp":3,"total":5},"39":{"cm":1,"td":1,"tp":3,"total":5},"40":{"cm":1,"td":1,"tp":3,"total":5}}',
  0, 2),
 
-(8, 'Developpement web', 'HTML, CSS, JavaScript et frameworks', 'Web', false,
+(8, 'Developpement web', 'HTML, CSS, JavaScript et frameworks', 'Web',
  20, 0, 30, 0, 70, 0,
  '{"21":{"cm":1,"td":2,"tp":4,"total":7},"22":{"cm":1,"td":2,"tp":4,"total":7},"23":{"cm":1,"td":2,"tp":4,"total":7},"24":{"cm":1,"td":2,"tp":4,"total":7},"25":{"cm":1,"td":2,"tp":4,"total":7},"26":{"cm":1,"td":2,"tp":4,"total":7},"27":{"cm":1,"td":2,"tp":4,"total":7},"28":{"cm":1,"td":2,"tp":4,"total":7},"29":{"cm":1,"td":2,"tp":4,"total":7},"30":{"cm":1,"td":2,"tp":4,"total":7},"31":{"cm":1,"td":1,"tp":3,"total":5},"32":{"cm":1,"td":1,"tp":3,"total":5},"33":{"cm":1,"td":1,"tp":3,"total":5},"34":{"cm":1,"td":1,"tp":3,"total":5},"35":{"cm":1,"td":1,"tp":3,"total":5},"36":{"cm":1,"td":1,"tp":3,"total":5},"37":{"cm":1,"td":1,"tp":3,"total":5},"38":{"cm":1,"td":1,"tp":3,"total":5},"39":{"cm":1,"td":1,"tp":3,"total":5},"40":{"cm":1,"td":1,"tp":3,"total":5}}',
  0, 2),
 
-(9, 'Algorithmique', 'Structures de donnees et algorithmes', 'Programmation', false,
+(9, 'Algorithmique', 'Structures de donnees et algorithmes', 'Programmation',
  25, 0, 45, 0, 30, 0,
  '{"21":{"cm":2,"td":3,"tp":2,"total":7},"22":{"cm":2,"td":3,"tp":2,"total":7},"23":{"cm":2,"td":3,"tp":2,"total":7},"24":{"cm":2,"td":3,"tp":2,"total":7},"25":{"cm":2,"td":3,"tp":2,"total":7},"26":{"cm":1,"td":2,"tp":2,"total":5},"27":{"cm":1,"td":2,"tp":2,"total":5},"28":{"cm":1,"td":2,"tp":2,"total":5},"29":{"cm":1,"td":2,"tp":2,"total":5},"30":{"cm":1,"td":2,"tp":2,"total":5},"31":{"cm":1,"td":2,"tp":1,"total":4},"32":{"cm":1,"td":2,"tp":1,"total":4},"33":{"cm":1,"td":2,"tp":1,"total":4},"34":{"cm":1,"td":2,"tp":1,"total":4},"35":{"cm":1,"td":2,"tp":1,"total":4},"36":{"cm":1,"td":2,"tp":1,"total":4},"37":{"cm":1,"td":2,"tp":1,"total":4},"38":{"cm":1,"td":2,"tp":1,"total":4},"39":{"cm":1,"td":2,"tp":1,"total":4},"40":{"cm":1,"td":2,"tp":1,"total":4}}',
  0, 2),
 
-(10, 'Reseaux', 'Fondamentaux des reseaux informatiques', 'Reseaux', false,
+(10, 'Reseaux', 'Fondamentaux des reseaux informatiques', 'Reseaux',
  15, 0, 25, 0, 30, 0,
  '{"21":{"cm":1,"td":2,"tp":2,"total":5},"22":{"cm":1,"td":2,"tp":2,"total":5},"23":{"cm":1,"td":2,"tp":2,"total":5},"24":{"cm":1,"td":2,"tp":2,"total":5},"25":{"cm":1,"td":2,"tp":2,"total":5},"26":{"cm":1,"td":1,"tp":2,"total":4},"27":{"cm":1,"td":1,"tp":2,"total":4},"28":{"cm":1,"td":1,"tp":2,"total":4},"29":{"cm":1,"td":1,"tp":2,"total":4},"30":{"cm":1,"td":1,"tp":2,"total":4},"31":{"cm":1,"td":1,"tp":1,"total":3},"32":{"cm":1,"td":1,"tp":1,"total":3},"33":{"cm":1,"td":1,"tp":1,"total":3},"34":{"cm":1,"td":1,"tp":1,"total":3},"35":{"cm":1,"td":1,"tp":1,"total":3},"36":{"cm":0,"td":1,"tp":1,"total":2},"37":{"cm":0,"td":1,"tp":1,"total":2},"38":{"cm":0,"td":1,"tp":1,"total":2},"39":{"cm":0,"td":1,"tp":1,"total":2},"40":{"cm":0,"td":1,"tp":1,"total":2}}',
  0, 2),
 
-(11, 'Probabilites et statistiques', 'Probabilites, statistiques descriptives', 'Mathematiques', false,
+(11, 'Probabilites et statistiques', 'Probabilites, statistiques descriptives', 'Mathematiques',
  20, 0, 30, 0, 10, 0,
  '{"21":{"cm":1,"td":2,"tp":1,"total":4},"22":{"cm":1,"td":2,"tp":1,"total":4},"23":{"cm":1,"td":2,"tp":1,"total":4},"24":{"cm":1,"td":2,"tp":1,"total":4},"25":{"cm":1,"td":2,"tp":1,"total":4},"26":{"cm":1,"td":2,"tp":1,"total":4},"27":{"cm":1,"td":2,"tp":1,"total":4},"28":{"cm":1,"td":2,"tp":1,"total":4},"29":{"cm":1,"td":2,"tp":1,"total":4},"30":{"cm":1,"td":2,"tp":1,"total":4},"31":{"cm":1,"td":1,"tp":0,"total":2},"32":{"cm":1,"td":1,"tp":0,"total":2},"33":{"cm":1,"td":1,"tp":0,"total":2},"34":{"cm":1,"td":1,"tp":0,"total":2},"35":{"cm":1,"td":1,"tp":0,"total":2},"36":{"cm":1,"td":1,"tp":0,"total":2},"37":{"cm":1,"td":1,"tp":0,"total":2},"38":{"cm":1,"td":1,"tp":0,"total":2},"39":{"cm":1,"td":1,"tp":0,"total":2},"40":{"cm":1,"td":1,"tp":0,"total":2}}',
  0, 2),
 
-(12, 'Projet tutore S2', 'Projet en equipe du semestre 2', 'Projet', false,
+(12, 'Projet tutore S2', 'Projet en equipe du semestre 2', 'Projet',
  0, 0, 10, 0, 30, 0,
  '{"21":{"cm":0,"td":1,"tp":2,"total":3},"22":{"cm":0,"td":1,"tp":2,"total":3},"23":{"cm":0,"td":1,"tp":2,"total":3},"24":{"cm":0,"td":1,"tp":2,"total":3},"25":{"cm":0,"td":1,"tp":2,"total":3},"26":{"cm":0,"td":1,"tp":2,"total":3},"27":{"cm":0,"td":1,"tp":2,"total":3},"28":{"cm":0,"td":1,"tp":2,"total":3},"29":{"cm":0,"td":1,"tp":2,"total":3},"30":{"cm":0,"td":1,"tp":2,"total":3},"31":{"cm":0,"td":0,"tp":1,"total":1},"32":{"cm":0,"td":0,"tp":1,"total":1},"33":{"cm":0,"td":0,"tp":1,"total":1},"34":{"cm":0,"td":0,"tp":1,"total":1},"35":{"cm":0,"td":0,"tp":1,"total":1},"36":{"cm":0,"td":0,"tp":1,"total":1},"37":{"cm":0,"td":0,"tp":1,"total":1},"38":{"cm":0,"td":0,"tp":1,"total":1},"39":{"cm":0,"td":0,"tp":1,"total":1},"40":{"cm":0,"td":0,"tp":1,"total":1}}',
  0, 2),
 
 -- ========== ANNEE 2 - SEMESTRE 1 (7 modules) ==========
-(13, 'Developpement d''applications', 'Developpement d''applications completes', 'Programmation', false,
+(13, 'Developpement d''applications', 'Developpement d''applications completes', 'Programmation',
  20, 0, 30, 0, 70, 0,
  '{"1":{"cm":1,"td":2,"tp":4,"total":7},"2":{"cm":1,"td":2,"tp":4,"total":7},"3":{"cm":1,"td":2,"tp":4,"total":7},"4":{"cm":1,"td":2,"tp":4,"total":7},"5":{"cm":1,"td":2,"tp":4,"total":7},"6":{"cm":1,"td":2,"tp":4,"total":7},"7":{"cm":1,"td":2,"tp":4,"total":7},"8":{"cm":1,"td":2,"tp":4,"total":7},"9":{"cm":1,"td":2,"tp":4,"total":7},"10":{"cm":1,"td":2,"tp":4,"total":7},"11":{"cm":1,"td":1,"tp":3,"total":5},"12":{"cm":1,"td":1,"tp":3,"total":5},"13":{"cm":1,"td":1,"tp":3,"total":5},"14":{"cm":1,"td":1,"tp":3,"total":5},"15":{"cm":1,"td":1,"tp":3,"total":5},"16":{"cm":1,"td":1,"tp":3,"total":5},"17":{"cm":1,"td":1,"tp":3,"total":5},"18":{"cm":1,"td":1,"tp":3,"total":5},"19":{"cm":1,"td":1,"tp":3,"total":5},"20":{"cm":1,"td":1,"tp":3,"total":5}}',
  0, 1),
 
-(14, 'Bases de donnees avancees', 'SQL avance, NoSQL, optimisation', 'Data', false,
+(14, 'Bases de donnees avancees', 'SQL avance, NoSQL, optimisation', 'Data',
  20, 0, 30, 0, 50, 0,
  '{"1":{"cm":1,"td":2,"tp":3,"total":6},"2":{"cm":1,"td":2,"tp":3,"total":6},"3":{"cm":1,"td":2,"tp":3,"total":6},"4":{"cm":1,"td":2,"tp":3,"total":6},"5":{"cm":1,"td":2,"tp":3,"total":6},"6":{"cm":1,"td":2,"tp":3,"total":6},"7":{"cm":1,"td":2,"tp":3,"total":6},"8":{"cm":1,"td":2,"tp":3,"total":6},"9":{"cm":1,"td":2,"tp":3,"total":6},"10":{"cm":1,"td":2,"tp":3,"total":6},"11":{"cm":1,"td":1,"tp":2,"total":4},"12":{"cm":1,"td":1,"tp":2,"total":4},"13":{"cm":1,"td":1,"tp":2,"total":4},"14":{"cm":1,"td":1,"tp":2,"total":4},"15":{"cm":1,"td":1,"tp":2,"total":4},"16":{"cm":1,"td":1,"tp":2,"total":4},"17":{"cm":1,"td":1,"tp":2,"total":4},"18":{"cm":1,"td":1,"tp":2,"total":4},"19":{"cm":1,"td":1,"tp":2,"total":4},"20":{"cm":1,"td":1,"tp":2,"total":4}}',
  0, 1),
 
-(15, 'Programmation systeme', 'Programmation bas niveau et systeme', 'Systemes', false,
+(15, 'Programmation systeme', 'Programmation bas niveau et systeme', 'Systemes',
  25, 0, 25, 0, 50, 0,
  '{"1":{"cm":2,"td":2,"tp":3,"total":7},"2":{"cm":2,"td":2,"tp":3,"total":7},"3":{"cm":2,"td":2,"tp":3,"total":7},"4":{"cm":2,"td":2,"tp":3,"total":7},"5":{"cm":2,"td":2,"tp":3,"total":7},"6":{"cm":1,"td":1,"tp":3,"total":5},"7":{"cm":1,"td":1,"tp":3,"total":5},"8":{"cm":1,"td":1,"tp":3,"total":5},"9":{"cm":1,"td":1,"tp":3,"total":5},"10":{"cm":1,"td":1,"tp":3,"total":5},"11":{"cm":1,"td":1,"tp":2,"total":4},"12":{"cm":1,"td":1,"tp":2,"total":4},"13":{"cm":1,"td":1,"tp":2,"total":4},"14":{"cm":1,"td":1,"tp":2,"total":4},"15":{"cm":1,"td":1,"tp":2,"total":4},"16":{"cm":1,"td":1,"tp":2,"total":4},"17":{"cm":1,"td":1,"tp":2,"total":4},"18":{"cm":1,"td":1,"tp":2,"total":4},"19":{"cm":1,"td":1,"tp":2,"total":4},"20":{"cm":1,"td":1,"tp":2,"total":4}}',
  0, 1),
 
-(16, 'Qualite de developpement', 'Tests, integration continue, qualite logicielle', 'Programmation', false,
+(16, 'Qualite de developpement', 'Tests, integration continue, qualite logicielle', 'Programmation',
  15, 0, 25, 0, 40, 0,
  '{"1":{"cm":1,"td":2,"tp":2,"total":5},"2":{"cm":1,"td":2,"tp":2,"total":5},"3":{"cm":1,"td":2,"tp":2,"total":5},"4":{"cm":1,"td":2,"tp":2,"total":5},"5":{"cm":1,"td":2,"tp":2,"total":5},"6":{"cm":1,"td":1,"tp":2,"total":4},"7":{"cm":1,"td":1,"tp":2,"total":4},"8":{"cm":1,"td":1,"tp":2,"total":4},"9":{"cm":1,"td":1,"tp":2,"total":4},"10":{"cm":1,"td":1,"tp":2,"total":4},"11":{"cm":1,"td":1,"tp":2,"total":4},"12":{"cm":1,"td":1,"tp":2,"total":4},"13":{"cm":1,"td":1,"tp":2,"total":4},"14":{"cm":1,"td":1,"tp":2,"total":4},"15":{"cm":1,"td":1,"tp":2,"total":4},"16":{"cm":0,"td":1,"tp":2,"total":3},"17":{"cm":0,"td":1,"tp":2,"total":3},"18":{"cm":0,"td":1,"tp":2,"total":3},"19":{"cm":0,"td":1,"tp":2,"total":3},"20":{"cm":0,"td":1,"tp":2,"total":3}}',
  0, 1),
 
-(17, 'IHM et ergonomie', 'Interfaces homme-machine et experience utilisateur', 'Web', false,
+(17, 'IHM et ergonomie', 'Interfaces homme-machine et experience utilisateur', 'Web',
  10, 0, 20, 0, 30, 0,
  '{"1":{"cm":1,"td":1,"tp":2,"total":4},"2":{"cm":1,"td":1,"tp":2,"total":4},"3":{"cm":1,"td":1,"tp":2,"total":4},"4":{"cm":1,"td":1,"tp":2,"total":4},"5":{"cm":1,"td":1,"tp":2,"total":4},"6":{"cm":1,"td":1,"tp":2,"total":4},"7":{"cm":1,"td":1,"tp":2,"total":4},"8":{"cm":1,"td":1,"tp":2,"total":4},"9":{"cm":1,"td":1,"tp":2,"total":4},"10":{"cm":1,"td":1,"tp":2,"total":4},"11":{"cm":0,"td":1,"tp":1,"total":2},"12":{"cm":0,"td":1,"tp":1,"total":2},"13":{"cm":0,"td":1,"tp":1,"total":2},"14":{"cm":0,"td":1,"tp":1,"total":2},"15":{"cm":0,"td":1,"tp":1,"total":2},"16":{"cm":0,"td":1,"tp":1,"total":2},"17":{"cm":0,"td":1,"tp":1,"total":2},"18":{"cm":0,"td":1,"tp":1,"total":2},"19":{"cm":0,"td":1,"tp":1,"total":2},"20":{"cm":0,"td":1,"tp":1,"total":2}}',
  0, 1),
 
-(18, 'Anglais technique', 'Anglais applique a l''informatique', 'Transversal', false,
+(18, 'Anglais technique', 'Anglais applique a l''informatique', 'Transversal',
  0, 0, 20, 0, 0, 0,
  '{"1":{"cm":0,"td":1,"tp":0,"total":1},"2":{"cm":0,"td":1,"tp":0,"total":1},"3":{"cm":0,"td":1,"tp":0,"total":1},"4":{"cm":0,"td":1,"tp":0,"total":1},"5":{"cm":0,"td":1,"tp":0,"total":1},"6":{"cm":0,"td":1,"tp":0,"total":1},"7":{"cm":0,"td":1,"tp":0,"total":1},"8":{"cm":0,"td":1,"tp":0,"total":1},"9":{"cm":0,"td":1,"tp":0,"total":1},"10":{"cm":0,"td":1,"tp":0,"total":1},"11":{"cm":0,"td":1,"tp":0,"total":1},"12":{"cm":0,"td":1,"tp":0,"total":1},"13":{"cm":0,"td":1,"tp":0,"total":1},"14":{"cm":0,"td":1,"tp":0,"total":1},"15":{"cm":0,"td":1,"tp":0,"total":1},"16":{"cm":0,"td":1,"tp":0,"total":1},"17":{"cm":0,"td":1,"tp":0,"total":1},"18":{"cm":0,"td":1,"tp":0,"total":1},"19":{"cm":0,"td":1,"tp":0,"total":1},"20":{"cm":0,"td":1,"tp":0,"total":1}}',
  0, 1),
 
-(19, 'Projet tutore S3', 'Projet en equipe du semestre 3', 'Projet', false,
+(19, 'Projet tutore S3', 'Projet en equipe du semestre 3', 'Projet',
  0, 0, 10, 0, 40, 0,
  '{"1":{"cm":0,"td":1,"tp":2,"total":3},"2":{"cm":0,"td":1,"tp":2,"total":3},"3":{"cm":0,"td":1,"tp":2,"total":3},"4":{"cm":0,"td":1,"tp":2,"total":3},"5":{"cm":0,"td":1,"tp":2,"total":3},"6":{"cm":0,"td":1,"tp":2,"total":3},"7":{"cm":0,"td":1,"tp":2,"total":3},"8":{"cm":0,"td":1,"tp":2,"total":3},"9":{"cm":0,"td":1,"tp":2,"total":3},"10":{"cm":0,"td":1,"tp":2,"total":3},"11":{"cm":0,"td":0,"tp":2,"total":2},"12":{"cm":0,"td":0,"tp":2,"total":2},"13":{"cm":0,"td":0,"tp":2,"total":2},"14":{"cm":0,"td":0,"tp":2,"total":2},"15":{"cm":0,"td":0,"tp":2,"total":2},"16":{"cm":0,"td":0,"tp":2,"total":2},"17":{"cm":0,"td":0,"tp":2,"total":2},"18":{"cm":0,"td":0,"tp":2,"total":2},"19":{"cm":0,"td":0,"tp":2,"total":2},"20":{"cm":0,"td":0,"tp":2,"total":2}}',
  0, 1),
 
 -- ========== ANNEE 2 - SEMESTRE 2 (6 modules) ==========
-(20, 'Developpement mobile', 'Applications mobiles Android et iOS', 'Programmation', false,
+(20, 'Developpement mobile', 'Applications mobiles Android et iOS', 'Programmation',
  15, 0, 25, 0, 60, 0,
  '{"21":{"cm":1,"td":2,"tp":3,"total":6},"22":{"cm":1,"td":2,"tp":3,"total":6},"23":{"cm":1,"td":2,"tp":3,"total":6},"24":{"cm":1,"td":2,"tp":3,"total":6},"25":{"cm":1,"td":2,"tp":3,"total":6},"26":{"cm":1,"td":1,"tp":3,"total":5},"27":{"cm":1,"td":1,"tp":3,"total":5},"28":{"cm":1,"td":1,"tp":3,"total":5},"29":{"cm":1,"td":1,"tp":3,"total":5},"30":{"cm":1,"td":1,"tp":3,"total":5},"31":{"cm":1,"td":1,"tp":3,"total":5},"32":{"cm":1,"td":1,"tp":3,"total":5},"33":{"cm":1,"td":1,"tp":3,"total":5},"34":{"cm":1,"td":1,"tp":3,"total":5},"35":{"cm":1,"td":1,"tp":3,"total":5},"36":{"cm":0,"td":1,"tp":3,"total":4},"37":{"cm":0,"td":1,"tp":3,"total":4},"38":{"cm":0,"td":1,"tp":3,"total":4},"39":{"cm":0,"td":1,"tp":3,"total":4},"40":{"cm":0,"td":1,"tp":3,"total":4}}',
  0, 2),
 
-(21, 'Intelligence Artificielle', 'Introduction a l''IA et au machine learning', 'Data', false,
+(21, 'Intelligence Artificielle', 'Introduction a l''IA et au machine learning', 'Data',
  25, 0, 30, 0, 45, 0,
  '{"21":{"cm":2,"td":2,"tp":3,"total":7},"22":{"cm":2,"td":2,"tp":3,"total":7},"23":{"cm":2,"td":2,"tp":3,"total":7},"24":{"cm":2,"td":2,"tp":3,"total":7},"25":{"cm":2,"td":2,"tp":3,"total":7},"26":{"cm":1,"td":2,"tp":2,"total":5},"27":{"cm":1,"td":2,"tp":2,"total":5},"28":{"cm":1,"td":2,"tp":2,"total":5},"29":{"cm":1,"td":2,"tp":2,"total":5},"30":{"cm":1,"td":2,"tp":2,"total":5},"31":{"cm":1,"td":1,"tp":2,"total":4},"32":{"cm":1,"td":1,"tp":2,"total":4},"33":{"cm":1,"td":1,"tp":2,"total":4},"34":{"cm":1,"td":1,"tp":2,"total":4},"35":{"cm":1,"td":1,"tp":2,"total":4},"36":{"cm":1,"td":1,"tp":2,"total":4},"37":{"cm":1,"td":1,"tp":2,"total":4},"38":{"cm":1,"td":1,"tp":2,"total":4},"39":{"cm":1,"td":1,"tp":2,"total":4},"40":{"cm":1,"td":1,"tp":2,"total":4}}',
  0, 2),
 
-(22, 'Securite informatique', 'Principes de securite et cryptographie', 'Securite', false,
+(22, 'Securite informatique', 'Principes de securite et cryptographie', 'Securite',
  20, 0, 30, 0, 50, 0,
  '{"21":{"cm":1,"td":2,"tp":3,"total":6},"22":{"cm":1,"td":2,"tp":3,"total":6},"23":{"cm":1,"td":2,"tp":3,"total":6},"24":{"cm":1,"td":2,"tp":3,"total":6},"25":{"cm":1,"td":2,"tp":3,"total":6},"26":{"cm":1,"td":2,"tp":3,"total":6},"27":{"cm":1,"td":2,"tp":3,"total":6},"28":{"cm":1,"td":2,"tp":3,"total":6},"29":{"cm":1,"td":2,"tp":3,"total":6},"30":{"cm":1,"td":2,"tp":3,"total":6},"31":{"cm":1,"td":1,"tp":2,"total":4},"32":{"cm":1,"td":1,"tp":2,"total":4},"33":{"cm":1,"td":1,"tp":2,"total":4},"34":{"cm":1,"td":1,"tp":2,"total":4},"35":{"cm":1,"td":1,"tp":2,"total":4},"36":{"cm":1,"td":1,"tp":2,"total":4},"37":{"cm":1,"td":1,"tp":2,"total":4},"38":{"cm":1,"td":1,"tp":2,"total":4},"39":{"cm":1,"td":1,"tp":2,"total":4},"40":{"cm":1,"td":1,"tp":2,"total":4}}',
  0, 2),
 
-(23, 'Administration systeme', 'Administration de serveurs et services', 'Systemes', false,
+(23, 'Administration systeme', 'Administration de serveurs et services', 'Systemes',
  15, 0, 20, 0, 45, 0,
  '{"21":{"cm":1,"td":1,"tp":3,"total":5},"22":{"cm":1,"td":1,"tp":3,"total":5},"23":{"cm":1,"td":1,"tp":3,"total":5},"24":{"cm":1,"td":1,"tp":3,"total":5},"25":{"cm":1,"td":1,"tp":3,"total":5},"26":{"cm":1,"td":1,"tp":2,"total":4},"27":{"cm":1,"td":1,"tp":2,"total":4},"28":{"cm":1,"td":1,"tp":2,"total":4},"29":{"cm":1,"td":1,"tp":2,"total":4},"30":{"cm":1,"td":1,"tp":2,"total":4},"31":{"cm":1,"td":1,"tp":2,"total":4},"32":{"cm":1,"td":1,"tp":2,"total":4},"33":{"cm":1,"td":1,"tp":2,"total":4},"34":{"cm":1,"td":1,"tp":2,"total":4},"35":{"cm":1,"td":1,"tp":2,"total":4},"36":{"cm":0,"td":1,"tp":2,"total":3},"37":{"cm":0,"td":1,"tp":2,"total":3},"38":{"cm":0,"td":1,"tp":2,"total":3},"39":{"cm":0,"td":1,"tp":2,"total":3},"40":{"cm":0,"td":1,"tp":2,"total":3}}',
  0, 2),
 
-(24, 'Gestion de donnees massives', 'Big Data et traitement de donnees', 'Data', false,
+(24, 'Gestion de donnees massives', 'Big Data et traitement de donnees', 'Data',
  20, 0, 25, 0, 35, 0,
  '{"21":{"cm":1,"td":2,"tp":2,"total":5},"22":{"cm":1,"td":2,"tp":2,"total":5},"23":{"cm":1,"td":2,"tp":2,"total":5},"24":{"cm":1,"td":2,"tp":2,"total":5},"25":{"cm":1,"td":2,"tp":2,"total":5},"26":{"cm":1,"td":1,"tp":2,"total":4},"27":{"cm":1,"td":1,"tp":2,"total":4},"28":{"cm":1,"td":1,"tp":2,"total":4},"29":{"cm":1,"td":1,"tp":2,"total":4},"30":{"cm":1,"td":1,"tp":2,"total":4},"31":{"cm":1,"td":1,"tp":2,"total":4},"32":{"cm":1,"td":1,"tp":2,"total":4},"33":{"cm":1,"td":1,"tp":2,"total":4},"34":{"cm":1,"td":1,"tp":2,"total":4},"35":{"cm":1,"td":1,"tp":2,"total":4},"36":{"cm":1,"td":1,"tp":1,"total":3},"37":{"cm":1,"td":1,"tp":1,"total":3},"38":{"cm":1,"td":1,"tp":1,"total":3},"39":{"cm":1,"td":1,"tp":1,"total":3},"40":{"cm":1,"td":1,"tp":1,"total":3}}',
  0, 2),
 
-(25, 'Projet tutore S4', 'Projet en equipe du semestre 4', 'Projet', false,
+(25, 'Projet tutore S4', 'Projet en equipe du semestre 4', 'Projet',
  0, 0, 10, 0, 50, 0,
  '{"21":{"cm":0,"td":1,"tp":3,"total":4},"22":{"cm":0,"td":1,"tp":3,"total":4},"23":{"cm":0,"td":1,"tp":3,"total":4},"24":{"cm":0,"td":1,"tp":3,"total":4},"25":{"cm":0,"td":1,"tp":3,"total":4},"26":{"cm":0,"td":1,"tp":3,"total":4},"27":{"cm":0,"td":1,"tp":3,"total":4},"28":{"cm":0,"td":1,"tp":3,"total":4},"29":{"cm":0,"td":1,"tp":3,"total":4},"30":{"cm":0,"td":1,"tp":3,"total":4},"31":{"cm":0,"td":0,"tp":2,"total":2},"32":{"cm":0,"td":0,"tp":2,"total":2},"33":{"cm":0,"td":0,"tp":2,"total":2},"34":{"cm":0,"td":0,"tp":2,"total":2},"35":{"cm":0,"td":0,"tp":2,"total":2},"36":{"cm":0,"td":0,"tp":2,"total":2},"37":{"cm":0,"td":0,"tp":2,"total":2},"38":{"cm":0,"td":0,"tp":2,"total":2},"39":{"cm":0,"td":0,"tp":2,"total":2},"40":{"cm":0,"td":0,"tp":2,"total":2}}',
  0, 2),
 
 -- ========== ANNEE 3 - SEMESTRE 1 - ALTERNANCE (7 modules) ==========
-(26, 'Architecture logicielle', 'Patterns et architecture logicielle', 'Programmation', false,
+(26, 'Architecture logicielle', 'Patterns et architecture logicielle', 'Programmation',
  20, 0, 20, 0, 30, 0,
  '{"1":{"cm":1,"td":1,"tp":2,"total":4},"2":{"cm":1,"td":1,"tp":2,"total":4},"3":{"cm":1,"td":1,"tp":2,"total":4},"4":{"cm":1,"td":1,"tp":2,"total":4},"5":{"cm":1,"td":1,"tp":2,"total":4},"6":{"cm":1,"td":1,"tp":2,"total":4},"7":{"cm":1,"td":1,"tp":2,"total":4},"8":{"cm":1,"td":1,"tp":2,"total":4},"9":{"cm":1,"td":1,"tp":2,"total":4},"10":{"cm":1,"td":1,"tp":2,"total":4},"11":{"cm":1,"td":1,"tp":1,"total":3},"12":{"cm":1,"td":1,"tp":1,"total":3},"13":{"cm":1,"td":1,"tp":1,"total":3},"14":{"cm":1,"td":1,"tp":1,"total":3},"15":{"cm":1,"td":1,"tp":1,"total":3},"16":{"cm":1,"td":1,"tp":1,"total":3},"17":{"cm":1,"td":1,"tp":1,"total":3},"18":{"cm":1,"td":1,"tp":1,"total":3},"19":{"cm":1,"td":1,"tp":1,"total":3},"20":{"cm":1,"td":1,"tp":1,"total":3}}',
  0, 1),
 
-(27, 'Cloud computing', 'Services cloud et deploiement', 'Systemes', false,
+(27, 'Cloud computing', 'Services cloud et deploiement', 'Systemes',
  15, 0, 15, 0, 30, 0,
  '{"1":{"cm":1,"td":1,"tp":2,"total":4},"2":{"cm":1,"td":1,"tp":2,"total":4},"3":{"cm":1,"td":1,"tp":2,"total":4},"4":{"cm":1,"td":1,"tp":2,"total":4},"5":{"cm":1,"td":1,"tp":2,"total":4},"6":{"cm":1,"td":1,"tp":2,"total":4},"7":{"cm":1,"td":1,"tp":2,"total":4},"8":{"cm":1,"td":1,"tp":2,"total":4},"9":{"cm":1,"td":1,"tp":2,"total":4},"10":{"cm":1,"td":1,"tp":2,"total":4},"11":{"cm":1,"td":1,"tp":1,"total":3},"12":{"cm":1,"td":1,"tp":1,"total":3},"13":{"cm":1,"td":1,"tp":1,"total":3},"14":{"cm":1,"td":1,"tp":1,"total":3},"15":{"cm":1,"td":1,"tp":1,"total":3},"16":{"cm":0,"td":0,"tp":1,"total":1},"17":{"cm":0,"td":0,"tp":1,"total":1},"18":{"cm":0,"td":0,"tp":1,"total":1},"19":{"cm":0,"td":0,"tp":1,"total":1},"20":{"cm":0,"td":0,"tp":1,"total":1}}',
  0, 1),
 
-(28, 'DevOps', 'Integration et deploiement continus', 'Systemes', false,
+(28, 'DevOps', 'Integration et deploiement continus', 'Systemes',
  10, 0, 15, 0, 35, 0,
  '{"1":{"cm":1,"td":1,"tp":2,"total":4},"2":{"cm":1,"td":1,"tp":2,"total":4},"3":{"cm":1,"td":1,"tp":2,"total":4},"4":{"cm":1,"td":1,"tp":2,"total":4},"5":{"cm":1,"td":1,"tp":2,"total":4},"6":{"cm":1,"td":1,"tp":2,"total":4},"7":{"cm":1,"td":1,"tp":2,"total":4},"8":{"cm":1,"td":1,"tp":2,"total":4},"9":{"cm":1,"td":1,"tp":2,"total":4},"10":{"cm":1,"td":1,"tp":2,"total":4},"11":{"cm":0,"td":1,"tp":2,"total":3},"12":{"cm":0,"td":1,"tp":2,"total":3},"13":{"cm":0,"td":1,"tp":2,"total":3},"14":{"cm":0,"td":1,"tp":2,"total":3},"15":{"cm":0,"td":1,"tp":2,"total":3},"16":{"cm":0,"td":0,"tp":1,"total":1},"17":{"cm":0,"td":0,"tp":1,"total":1},"18":{"cm":0,"td":0,"tp":1,"total":1},"19":{"cm":0,"td":0,"tp":1,"total":1},"20":{"cm":0,"td":0,"tp":1,"total":1}}',
  0, 1),
 
-(29, 'Management de projet', 'Gestion avancee de projets informatiques', 'Transversal', false,
+(29, 'Management de projet', 'Gestion avancee de projets informatiques', 'Transversal',
  10, 0, 20, 0, 0, 0,
  '{"1":{"cm":1,"td":1,"tp":0,"total":2},"2":{"cm":1,"td":1,"tp":0,"total":2},"3":{"cm":1,"td":1,"tp":0,"total":2},"4":{"cm":1,"td":1,"tp":0,"total":2},"5":{"cm":1,"td":1,"tp":0,"total":2},"6":{"cm":1,"td":1,"tp":0,"total":2},"7":{"cm":1,"td":1,"tp":0,"total":2},"8":{"cm":1,"td":1,"tp":0,"total":2},"9":{"cm":1,"td":1,"tp":0,"total":2},"10":{"cm":1,"td":1,"tp":0,"total":2},"11":{"cm":0,"td":1,"tp":0,"total":1},"12":{"cm":0,"td":1,"tp":0,"total":1},"13":{"cm":0,"td":1,"tp":0,"total":1},"14":{"cm":0,"td":1,"tp":0,"total":1},"15":{"cm":0,"td":1,"tp":0,"total":1},"16":{"cm":0,"td":1,"tp":0,"total":1},"17":{"cm":0,"td":1,"tp":0,"total":1},"18":{"cm":0,"td":1,"tp":0,"total":1},"19":{"cm":0,"td":1,"tp":0,"total":1},"20":{"cm":0,"td":1,"tp":0,"total":1}}',
  0, 1),
 
-(30, 'Veille technologique', 'Veille et innovation technologique', 'Transversal', false,
+(30, 'Veille technologique', 'Veille et innovation technologique', 'Transversal',
  0, 0, 10, 0, 10, 0,
  '{"1":{"cm":0,"td":1,"tp":1,"total":2},"2":{"cm":0,"td":1,"tp":1,"total":2},"3":{"cm":0,"td":1,"tp":1,"total":2},"4":{"cm":0,"td":1,"tp":1,"total":2},"5":{"cm":0,"td":1,"tp":1,"total":2},"6":{"cm":0,"td":1,"tp":1,"total":2},"7":{"cm":0,"td":1,"tp":1,"total":2},"8":{"cm":0,"td":1,"tp":1,"total":2},"9":{"cm":0,"td":1,"tp":1,"total":2},"10":{"cm":0,"td":1,"tp":1,"total":2}}',
  0, 1),
 
-(31, 'Mission en entreprise S5', 'Periode en entreprise du semestre 5', 'Entreprise', false,
+(31, 'Mission en entreprise S5', 'Periode en entreprise du semestre 5', 'Entreprise',
  0, 0, 0, 0, 0, 0,
  '{}',
  0, 1),
 
-(32, 'Rapport d''activite S5', 'Redaction du rapport d''activite S5', 'Transversal', false,
+(32, 'Rapport d''activite S5', 'Redaction du rapport d''activite S5', 'Transversal',
  0, 0, 10, 0, 10, 0,
  '{"1":{"cm":0,"td":1,"tp":1,"total":2},"2":{"cm":0,"td":1,"tp":1,"total":2},"3":{"cm":0,"td":1,"tp":1,"total":2},"4":{"cm":0,"td":1,"tp":1,"total":2},"5":{"cm":0,"td":1,"tp":1,"total":2},"6":{"cm":0,"td":1,"tp":1,"total":2},"7":{"cm":0,"td":1,"tp":1,"total":2},"8":{"cm":0,"td":1,"tp":1,"total":2},"9":{"cm":0,"td":1,"tp":1,"total":2},"10":{"cm":0,"td":1,"tp":1,"total":2}}',
  0, 1),
 
 -- ========== ANNEE 3 - SEMESTRE 2 - ALTERNANCE (5 modules) ==========
-(33, 'Securite avancee', 'Securite avancee et pentest', 'Securite', false,
+(33, 'Securite avancee', 'Securite avancee et pentest', 'Securite',
  15, 0, 15, 0, 30, 0,
  '{"21":{"cm":1,"td":1,"tp":2,"total":4},"22":{"cm":1,"td":1,"tp":2,"total":4},"23":{"cm":1,"td":1,"tp":2,"total":4},"24":{"cm":1,"td":1,"tp":2,"total":4},"25":{"cm":1,"td":1,"tp":2,"total":4},"26":{"cm":1,"td":1,"tp":2,"total":4},"27":{"cm":1,"td":1,"tp":2,"total":4},"28":{"cm":1,"td":1,"tp":2,"total":4},"29":{"cm":1,"td":1,"tp":2,"total":4},"30":{"cm":1,"td":1,"tp":2,"total":4},"31":{"cm":1,"td":1,"tp":1,"total":3},"32":{"cm":1,"td":1,"tp":1,"total":3},"33":{"cm":1,"td":1,"tp":1,"total":3},"34":{"cm":1,"td":1,"tp":1,"total":3},"35":{"cm":1,"td":1,"tp":1,"total":3},"36":{"cm":0,"td":0,"tp":1,"total":1},"37":{"cm":0,"td":0,"tp":1,"total":1},"38":{"cm":0,"td":0,"tp":1,"total":1},"39":{"cm":0,"td":0,"tp":1,"total":1},"40":{"cm":0,"td":0,"tp":1,"total":1}}',
  0, 2),
 
-(34, 'Intelligence Artificielle avancee', 'Deep learning et IA avancee', 'Data', false,
+(34, 'Intelligence Artificielle avancee', 'Deep learning et IA avancee', 'Data',
  15, 0, 15, 0, 30, 0,
  '{"21":{"cm":1,"td":1,"tp":2,"total":4},"22":{"cm":1,"td":1,"tp":2,"total":4},"23":{"cm":1,"td":1,"tp":2,"total":4},"24":{"cm":1,"td":1,"tp":2,"total":4},"25":{"cm":1,"td":1,"tp":2,"total":4},"26":{"cm":1,"td":1,"tp":2,"total":4},"27":{"cm":1,"td":1,"tp":2,"total":4},"28":{"cm":1,"td":1,"tp":2,"total":4},"29":{"cm":1,"td":1,"tp":2,"total":4},"30":{"cm":1,"td":1,"tp":2,"total":4},"31":{"cm":1,"td":1,"tp":1,"total":3},"32":{"cm":1,"td":1,"tp":1,"total":3},"33":{"cm":1,"td":1,"tp":1,"total":3},"34":{"cm":1,"td":1,"tp":1,"total":3},"35":{"cm":1,"td":1,"tp":1,"total":3},"36":{"cm":0,"td":0,"tp":1,"total":1},"37":{"cm":0,"td":0,"tp":1,"total":1},"38":{"cm":0,"td":0,"tp":1,"total":1},"39":{"cm":0,"td":0,"tp":1,"total":1},"40":{"cm":0,"td":0,"tp":1,"total":1}}',
  0, 2),
 
-(35, 'Projet de fin d''etudes', 'Projet de fin d''etudes en equipe', 'Projet', false,
+(35, 'Projet de fin d''etudes', 'Projet de fin d''etudes en equipe', 'Projet',
  0, 0, 20, 0, 80, 0,
  '{"21":{"cm":0,"td":1,"tp":4,"total":5},"22":{"cm":0,"td":1,"tp":4,"total":5},"23":{"cm":0,"td":1,"tp":4,"total":5},"24":{"cm":0,"td":1,"tp":4,"total":5},"25":{"cm":0,"td":1,"tp":4,"total":5},"26":{"cm":0,"td":1,"tp":4,"total":5},"27":{"cm":0,"td":1,"tp":4,"total":5},"28":{"cm":0,"td":1,"tp":4,"total":5},"29":{"cm":0,"td":1,"tp":4,"total":5},"30":{"cm":0,"td":1,"tp":4,"total":5},"31":{"cm":0,"td":1,"tp":4,"total":5},"32":{"cm":0,"td":1,"tp":4,"total":5},"33":{"cm":0,"td":1,"tp":4,"total":5},"34":{"cm":0,"td":1,"tp":4,"total":5},"35":{"cm":0,"td":1,"tp":4,"total":5},"36":{"cm":0,"td":1,"tp":4,"total":5},"37":{"cm":0,"td":1,"tp":4,"total":5},"38":{"cm":0,"td":1,"tp":4,"total":5},"39":{"cm":0,"td":1,"tp":4,"total":5},"40":{"cm":0,"td":1,"tp":4,"total":5}}',
  0, 2),
 
-(36, 'Mission en entreprise S6', 'Periode en entreprise du semestre 6', 'Entreprise', false,
+(36, 'Mission en entreprise S6', 'Periode en entreprise du semestre 6', 'Entreprise',
  0, 0, 0, 0, 0, 0,
  '{}',
  0, 2),
 
-(37, 'Memoire professionnel', 'Redaction du memoire professionnel', 'Transversal', false,
+(37, 'Memoire professionnel', 'Redaction du memoire professionnel', 'Transversal',
  0, 0, 30, 0, 0, 0,
  '{"21":{"cm":0,"td":2,"tp":0,"total":2},"22":{"cm":0,"td":2,"tp":0,"total":2},"23":{"cm":0,"td":2,"tp":0,"total":2},"24":{"cm":0,"td":2,"tp":0,"total":2},"25":{"cm":0,"td":2,"tp":0,"total":2},"26":{"cm":0,"td":2,"tp":0,"total":2},"27":{"cm":0,"td":2,"tp":0,"total":2},"28":{"cm":0,"td":2,"tp":0,"total":2},"29":{"cm":0,"td":2,"tp":0,"total":2},"30":{"cm":0,"td":2,"tp":0,"total":2},"31":{"cm":0,"td":1,"tp":0,"total":1},"32":{"cm":0,"td":1,"tp":0,"total":1},"33":{"cm":0,"td":1,"tp":0,"total":1},"34":{"cm":0,"td":1,"tp":0,"total":1},"35":{"cm":0,"td":1,"tp":0,"total":1},"36":{"cm":0,"td":1,"tp":0,"total":1},"37":{"cm":0,"td":1,"tp":0,"total":1},"38":{"cm":0,"td":1,"tp":0,"total":1},"39":{"cm":0,"td":1,"tp":0,"total":1},"40":{"cm":0,"td":1,"tp":0,"total":1}}',
  0, 2);

@@ -32,7 +32,6 @@ import { Observable, of } from 'rxjs';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    AsyncPipe,
     NgIf,
     NgFor
   ],

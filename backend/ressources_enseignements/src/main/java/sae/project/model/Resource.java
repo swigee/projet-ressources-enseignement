@@ -59,10 +59,6 @@ public class Resource implements Serializable {
     @Column(name = "category", length = 100)
     private String category;
 
-    @Column(name = "is_highlighted")
-    @Builder.Default
-    private Boolean isHighlighted = false;
-
     // Heures TD (Travaux Dirigés)
     @Column(name = "td_state_hours")
     private Integer tdStateHours;

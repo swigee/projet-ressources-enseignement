@@ -1,5 +1,5 @@
 
-<div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden w-250 h-150">
+<div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden w-250 h-180">
                
     <button class="bg-black w-7 h-7 rounded-sm cursor-pointer" (click)="goBack()">
         <i class="fa-solid fa-arrow-left text-white text-sm pt-0.5"></i>
@@ -32,26 +32,29 @@
                 <span class="text-xs text-gray-400">0/500</span>
             </div>
 
-            <div class="mt-4">
-                <label for="resources" class="block text-sm font-medium text-gray-700 mb-2">
+           <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
                     Ressources associées <span class="text-red-500">*</span>
                 </label>
-                
-                    @for(l of lessonsService.lessonsList(); track l.id){
-                    <button
+
+                <div class="max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-2">
+                    @for (l of lessonsService.lessonsList(); track l.id) {
+                        <button
                             type="button"
                             (click)="toggleLesson(l)"
-                            [class.bg-blue-600]="selectedLessons.includes(l)"
-                            [class.text-white]="selectedLessons.includes(l)"
-                            class="ml-1 px-4 py-2 rounded-full border text-sm
+                            [class.bg-blue-600]="isSelected(l)"
+                            [class.text-white]="isSelected(l)"
+                            class="ml-1 mb-1 px-4 py-2 rounded-full border text-sm
                                 hover:bg-blue-300 transition">
                             {{ l.title }}
                         </button>
                     }
+                </div>
             </div>
-            <button type="submit" class="mt-5.5 px-6 py-3 bg-blue-600 
-            text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-sm">
-                {{ form.value.id ? 'Modifier la formation' : 'Créer la formation' }} <i class="fa-light fa-plus font-bold"></i>
+            <button type="submit"
+                class="px-6 py-3 bg-blue-600 text-white rounded-lg mt-3
+                    hover:bg-blue-700 transition font-medium shadow-sm">
+                {{ form.value.id ? 'Modifier la formation' : 'Créer la formation' }}
             </button>
         </div>
     </form>

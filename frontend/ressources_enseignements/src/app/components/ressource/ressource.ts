@@ -3,9 +3,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { RessourcesService } from '../../services/ressources/ressources-service';
 import {
-  RessourceRowDTO, RessourcesTotalsDTO,
-  ScheduleConflictDTO,
-  TeacherBadgeDTO
+  RessourceRow, RessourcesTotals,
+  ScheduleConflict,
+  TeacherBadge
 } from '../../models/ressources/ressources.model';
 import {MonthDTO,WeekDTO,ValidationRequestDTO,WeekHoursDTO,UpdateHoursDTO,ValidationResponseDTO,ScheduleStatisticsDTO,RessourceScheduleDTO,PedagogicalScheduleDTO,ProjectScheduleDTO} from '../../models/schedule/schedule.model';
 import {
@@ -68,9 +68,9 @@ export class Ressource implements OnInit {
   selectedSemester = signal<string>('1');
 
   // Data state
-  ressources = signal<RessourceRowDTO[]>([]);
-  availableTeachers = signal<TeacherBadgeDTO[]>([]);
-  conflicts = signal<ScheduleConflictDTO[]>([]);
+  ressources = signal<RessourceRow[]>([]);
+  availableTeachers = signal<TeacherBadge[]>([]);
+  conflicts = signal<ScheduleConflict[]>([]);
   isLoading = signal<boolean>(false);
   errorMessage = signal<string>('');
   successMessage = signal<string>('');
@@ -115,14 +115,14 @@ export class Ressource implements OnInit {
   });
 
   // Auto-updating totals
-  calculatedTotals = computed<RessourcesTotalsDTO>(() => {
+  calculatedTotals = computed<RessourcesTotals>(() => {
     const filtered = this.filteredRessources();
     return {
-      totalHeuresPrevisionnelles: filtered.reduce((sum, r) => sum + r.heuresPrevisionnelles, 0),
-      totalHeuresReelles: filtered.reduce((sum, r) => sum + r.heuresReelles, 0),
-      totalHeuresTD: filtered.reduce((sum, r) => sum + r.heuresTD, 0),
-      totalHeuresTP: filtered.reduce((sum, r) => sum + r.heuresTP, 0),
-      totalHeuresCM: filtered.reduce((sum, r) => sum + r.heuresCM, 0)
+      totalPlannedHours: filtered.reduce((sum, r) => sum + r.plannedHours, 0),
+      totalActualHours: filtered.reduce((sum, r) => sum + r.actualHours, 0),
+      totalTDHours: filtered.reduce((sum, r) => sum + r.TDHours, 0),
+      totalTPHours: filtered.reduce((sum, r) => sum + r.TPHours, 0),
+      totalCMHours: filtered.reduce((sum, r) => sum + r.CMHours, 0)
     };
   });
 
@@ -273,12 +273,12 @@ export class Ressource implements OnInit {
     setTimeout(() => this.showTeacherDropdown.set(false), 200);
   }
 
-  hasConflict(ressource: RessourceRowDTO): boolean {
+  hasConflict(ressource: RessourceRow): boolean {
     const conflictingModules = this.conflicts().flatMap(c => c.conflictingModules);
     return conflictingModules.includes(ressource.moduleName);
   }
 
-  getConflictDetails(ressource: RessourceRowDTO): ScheduleConflictDTO | undefined {
+  getConflictDetails(ressource: RessourceRow): ScheduleConflict | undefined {
     return this.conflicts().find(c => c.conflictingModules.includes(ressource.moduleName));
   }
 

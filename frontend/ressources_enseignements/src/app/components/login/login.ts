@@ -58,7 +58,7 @@ export class Login {
 
       this.authService.login(username, password).subscribe({
         next: (user: any) => {
-          this.router.navigate(['/dashboard']); // Redirection vers l'accueil
+          this.router.navigate(['/educational-model']); // Redirection vers l'accueil
         },
         error: (err: any) => {
           alert('identifiant ou mot de passe incorrect');

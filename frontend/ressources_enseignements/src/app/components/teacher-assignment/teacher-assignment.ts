@@ -2,13 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  TeacherAssignmentService,
-  TeacherDTO,
-  AffectationRowDTO,
-  CreateAssignmentDTO,
-  TeacherAssignmentDTO,
-  AssignmentGridDTO
-} from '../../services/teacher-assignment/teacher-assignment-service';
+  TeacherAssignment,
+  AffectationRow,
+  AssignmentGrid,
+  Teacher,
+  AssignmentValidationResponse,
+  CreateAssignment,
+  AssignmentStatistics
+} from '../../models/teacher/teacher.model';
+import {TeacherAssignmentService} from '../../services/teacher-assignment/teacher-assignment-service'
 
 interface DragData {
   type: string;
@@ -24,15 +26,15 @@ interface DragData {
 })
 export class TeacherAssignmentComponent implements OnInit {
   selectedFormation: string = 'Informatique';
-  selectedYear: string = '2';
+  selectedYear: string = '1';
   selectedClass: string = 'Classe A';
   selectedSemester: string = '';
   searchQuery: string = '';
-  draggedTeacher: TeacherDTO | null = null;
+  draggedTeacher: Teacher | null = null;
   isLoading: boolean = false;
 
-  teachers: TeacherDTO[] = [];
-  affectationGrid: AffectationRowDTO[] = [];
+  teachers: Teacher[] = [];
+  affectationGrid: AffectationRow[] = [];
   statistics: any = null;
 
   constructor(private teacherService: TeacherAssignmentService) {}
@@ -46,9 +48,6 @@ export class TeacherAssignmentComponent implements OnInit {
     this.loadData();
   }
 
-  /**
-   * load data from backend
-   */
   loadData(): void {
     if (!this.selectedYear || !this.selectedClass) {
       console.warn('Année ou classe non sélectionnée');
@@ -69,7 +68,7 @@ export class TeacherAssignmentComponent implements OnInit {
       this.selectedClass,
       this.selectedSemester
     ).subscribe({
-      next: (data: AssignmentGridDTO) => {
+      next: (data: AssignmentGrid) => {
         console.log('Données reçues du backend:', data);
         console.log('Nombre de ressources:', data.affectationGrid?.length || 0);
         console.log('Nombre d\'enseignants:', data.availableTeachers?.length || 0);
@@ -101,7 +100,7 @@ export class TeacherAssignmentComponent implements OnInit {
     this.loadData();
   }
 
-  get filteredTeachers(): TeacherDTO[] {
+  get filteredTeachers(): Teacher[] {
     if (!this.searchQuery) {
       return this.teachers;
     }
@@ -113,7 +112,7 @@ export class TeacherAssignmentComponent implements OnInit {
     );
   }
 
-  onDragStart(event: DragEvent, teacher: TeacherDTO): void {
+  onDragStart(event: DragEvent, teacher: Teacher): void {
     this.draggedTeacher = teacher;
     if (event.dataTransfer) {
       event.dataTransfer.effectAllowed = 'copy';
@@ -146,7 +145,7 @@ export class TeacherAssignmentComponent implements OnInit {
       const module = this.affectationGrid.find(m => m.resourceId === ressourceId);
       if (!module) return;
 
-      let teacherList: TeacherAssignmentDTO[];
+      let teacherList: TeacherAssignment[];
       let moduleHours: number;
 
       switch (lessonType) {
@@ -192,7 +191,7 @@ export class TeacherAssignmentComponent implements OnInit {
       if (existingAssignment) {
         existingAssignment.assignedHours += hours;
       } else {
-        const assignment: CreateAssignmentDTO = {
+        const assignment: CreateAssignment = {
           userId: dragData.teacherId,
           resourceId: ressourceId,
           lessonType: lessonType,
@@ -237,7 +236,7 @@ export class TeacherAssignmentComponent implements OnInit {
     }
   }
 
-  getTeachersDisplay(teachers: TeacherAssignmentDTO[]): string {
+  getTeachersDisplay(teachers: TeacherAssignment[]): string {
     if (!teachers || teachers.length === 0) {
       return 'Non Affecté';
     }
@@ -247,7 +246,7 @@ export class TeacherAssignmentComponent implements OnInit {
     return teachers[0].teacherName + ', +' + (teachers.length - 1);
   }
 
-  isModuleEmpty(teachers: TeacherAssignmentDTO[]): boolean {
+  isModuleEmpty(teachers: TeacherAssignment[]): boolean {
     return !teachers || teachers.length === 0;
   }
 

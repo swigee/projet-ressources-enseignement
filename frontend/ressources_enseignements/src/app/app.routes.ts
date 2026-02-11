@@ -9,14 +9,12 @@ import { Ressource } from './components/ressource/ressource';
 import { authGuard } from './services/auth/auth.guard';
 import { roleGuard } from './services/auth/role.guard';
 
-
 export const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
-
-  },
+    // {
+    //   path:'',
+    //   redirectTo:'login',
+    //   pathMatch:'full',
+    // },
   {
     path: 'login',
     component: Login
@@ -45,17 +43,17 @@ export const routes: Routes = [
     data: { roles: ['ADMIN'] }
   },
   {
-    path: 'education-manager',
-    component: EducationalManager,
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['ADMIN'] }
-  },
-  {
-    path: 'education-manager/create',
-    component: EducationManagerCreation,
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['ADMIN'] }
-  },
+        path:'education-manager',
+        component: EducationalManager
+    },
+    {
+        path:'education-manager/create',
+        component: EducationManagerCreation
+    },
+    {
+        path:'education-manager/edit/:id',
+        component: EducationManagerCreation
+    },
   {
     path: 'user-manager',
     component: UserManager,

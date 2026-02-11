@@ -29,8 +29,6 @@ public class RessourcesService {
     @Autowired
     private TeacherAssignmentRepository assignmentRepository;
 
-    @Autowired
-    private UserRepository userRepository;
 
     /**
      * Récupérer les données du tableau de ressources pour une année, classe et semestre
@@ -184,7 +182,6 @@ public class RessourcesService {
                 .heuresTD(resource.getTdStateHours() != null ? resource.getTdStateHours() : 0)
                 .heuresTP(resource.getTpStateHours() != null ? resource.getTpStateHours() : 0)
                 .heuresCM(resource.getCmStateHours() != null ? resource.getCmStateHours() : 0)
-                .isHighlighted(resource.getIsHighlighted() != null ? resource.getIsHighlighted() : false)
                 .assignedTeachers(assignedTeachers)
                 .build();
     }

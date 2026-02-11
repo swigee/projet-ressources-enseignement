@@ -1,6 +1,7 @@
 package sae.project.services;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sae.project.model.Formation;
@@ -18,7 +19,11 @@ public class EducationManagerService {
     public List<Formation> getAll() {
         return (List<Formation>) emrep.findAll();
     }
-
+       
+    public Optional<Formation> getById(Integer id){
+        return emrep.findById(id);
+    }
+    
     public void delete(Integer id) {
         emrep.deleteById(id);
     }
@@ -29,5 +34,13 @@ public class EducationManagerService {
 
     public List<Resource> getRessourcesList() {
         return rrep.findAll();
+    }
+    
+    public List<Resource> getRessourcesByFormation(Formation f) {
+        return f.getResourceList();
+    }
+    
+    public Formation update(Formation f){
+        return emrep.save(f);
     }
 }

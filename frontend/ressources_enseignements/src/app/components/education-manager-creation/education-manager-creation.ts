@@ -1,35 +1,91 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LessonService } from '../../services/lesson/lesson-service';
+import { EducationalManagerService } from '../../services/educational-manager/educational-manager';
 import { Lesson } from '../../models/lesson/lesson.model';
 import { Education } from '../../models/education/education.model';
-import { EducationalManagerService } from '../../services/educational-manager/educational-manager';
 
 @Component({
   selector: 'app-education-manager-creation',
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './education-manager-creation.html',
 })
 export class EducationManagerCreation {
   lessonsService = inject(LessonService)
   edService = inject(EducationalManagerService)
   selectedLessons: Lesson[] = [];
+  
+  form!: FormGroup;
+  private route = inject(ActivatedRoute);
+  constructor(
+    private fb: FormBuilder,
+    private service: EducationalManagerService,
+    private router: Router
+  ) 
+  {
+     this.lessonsService.loadLessons();
+  }
+  ngOnInit() {
+    this.form = this.fb.group({
+      id: [null],
+      name: ['', Validators.required],
+      description: [''],
+      lessons: [[]]
+    });
 
+    const id = this.route.snapshot.paramMap.get('id');
 
-  constructor(){
-    this.lessonsService.loadLessons();
+    if (id) {
+    this.edService.getEducationById(+id).subscribe(edu => {
+      this.form.patchValue(edu);
+
+      const allLessons = this.lessonsService.lessonsList();
+
+      this.selectedLessons = allLessons.filter(l =>
+        edu.lessons?.some(el => el.id === l.id)
+      );
+      console.log(this.selectedLessons);
+    });
+  }
+  }
+
+  goBack() {
+    this.router.navigate(['/education-manager']);
   }
 
   toggleLesson(l: Lesson) {
-    if (this.selectedLessons.includes(l)) {
-      this.selectedLessons = this.selectedLessons.filter(r => r !== l);
-    }
-    else {
+    const index = this.selectedLessons.findIndex(sl => sl.id === l.id);
+
+    if (index !== -1) {
+      this.selectedLessons.splice(index, 1);
+    } else {
       this.selectedLessons.push(l);
     }
   }
 
-  clickCreate(e: Education){
-    console.log('click sur bouton, creation')
-    this.edService.createEducation(e);
+  isSelected(l: Lesson): boolean {
+    return this.selectedLessons.some(sl => sl.id === l.id);
+  }
+
+
+  submit() {
+    if (this.form.invalid) return;
+    const edu: Education = {
+      ...this.form.value,
+      lessons: this.selectedLessons
+    };
+    if (edu.id) {
+      this.service.updateEducation(edu).subscribe(() => {
+        this.router.navigate(['/education-manager']);
+        this.edService.loadEducations();
+      });
+    } 
+    else {
+      this.service.createEducation(edu).subscribe(() => {
+        this.router.navigate(['/education-manager']);
+        this.edService.loadEducations();
+      });
+    }
   }
 }

@@ -115,7 +115,6 @@ public class PedagogicalScheduleService {
                     ressource.setTitle(ressourceDetails.getTitle());
                     ressource.setDescription(ressourceDetails.getDescription());
                     ressource.setCategory(ressourceDetails.getCategory());
-                    ressource.setIsHighlighted(ressourceDetails.getIsHighlighted());
                     ressource.setHoursPerWeekJson(ressourceDetails.getHoursPerWeekJson());
                     ressource.setHoursPerHalfGroup(ressourceDetails.getHoursPerHalfGroup());
 
@@ -230,7 +229,6 @@ public class PedagogicalScheduleService {
                 .id(ressource.getId())
                 .courseName(ressource.getTitle())
                 .category(ressource.getCategory())
-                .isHighlighted(ressource.getIsHighlighted())
                 .hoursPerWeek(weekHours)
                 .hoursPerHalfGroup(ressource.getHoursPerHalfGroup())
                 .totalHours(ressource.getTotalHours())

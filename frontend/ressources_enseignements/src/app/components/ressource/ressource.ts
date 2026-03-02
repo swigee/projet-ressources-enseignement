@@ -1,13 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
-import { RessourcesService } from '../../services/ressources/ressources-service';
-import {
-  RessourceRowDTO, RessourcesTotalsDTO,
-  ScheduleConflictDTO,
-  TeacherBadgeDTO
-} from '../../models/ressources/ressources.model';
-import {MonthDTO,WeekDTO,ValidationRequestDTO,WeekHoursDTO,UpdateHoursDTO,ValidationResponseDTO,ScheduleStatisticsDTO,RessourceScheduleDTO,PedagogicalScheduleDTO,ProjectScheduleDTO} from '../../models/schedule/schedule.model';
+import { RessourcesService } from '../../services/ressources/ressources-service';import {MonthDTO,WeekDTO,ValidationRequestDTO,WeekHoursDTO,UpdateHoursDTO,ValidationResponseDTO,ScheduleStatisticsDTO,RessourceScheduleDTO,PedagogicalScheduleDTO,ProjectScheduleDTO} from '../../models/schedule/schedule.model';
 import {
   PedagogicalScheduleService
 } from '../../services/pedagogical-schedule/pedagogical-schedule-service';
@@ -18,6 +12,7 @@ import { isPlatformBrowser, AsyncPipe, NgIf, NgFor } from '@angular/common';
 import { TicketService, CreateTicketDTO } from '../../services/ticket/ticket.service';
 import { ServiceSheetService } from '../../services/professor-service/service-sheet.service';
 import { ServiceSummary } from '../../models/service-summary.model';
+import { RessourceRow, RessourcesTotals, ScheduleConflict, TeacherBadge } from '../../models/ressources/ressources.model';
 
 
 @Component({
@@ -68,9 +63,9 @@ export class Ressource implements OnInit {
   selectedSemester = signal<string>('1');
 
   // Data state
-  ressources = signal<RessourceRowDTO[]>([]);
-  availableTeachers = signal<TeacherBadgeDTO[]>([]);
-  conflicts = signal<ScheduleConflictDTO[]>([]);
+  ressources = signal<RessourceRow[]>([]);
+  availableTeachers = signal<TeacherBadge[]>([]);
+  conflicts = signal<ScheduleConflict[]>([]);
   isLoading = signal<boolean>(false);
   errorMessage = signal<string>('');
   successMessage = signal<string>('');
@@ -115,7 +110,7 @@ export class Ressource implements OnInit {
   });
 
   // Auto-updating totals
-  calculatedTotals = computed<RessourcesTotalsDTO>(() => {
+  calculatedTotals = computed<RessourcesTotals>(() => {
     const filtered = this.filteredRessources();
     return {
       totalHeuresPrevisionnelles: filtered.reduce((sum, r) => sum + r.heuresPrevisionnelles, 0),
@@ -273,12 +268,12 @@ export class Ressource implements OnInit {
     setTimeout(() => this.showTeacherDropdown.set(false), 200);
   }
 
-  hasConflict(ressource: RessourceRowDTO): boolean {
+  hasConflict(ressource: RessourceRow): boolean {
     const conflictingModules = this.conflicts().flatMap(c => c.conflictingModules);
     return conflictingModules.includes(ressource.moduleName);
   }
 
-  getConflictDetails(ressource: RessourceRowDTO): ScheduleConflictDTO | undefined {
+  getConflictDetails(ressource: RessourceRow): ScheduleConflict | undefined {
     return this.conflicts().find(c => c.conflictingModules.includes(ressource.moduleName));
   }
 

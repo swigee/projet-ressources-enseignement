@@ -3,30 +3,37 @@
 Ce projet est une application web de gestion des ressources d'enseignements, développée avec Angular (frontend) et Spring Boot (backend). Il permet la gestion des utilisateurs, des rôles, des formations, des tickets et des affectations enseignants.
 
 ## Prérequis
+
 - Docker et Docker Compose
 - Node.js et npm (pour développement frontend)
 - Maven (pour développement backend)
 
 ## Installation rapide (via Docker)
+
 1. Cloner le projet :
+
    ```
-   git clone <url-du-repo>
+   git clone https://forge.univ-lyon1.fr/hlib.fedorchenko/ressources-enseignements-sae.git
    ```
 2. Lancer les conteneurs :
+
    ```
    docker compose up --build
    ```
 3. Accéder à l'application :
+
    - http://localhost:4200/
 
 ## Lancement manuel (développement)
 
-### pré-requis
+### Prérequis
+
 - Maven
-- Java 21 
+- Java 21
 - Wamp (pour la base de données) (creer une base de données nommée `ressources_enseignements`)
 
 ### Backend
+
 - Installer Maven : https://maven.apache.org/download.cgi
 - Se placer dans `backend/ressources_enseignements` puis lancer :
   ```
@@ -34,6 +41,7 @@ Ce projet est une application web de gestion des ressources d'enseignements, dé
   ```
 
 ### Frontend
+
 - Installer Node.js : https://nodejs.org/
 - Se placer dans `frontend/ressources_enseignements` puis lancer :
   ```
@@ -43,28 +51,40 @@ Ce projet est une application web de gestion des ressources d'enseignements, dé
 - Accéder à : http://localhost:4200
 
 ## Structure du projet
+
 - `backend/ressources_enseignements` : API Spring Boot
 - `frontend/ressources_enseignements` : Application Angular
-- `docker-compose.yml` : Orchestration des services
 
 ## Fonctionnalités principales
+
 - Gestion des utilisateurs et rôles
 - Gestion des formations et affectations
 - Système de tickets
-- Authentification et sécurité
+- Authentification
 
-## Dépendances principales
-- Backend : Spring Boot, JPA, MySQL
-- Frontend : Angular, RxJS, FontAwesome
+## Comptes pour tester
 
-## Notes
-- Pour le backend, Maven doit être installé sur votre machine pour le développement local.
-- Pour le frontend, Node.js et npm sont nécessaires.
-- En production, tout est automatisé via Docker.
+- Admin
+
+  username: admin
+
+  password: Admin123
+- Prof
+
+  username: prof
+
+  password: Prof123
 
 ## Auteur
+
+SERIANI Selsebil
+
+SACCONE Enzo
+
+RANDRIANOMENJANAHARY Andry
+
+FEDORCHENKO Hlib
+
 Projet réalisé dans le cadre de la SAE.
 
 ---
-N'hésitez pas à adapter ce README selon vos besoins spécifiques ou à ajouter des instructions complémentaires.
-

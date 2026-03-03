@@ -30,4 +30,25 @@ public class TicketService {
 
         ticketsRepository.save(ticket);
     }
+
+    public java.util.List<sae.project.dtos.ticket.TicketResponseDto> getAllTickets() {
+        return ticketsRepository.findAll().stream()
+                .map(t -> new sae.project.dtos.ticket.TicketResponseDto(
+                        t.getId(),
+                        t.getTitle(),
+                        t.getDescription(),
+                        t.getDate(),
+                        t.getStatus(),
+                        t.getUser() != null ? t.getUser().getId() : null,
+                        t.getUser() != null ? t.getUser().getFirstName() + " " + t.getUser().getLastName()
+                                : "Utilisateur Inconnu"))
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    public void updateStatus(Integer ticketId, String status) {
+        Ticket ticket = ticketsRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket introuvable"));
+        ticket.setStatus(status);
+        ticketsRepository.save(ticket);
+    }
 }

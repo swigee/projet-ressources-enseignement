@@ -1,0 +1,76 @@
+<div class="h-full flex flex-col p-6 space-y-6 overflow-y-auto" style="background-color: #f7f9fc;">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Gestion des Tickets</h1>
+            <p class="text-gray-500 mt-2">Gérez les signalements et problèmes des enseignants.</p>
+        </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-sm">
+        <p>{{ errorMessage }}</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-100">
+                        <th class="px-6 py-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Utilisateur
+                        </th>
+                        <th class="px-6 py-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Titre</th>
+                        <th class="px-6 py-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Description
+                        </th>
+                        <th class="px-6 py-4 font-semibold text-gray-600 text-sm uppercase tracking-wider text-center">
+                            Statut</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr *ngIf="isLoading">
+                        <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Chargement des tickets...
+                        </td>
+                    </tr>
+                    <tr *ngIf="!isLoading && tickets.length === 0">
+                        <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                            <i class="fa-regular fa-folder-open text-2xl text-gray-300 mb-2 block"></i>
+                            Aucun ticket n'a été signalé.
+                        </td>
+                    </tr>
+                    <tr *ngFor="let ticket of tickets" class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {{ ticket.date | date:'dd/MM/yyyy' }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-800 font-medium">
+                            {{ ticket.userName }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-800 font-semibold"
+                            style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            {{ ticket.title }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-600" style="max-width: 300px;">
+                            <div class="truncate" [title]="ticket.description">
+                                {{ ticket.description }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
+                            <select
+                                class="text-sm rounded-full px-3 py-1 font-medium border-0 focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 shadow-sm cursor-pointer"
+                                [ngClass]="{
+                  'bg-red-100 text-red-700': ticket.status === 'OPEN',
+                  'bg-yellow-100 text-yellow-700': ticket.status === 'IN_PROGRESS',
+                  'bg-green-100 text-green-700': ticket.status === 'RESOLVED'
+                }" [ngModel]="ticket.status" (ngModelChange)="updateStatus(ticket, $event)">
+                                <option value="OPEN" class="bg-white text-gray-800">Ouvert</option>
+                                <option value="IN_PROGRESS" class="bg-white text-gray-800">En cours</option>
+                                <option value="RESOLVED" class="bg-white text-gray-800">Résolu</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

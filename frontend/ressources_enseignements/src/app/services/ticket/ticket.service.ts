@@ -7,6 +7,16 @@ export interface CreateTicketDTO {
   description: string;
 }
 
+export interface TicketResponseDTO {
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+  status: string;
+  userId: number;
+  userName: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -19,4 +29,11 @@ export class TicketService {
     return this.http.post(this.apiUrl, { ...ticket, userId });
   }
 
+  getTickets(): Observable<TicketResponseDTO[]> {
+    return this.http.get<TicketResponseDTO[]>(this.apiUrl);
+  }
+
+  updateTicketStatus(ticketId: number, status: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${ticketId}/status`, { status });
+  }
 }

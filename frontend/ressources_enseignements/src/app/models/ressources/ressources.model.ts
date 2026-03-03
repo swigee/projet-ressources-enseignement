@@ -2,11 +2,11 @@ export interface RessourceRow {
   id: number;
   moduleName: string;
   category?: string;
-  plannedHours: number;
-  actualHours: number;
-  TDHours: number;
-  TPHours: number;
-  CMHours: number;
+  heuresPrevisionnelles: number;
+  heuresReelles: number;
+  heuresTD: number;
+  heuresTP: number;
+  heuresCM: number;
   isHighlighted: boolean;
   assignedTeachers: TeacherBadge[];
 }

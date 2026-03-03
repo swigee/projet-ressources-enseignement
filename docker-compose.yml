@@ -1,0 +1,39 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-sae
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ressources_enseignements
+      MYSQL_USER: sae
+      MYSQL_PASSWORD: sae
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+
+  backend:
+    build: ./backend/ressources_enseignements
+    container_name: backend-sae
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ressources_enseignements?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: sae
+      SPRING_DATASOURCE_PASSWORD: sae
+    ports:
+      - "8080:8080"
+    restart: always
+
+  frontend:
+    build: ./frontend/ressources_enseignements
+    container_name: frontend-sae
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  db_data:

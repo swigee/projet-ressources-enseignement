@@ -1,82 +1,157 @@
 stages:
-  - build
   - test
-  - sonarqube-check
-  - deploy
+  - build
+  - sonar
+  - docker
 
+# ─── Variables globales ────────────────────────────────────────────────────────
 variables:
-  # On définit le dossier local pour le cache Maven
-  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  MAVEN_OPTS: >-
+    -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+    -Dmaven.color=false
+  DOCKER_TLS_CERTDIR: "/certs"
+  # À définir dans Settings > CI/CD > Variables (masked) :
+  #   SONAR_HOST_URL  → ex: http://sonarqube:9000
+  #   SONAR_TOKEN     → token généré dans SonarQube
 
-# --- BACKEND JOB ---
-build-backend:
-  stage: build
-  image: maven:3.9-eclipse-temurin-17
+# ─── Anchors cache ────────────────────────────────────────────────────────────
+.cache-maven: &cache-maven
   cache:
-    key: backend-deps
+    key: "maven-$CI_COMMIT_REF_SLUG"
     paths:
-      - .m2/repository
-  script:
-    - echo "Compiling backend Java code..."
-    # On ajoute des flags pour être moins strict :
-    # -Dmaven.wagon.http.retryHandler.count=3 (tente de reconnecter si le réseau saute)
-    # -fae (Fail At End : continue le build même si un module a un souci)
-    - mvn -f backend/ressources_enseignements/pom.xml clean compile -Dmaven.wagon.http.retryHandler.count=3
-  allow_failure: false
-  only:
-    - merge_requests
-    - main
+      - .m2/repository/
 
-# --- FRONTEND JOB ---
-build-frontend:
-  stage: build
-  image: node:20
+.cache-node: &cache-node
   cache:
-    key: frontend-deps
+    key: "node-$CI_COMMIT_REF_SLUG"
     paths:
-      - frontend/ressources_enseignements/node_modules
-  script:
-    - echo "Building frontend..."
-    - cd frontend/ressources_enseignements
-    - npm install --prefer-offline --no-audit
-    - npm run build
-  only:
-    - merge_requests
-    - main
+      - frontend/ressources_enseignements/node_modules/
 
-# --- TEST JOBS ---
-unit-test-job:
+.rules-default: &rules-default
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "master"
+
+# ─── STAGE : test ─────────────────────────────────────────────────────────────
+
+test:backend:
   stage: test
+  image: maven:3.9-eclipse-temurin-21
+  <<: *cache-maven
+  <<: *rules-default
+  services:
+    - name: mysql:8.0
+      alias: mysql-ci
+      variables:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: ressources_enseignements_test
+        MYSQL_USER: sae
+        MYSQL_PASSWORD: sae
+  variables:
+    SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-ci:3306/ressources_enseignements_test?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false"
+    SPRING_DATASOURCE_USERNAME: sae
+    SPRING_DATASOURCE_PASSWORD: sae
+    SPRING_PROFILES_ACTIVE: test
   script:
-    - echo "Skipping tests to bypass DB connection issues..."
-  only:
-    - merge_requests
-    - main
+    - cd backend/ressources_enseignements
+    - mvn verify --no-transfer-progress -B
+  artifacts:
+    when: always
+    reports:
+      junit: backend/ressources_enseignements/target/surefire-reports/TEST-*.xml
+    paths:
+      - backend/ressources_enseignements/target/site/jacoco/
+      - backend/ressources_enseignements/target/surefire-reports/
+    expire_in: 1 day
 
-# --- SONARQUBE ---
-sonarqube-check:
-  stage: sonarqube-check
-  image:
-    name: sonarsource/sonar-scanner-cli:5.0
-    entrypoint: [""]
+test:frontend:
+  stage: test
+  image: node:20-slim
+  <<: *cache-node
+  <<: *rules-default
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq chromium
+    - export CHROME_BIN=/usr/bin/chromium
+  script:
+    - cd frontend/ressources_enseignements
+    - npm ci --prefer-offline
+    - npx ng test --no-watch --no-progress --browsers=ChromeHeadlessCI --code-coverage
+  artifacts:
+    when: always
+    paths:
+      - frontend/ressources_enseignements/coverage/
+    expire_in: 1 day
+
+# ─── STAGE : build ────────────────────────────────────────────────────────────
+
+build:backend:
+  stage: build
+  image: maven:3.9-eclipse-temurin-21
+  <<: *cache-maven
+  <<: *rules-default
+  script:
+    - cd backend/ressources_enseignements
+    - mvn package -DskipTests --no-transfer-progress -B
+  artifacts:
+    paths:
+      - backend/ressources_enseignements/target/*.jar
+    expire_in: 1 hour
+
+build:frontend:
+  stage: build
+  image: node:20-slim
+  <<: *cache-node
+  <<: *rules-default
+  script:
+    - cd frontend/ressources_enseignements
+    - npm ci --prefer-offline
+    - npx ng build --configuration production
+  artifacts:
+    paths:
+      - frontend/ressources_enseignements/dist/
+    expire_in: 1 hour
+
+# ─── STAGE : sonar ────────────────────────────────────────────────────────────
+
+sonar:analyze:
+  stage: sonar
+  image: maven:3.9-eclipse-temurin-21
+  <<: *cache-maven
+  needs:
+    - test:backend
+    - test:frontend
   variables:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
-    GIT_DEPTH: "0"
+    GIT_DEPTH: "0"  # Nécessaire pour le blame et l'analyse des branches
   cache:
-    key: "${CI_JOB_NAME}"
+    key: "sonar-cache"
     paths:
-      - .sonar/cache
+      - .sonar/cache/
   script:
-    - sonar-scanner -Dsonar.login=$SONAR_TOKEN || echo "SonarQube failed but keeping pipeline alive"
-  allow_failure: true
-  only:
-    - merge_requests
-    - main
+    - cd backend/ressources_enseignements
+    - mvn sonar:sonar --no-transfer-progress -B
+      -Dsonar.host.url="${SONAR_HOST_URL}"
+      -Dsonar.token="${SONAR_TOKEN}"
+      -Dsonar.qualitygate.wait=true
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "master"
+  allow_failure: false
 
-# --- DEPLOY ---
-deploy-job:
-  stage: deploy
+# ─── STAGE : docker ───────────────────────────────────────────────────────────
+
+docker:build:
+  stage: docker
+  image: docker:24
+  services:
+    - docker:24-dind
+  needs:
+    - build:backend
+    - build:frontend
   script:
-    - echo "Deploying..."
-  only:
-    - main
+    - docker compose build
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "master"

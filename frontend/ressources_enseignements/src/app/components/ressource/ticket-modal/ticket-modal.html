@@ -4,8 +4,9 @@
 
     <div class="px-8 py-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
       <div>
-        <h2 class="text-xl font-bold text-gray-800">Reporter un problème</h2>
-        <p class="mt-1 text-sm text-gray-500">Décrivez l'erreur constatée dans vos services.</p>
+        <h2 class="text-xl font-bold text-gray-800">Créer un ticket</h2>
+        <p class="mt-1 text-sm text-gray-500">Décrivez le problème que vous rencontrez (heures, validation,
+          ressources...)</p>
       </div>
       <button (click)="closeTicketModal()" class="text-gray-400 hover:text-gray-600">
         <i class="fa-solid fa-xmark text-xl"></i>
@@ -19,7 +20,7 @@
         </label>
         <input type="text" [(ngModel)]="ticketData.title"
           class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-          placeholder="Ex: Erreur d'heures sur le module Java">
+          placeholder="Ex: Erreur d'heures, Problème de validation, etc.">
       </div>
 
       <div class="relative">
@@ -37,8 +38,8 @@
           Annuler
         </button>
         <button (click)="submitTicket()"
-          class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md font-medium flex items-center gap-2">
-          Envoyer le ticket <i class="fa-regular fa-paper-plane"></i>
+          class="px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-md font-medium flex items-center gap-2">
+          Signaler <i class="fa-regular fa-paper-plane"></i>
         </button>
       </div>
     </div>

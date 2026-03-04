@@ -1,40 +1,31 @@
 <div class="min-h-screen bg-gray-50 p-6">
   <div class="max-w-7xl mx-auto bg-white rounded-lg shadow-lg">
 
-    <div class="border-b border-gray-200 p-6">
+    <div class="border-b border-gray-200 p-6 flex justify-between items-center">
       <h1 class="text-2xl font-semibold text-gray-800">Tableau des ressources</h1>
+      <button
+        class="px-5 py-2.5 bg-red-100 text-red-700 font-semibold rounded-lg hover:bg-red-200 transition duration-200 shadow-sm flex items-center gap-2"
+        (click)="showModal.set(true)">
+        <i class="fa-regular fa-circle-exclamation"></i>
+        Signaler un problème
+      </button>
     </div>
 
     <div class="flex border-b border-gray-300">
-      <button
-        (click)="setActiveTab('ressources')"
-        [class]="activeTab() === 'ressources'
+      <button (click)="setActiveTab('ressources')" [class]="activeTab() === 'ressources'
           ? 'px-6 py-3 font-medium bg-gray-500 text-white'
-          : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'"
-      >Resources</button>
-      <button
-        (click)="setActiveTab('maquette')"
-        [class]="activeTab() === 'maquette'
+          : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'">Resources</button>
+      <button (click)="setActiveTab('maquette')" [class]="activeTab() === 'maquette'
           ? 'px-6 py-3 font-medium bg-gray-500 text-white'
-          : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'"
-      >Maquette</button>
-      <button
-        (click)="setActiveTab('validation')"
-        [class]="activeTab() === 'validation'
+          : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'">Maquette</button>
+      <button (click)="setActiveTab('validation')" [class]="activeTab() === 'validation'
           ? 'px-6 py-3 font-medium bg-gray-500 text-white'
-          : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'"
-      >Validation services</button>
+          : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'">Validation services</button>
     </div>
 
-    <app-filter-controls
-      [selectedYear]="selectedYear()"
-      [selectedClass]="selectedClass()"
-      [selectedSemester]="selectedSemester()"
-      [classData]="classData"
-      (yearChange)="onYearChange($event)"
-      (classChange)="onClassChange($event)"
-      (semesterChange)="onSemesterChange($event)"
-    />
+    <app-filter-controls [selectedYear]="selectedYear()" [selectedClass]="selectedClass()"
+      [selectedSemester]="selectedSemester()" [classData]="classData" (yearChange)="onYearChange($event)"
+      (classChange)="onClassChange($event)" (semesterChange)="onSemesterChange($event)" />
 
     @if (isLoading()) {
     <div class="flex justify-center items-center p-12">
@@ -49,47 +40,25 @@
     }
 
     @if (activeTab() === 'ressources' && !isLoading()) {
-    <app-resources-tab
-      [filteredRessources]="filteredRessources()"
-      [calculatedTotals]="calculatedTotals()"
-      [filteredConflicts]="filteredConflicts()"
-      [availableTeachers]="availableTeachers()"
-      [selectedTeacherIds]="selectedTeacherIds()"
-      [searchQuery]="searchQuery()"
-      (searchQueryChange)="searchQuery.set($event)"
-      (teacherSelected)="toggleTeacherFilter($event)"
-      (teacherFilterRemoved)="removeTeacherFilter($event)"
-      (filtersCleared)="clearFilters()"
-    />
+    <app-resources-tab [filteredRessources]="filteredRessources()" [calculatedTotals]="calculatedTotals()"
+      [filteredConflicts]="filteredConflicts()" [availableTeachers]="availableTeachers()"
+      [selectedTeacherIds]="selectedTeacherIds()" [searchQuery]="searchQuery()"
+      (searchQueryChange)="searchQuery.set($event)" (teacherSelected)="toggleTeacherFilter($event)"
+      (teacherFilterRemoved)="removeTeacherFilter($event)" (filtersCleared)="clearFilters()" />
     }
 
     @if (activeTab() === 'maquette' && !isLoading()) {
-    <app-maquette-tab
-      [scheduleData]="scheduleData()"
-      [projectData]="projectData()"
-      [weeks]="weeks()"
-      [isEditing]="isEditing()"
-      [successMessage]="successMessage()"
-      [errorMessage]="errorMessage()"
-      (editingEnabled)="enableEditing()"
-      (editingValidated)="validateEditing()"
-      (editingCancelled)="cancelEditing()"
-      (scheduleHoursChanged)="onScheduleHoursChanged($event)"
-      (projectHoursChanged)="onProjectHoursChanged($event)"
-    />
+    <app-maquette-tab [scheduleData]="scheduleData()" [projectData]="projectData()" [weeks]="weeks()"
+      [isEditing]="isEditing()" [successMessage]="successMessage()" [errorMessage]="errorMessage()"
+      (editingEnabled)="enableEditing()" (editingValidated)="validateEditing()" (editingCancelled)="cancelEditing()"
+      (scheduleHoursChanged)="onScheduleHoursChanged($event)" (projectHoursChanged)="onProjectHoursChanged($event)" />
     }
 
     @if (activeTab() === 'validation' && !isLoading()) {
-    <app-validation-tab
-      [selectedYear]="selectedYear()"
-      (ticketRequested)="showModal.set(true)"
-    />
+    <app-validation-tab [selectedYear]="selectedYear()" (ticketRequested)="showModal.set(true)" />
     }
 
-    <app-ticket-modal
-      [isOpen]="showModal()"
-      (closed)="showModal.set(false)"
-    />
+    <app-ticket-modal [isOpen]="showModal()" (closed)="showModal.set(false)" />
 
   </div>
 </div>

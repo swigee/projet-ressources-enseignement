@@ -7,21 +7,22 @@ services:
       MYSQL_DATABASE: ressources_enseignements
       MYSQL_USER: sae
       MYSQL_PASSWORD: sae
-    ports:
-      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
     restart: always
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      retries: 10
 
   backend:
     build: ./backend/ressources_enseignements
     container_name: backend-sae
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ressources_enseignements?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: sae
-      SPRING_DATASOURCE_PASSWORD: sae
+      SPRING_PROFILES_ACTIVE: prod
     ports:
       - "8080:8080"
     restart: always

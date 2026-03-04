@@ -58,7 +58,7 @@ Ce projet est une application web de gestion des ressources d'enseignements. Il 
 
 ## Fonctionnalités principales
 
-- Gestion des utilisateurs 
+- Gestion des utilisateurs
 - Création et modification de maquettes pédagogiques
 - Gestion des formations et affectations
 - Authentification
@@ -69,12 +69,12 @@ Ce projet est une application web de gestion des ressources d'enseignements. Il 
 
   username: admin
 
-  password: Admin123
+  password: admin123
 - Prof
 
   username: prof
 
-  password: Prof123
+  password: prof123
 
 ## Auteur
 

@@ -1,0 +1,52 @@
+
+# Usage local : docker compose -f docker-compose.sonarqube.yml up -d
+# Accès : http://localhost:9000  (admin / admin au premier démarrage)
+#
+# Après démarrage :
+#   1. Créer un projet avec la clé : sae-dev
+#   2. Générer un token dans User > My Account > Security
+#   3. Lancer l'analyse : mvn sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=<TOKEN>
+
+services:
+  sonarqube:
+    image: sonarqube:10-community
+    container_name: sonarqube
+    depends_on:
+      sonar-db:
+        condition: service_healthy
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonar_data:/opt/sonarqube/data
+      - sonar_extensions:/opt/sonarqube/extensions
+      - sonar_logs:/opt/sonarqube/logs
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    restart: unless-stopped
+
+  sonar-db:
+    image: postgres:15-alpine
+    container_name: sonar-db
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - sonar_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sonar"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  sonar_data:
+  sonar_extensions:
+  sonar_logs:
+  sonar_db:

@@ -30,6 +30,17 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.projectKey>sae-dev</sonar.projectKey>
+        <sonar.projectName>SAE Dev</sonar.projectName>
+        <!-- Chemins relatifs depuis backend/ressources_enseignements/ -->
+        <sonar.sources>src/main/java,../../frontend/ressources_enseignements/src</sonar.sources>
+        <sonar.tests>src/test/java</sonar.tests>
+        <sonar.java.binaries>target/classes</sonar.java.binaries>
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.javascript.lcov.reportPaths>../../frontend/ressources_enseignements/coverage/ressources_enseignement/lcov.info</sonar.javascript.lcov.reportPaths>
+        <sonar.typescript.lcov.reportPaths>../../frontend/ressources_enseignements/coverage/ressources_enseignement/lcov.info</sonar.typescript.lcov.reportPaths>
+        <sonar.exclusions>**/node_modules/**,**/dist/**,**/*.spec.ts,**/target/**,**/*.min.js</sonar.exclusions>
+        <sonar.coverage.exclusions>**/*.spec.ts,**/main.ts,**/main.server.ts,**/*environment*,**/ProjectApplicationTests.java</sonar.coverage.exclusions>
     </properties>
     <dependencies>
         <dependency>
@@ -155,6 +166,31 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <!-- JaCoCo : couverture de code Java -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals><goal>prepare-agent</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals><goal>report</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Sonar Maven Plugin -->
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>4.0.0.4121</version>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

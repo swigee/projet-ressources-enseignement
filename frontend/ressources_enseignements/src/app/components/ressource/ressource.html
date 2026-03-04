@@ -2,9 +2,7 @@
   <div class="max-w-7xl mx-auto bg-white rounded-lg shadow-lg">
 
     <div class="border-b border-gray-200 p-6">
-      <h1 class="text-2xl font-semibold text-gray-800">
-        Tableau des ressources
-      </h1>
+      <h1 class="text-2xl font-semibold text-gray-800">Tableau des ressources</h1>
     </div>
 
     <div class="flex border-b border-gray-300">
@@ -13,149 +11,30 @@
         [class]="activeTab() === 'ressources'
           ? 'px-6 py-3 font-medium bg-gray-500 text-white'
           : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'"
-      >
-        Resources
-      </button>
+      >Resources</button>
       <button
         (click)="setActiveTab('maquette')"
         [class]="activeTab() === 'maquette'
           ? 'px-6 py-3 font-medium bg-gray-500 text-white'
           : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'"
-      >
-        Maquette
-      </button>
+      >Maquette</button>
       <button
         (click)="setActiveTab('validation')"
         [class]="activeTab() === 'validation'
           ? 'px-6 py-3 font-medium bg-gray-500 text-white'
           : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'"
-      >
-        Validation services
-      </button>
+      >Validation services</button>
     </div>
 
-    <div class="border-b border-gray-200 p-6">
-      <div class="flex gap-4">
-        <div class="flex-1">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Annee d'etude
-          </label>
-          <select
-            [ngModel]="selectedYear()"
-            (ngModelChange)="onYearChange($event)"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            @for (yearKey of getYearKeys(); track yearKey) {
-            <option [value]="yearKey">{{ classData[yearKey].name }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="flex-1">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Classe
-          </label>
-          <select
-            [ngModel]="selectedClass()"
-            (ngModelChange)="selectedClass.set($event); onClassChange()"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            @for (classOption of getAvailableClasses(); track classOption) {
-            <option [value]="classOption">{{ classOption }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="flex-1">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Semestre
-          </label>
-          <select
-            [ngModel]="selectedSemester()"
-            (ngModelChange)="onSemesterChange($event)"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="1">Semestre 1</option>
-            <option value="2">Semestre 2</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="mt-3 text-sm text-gray-600">
-        <span class="font-medium">Sélection :</span> {{ classData[selectedYear()].name }} - {{ selectedClass() }} - Semestre {{ selectedSemester() }}
-      </div>
-    </div>
-
-    @if (activeTab() === 'ressources') {
-    <div class="p-6 border-b border-gray-200">
-      <div class="relative mb-4">
-          <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-          <input
-            type="text"
-            placeholder="Rechercher une ressource..."
-            [value]="searchQuery()"
-          (input)="onSearchInput($event)"
-            class="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-blue-500"
-          />
-      </div>
-
-      <div class="relative">
-        <span class="text-sm font-medium text-gray-700 mb-2 block">Filtrer par enseignant:</span>
-        <div class="relative">
-            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-            <input
-              type="text"
-              placeholder="Rechercher un enseignant..."
-              [value]="teacherSearchQuery()"
-              (input)="onTeacherSearchInput($event)"
-              (blur)="closeTeacherDropdown()"
-              class="w-full pl-9 pr-4 py-2 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          @if (showTeacherDropdown() && filteredTeacherSuggestions().length > 0) {
-              <div class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-48 overflow-y-auto">
-            @for (teacher of filteredTeacherSuggestions(); track teacher.teacherId) {
-                  <button
-                    (mousedown)="selectTeacherFromDropdown(teacher.teacherId)"
-                    class="w-full text-left px-4 py-2 text-sm hover:bg-blue-50 transition-colors"
-                  >
-              {{ teacher.fullName }}
-            </button>
-            }
-          </div>
-          }
-          @if (showTeacherDropdown() && teacherSearchQuery().trim() && filteredTeacherSuggestions().length === 0) {
-          <div class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 px-4 py-3">
-            <span class="text-sm text-gray-400 italic">Aucun enseignant trouve</span>
-          </div>
-          }
-        </div>
-
-        @if (selectedTeacherIds().length > 0) {
-        <div class="flex flex-wrap gap-2 mt-3 items-center">
-          @for (teacherId of selectedTeacherIds(); track teacherId) {
-          <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-blue-500 text-white">
-            {{ getTeacherName(teacherId) }}
-                  <button (click)="removeTeacherFilter(teacherId)" class="ml-1 hover:text-blue-200 transition-colors">&times;</button>
-          </span>
-          }
-        </div>
-        }
-
-        @if (selectedTeacherIds().length > 0 || searchQuery()) {
-            <button
-              (click)="clearFilters()"
-              class="mt-3 px-3 py-1 rounded-full text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
-            >
-          Effacer les filtres
-        </button>
-        }
-      </div>
-    </div>
-    }
+    <app-filter-controls
+      [selectedYear]="selectedYear()"
+      [selectedClass]="selectedClass()"
+      [selectedSemester]="selectedSemester()"
+      [classData]="classData"
+      (yearChange)="onYearChange($event)"
+      (classChange)="onClassChange($event)"
+      (semesterChange)="onSemesterChange($event)"
+    />
 
     @if (isLoading()) {
     <div class="flex justify-center items-center p-12">
@@ -170,646 +49,47 @@
     }
 
     @if (activeTab() === 'ressources' && !isLoading()) {
-    <div class="p-6">
-      <div class="overflow-x-auto border border-gray-300 rounded-lg">
-        <table class="w-full border-collapse text-sm">
-          <thead>
-            <tr class="bg-gray-50 border-b border-gray-300">
-              <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Module</th>
-              <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Heures Prev.</th>
-              <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Heures Reelles</th>
-              <th class="px-4 py-3 text-center text-sm font-semibold" style="color: #4ecdc4">TD</th>
-              <th class="px-4 py-3 text-center text-sm font-semibold" style="color: #a864a8">TP</th>
-              <th class="px-4 py-3 text-center text-sm font-semibold" style="color: #ff6b6b">CM</th>
-              <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Teachers</th>
-              <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (filteredRessources().length === 0) {
-            <tr>
-              <td colspan="8" class="text-center text-gray-500 italic py-8">
-                Aucune ressource trouvee
-              </td>
-            </tr>
-            } @else {
-            @for (row of filteredRessources(); track row.id) {
-                  <tr [class]="(row.isHighlighted ? 'bg-blue-100' : 'bg-white') + ' border-b border-gray-300 hover:bg-blue-50'">
-
-              <td [class]="'px-4 py-3 font-medium ' + (row.isHighlighted ? 'bg-blue-100' : '')">
-                {{ row.moduleName }}
-                @if (row.category) {
-                <div class="text-xs text-gray-600 mt-1">
-                  {{ row.category }}
-                </div>
-                }
-              </td>
-
-              <td class="px-4 py-3 text-center">
-                {{ row.plannedHours }}h
-              </td>
-
-              <td class="px-4 py-3 text-center">
-                {{ row.actualHours }}h
-              </td>
-
-              <td class="px-4 py-3 text-center font-medium" style="color: #4ecdc4">
-                {{ row.tdHours }}h
-              </td>
-
-              <td class="px-4 py-3 text-center font-medium" style="color: #a864a8">
-                {{ row.tpHours }}h
-              </td>
-
-              <td class="px-4 py-3 text-center font-medium" style="color: #ff6b6b">
-                {{ row.cmHours }}h
-              </td>
-
-              <td class="px-4 py-3">
-                <div class="flex flex-wrap gap-1">
-                  @for (teacher of row.assignedTeachers; track teacher.teacherId) {
-                  <span class="px-2 py-1 rounded-full text-xs bg-blue-200 text-blue-800">
-                    {{ teacher.fullName }} ({{ teacher.assignedHours }}h)
-                  </span>
-                  }
-                  @if (row.assignedTeachers.length === 0) {
-                  <span class="text-gray-400 italic text-xs">Non assigne</span>
-                  }
-                </div>
-              </td>
-
-
-              <td class="px-4 py-3 text-center">
-                @if (hasConflict(row)) {
-                <div class="flex items-center justify-center" title="Conflit d'emploi du temps detecte">
-                  <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
-                </div>
-                } @else {
-                <div class="flex items-center justify-center">
-                  <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                }
-              </td>
-            </tr>
-            }
-            }
-          </tbody>
-
-
-          <tfoot>
-            <tr class="bg-gray-100 border-t-2 border-gray-400 font-semibold">
-              <td class="px-4 py-3">Total</td>
-              <td class="px-4 py-3 text-center">{{ calculatedTotals().totalPlannedHours }}h</td>
-              <td class="px-4 py-3 text-center">{{ calculatedTotals().totalActualHours }}h</td>
-              <td class="px-4 py-3 text-center" style="color: #4ecdc4">{{ calculatedTotals().totalTDHours }}h</td>
-              <td class="px-4 py-3 text-center" style="color: #a864a8">{{ calculatedTotals().totalTPHours }}h</td>
-              <td class="px-4 py-3 text-center" style="color: #ff6b6b">{{ calculatedTotals().totalCMHours }}h</td>
-              <td class="px-4 py-3" colspan="2"></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-
-
-      @if (filteredConflicts().length > 0) {
-      <div class="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
-        <h3 class="text-sm font-semibold text-orange-800 mb-2">
-          <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
-          Conflits detectes ({{ filteredConflicts().length }})
-        </h3>
-        <ul class="space-y-1">
-          @for (conflict of filteredConflicts(); track conflict.teacherId) {
-          <li class="text-sm text-orange-700">
-            <span class="font-medium">{{ conflict.teacherName }}</span> -
-            Week {{ conflict.weekNumber }}, {{ conflict.timeSlot }}:
-            {{ conflict.conflictingModules.join(', ') }}
-          </li>
-          }
-        </ul>
-      </div>
-      }
-
-
-      <div class="mt-4 p-4 bg-blue-50 rounded-lg">
-        <div class="grid grid-cols-5 gap-4">
-          <div>
-            <div class="text-sm text-gray-600">Total Prév.</div>
-            <div class="text-xl font-bold text-gray-800">{{ calculatedTotals().totalPlannedHours }}h</div>
-          </div>
-          <div>
-            <div class="text-sm text-gray-600">Total Réel</div>
-            <div class="text-xl font-bold text-blue-600">{{ calculatedTotals().totalActualHours }}h</div>
-          </div>
-          <div>
-            <div class="text-sm text-gray-600">Total TD</div>
-            <div class="text-xl font-bold" style="color: #4ecdc4">{{ calculatedTotals().totalTDHours }}h</div>
-          </div>
-          <div>
-            <div class="text-sm text-gray-600">Total TP</div>
-            <div class="text-xl font-bold" style="color: #a864a8">{{ calculatedTotals().totalTPHours }}h</div>
-          </div>
-          <div>
-            <div class="text-sm text-gray-600">Total CM</div>
-            <div class="text-xl font-bold" style="color: #ff6b6b">{{ calculatedTotals().totalCMHours }}h</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <app-resources-tab
+      [filteredRessources]="filteredRessources()"
+      [calculatedTotals]="calculatedTotals()"
+      [filteredConflicts]="filteredConflicts()"
+      [availableTeachers]="availableTeachers()"
+      [selectedTeacherIds]="selectedTeacherIds()"
+      [searchQuery]="searchQuery()"
+      (searchQueryChange)="searchQuery.set($event)"
+      (teacherSelected)="toggleTeacherFilter($event)"
+      (teacherFilterRemoved)="removeTeacherFilter($event)"
+      (filtersCleared)="clearFilters()"
+    />
     }
 
-
     @if (activeTab() === 'maquette' && !isLoading()) {
-    <div class="p-6 space-y-6">
-
-
-        <div class="flex items-center justify-between gap-3 sticky top-0 z-50 bg-white py-3 border-b border-gray-200 shadow-sm -mx-6 px-6">
-
-        <div>
-          @if (isEditing()) {
-              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm font-medium">
-            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-            Mode edition actif
-          </span>
-          }
-        </div>
-
-        <div class="flex gap-3">
-            <button
-              (click)="enableEditing()"
-              [disabled]="isEditing()"
-              class="inline-flex items-center gap-2 px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 transition-colors duration-200 font-medium"
-            >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>
-            Modifier
-          </button>
-            <button
-              (click)="validateEditing()"
-              [disabled]="!isEditing()"
-              class="inline-flex items-center gap-2 px-5 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 transition-colors duration-200 font-medium"
-            >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Valider
-          </button>
-            <button
-              (click)="cancelEditing()"
-              [disabled]="!isEditing()"
-              class="inline-flex items-center gap-2 px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors duration-200 font-medium"
-            >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-            Annuler
-          </button>
-        </div>
-      </div>
-
-
-      @if (successMessage()) {
-      <div class="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg">
-        <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <p class="text-sm font-medium text-green-800">{{ successMessage() }}</p>
-      </div>
-      }
-
-
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 border-l-4" style="border-left-color: #667eea">
-          <div class="text-sm text-gray-600">Total heures</div>
-          <div class="text-2xl font-bold text-gray-800">{{ calculateGrandTotalWithProject() }}h</div>
-        </div>
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 border-l-4" style="border-left-color: #ff6b6b">
-          <div class="text-sm text-gray-600">Heures CM</div>
-          <div class="text-2xl font-bold" style="color: #ff6b6b">{{ maquetteTotalCM }}h</div>
-        </div>
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 border-l-4" style="border-left-color: #4ecdc4">
-          <div class="text-sm text-gray-600">Heures TD</div>
-          <div class="text-2xl font-bold" style="color: #4ecdc4">{{ maquetteTotalTD }}h</div>
-        </div>
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 border-l-4" style="border-left-color: #a864a8">
-          <div class="text-sm text-gray-600">Heures TP</div>
-          <div class="text-2xl font-bold" style="color: #a864a8">{{ maquetteTotalTP }}h</div>
-        </div>
-      </div>
-
-
-      <div class="bg-gray-50 rounded-lg px-4 py-3 flex flex-wrap items-center gap-4">
-        <span class="text-sm font-medium text-gray-700">Legende :</span>
-        <span class="flex items-center gap-1.5">
-          <span class="w-3 h-3 rounded-full inline-block" style="background-color: #ff6b6b"></span>
-          <span class="text-sm text-gray-600">CM</span>
-        </span>
-        <span class="flex items-center gap-1.5">
-          <span class="w-3 h-3 rounded-full inline-block" style="background-color: #4ecdc4"></span>
-          <span class="text-sm text-gray-600">TD</span>
-        </span>
-        <span class="flex items-center gap-1.5">
-          <span class="w-3 h-3 rounded-full inline-block" style="background-color: #a864a8"></span>
-          <span class="text-sm text-gray-600">TP</span>
-        </span>
-        <span class="flex items-center gap-1.5">
-          <span class="w-3 h-3 rounded-full inline-block bg-amber-400"></span>
-          <span class="text-sm text-gray-600">Entreprise</span>
-        </span>
-      </div>
-
-
-      @for (row of scheduleData(); track row.id) {
-      <div class="space-y-3">
-
-            <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200 border-l-4 p-4 hover:shadow-lg transition-shadow duration-200" style="border-left-color: #667eea">
-          <div class="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h3 class="text-base font-semibold text-gray-800">{{ row.courseName }}</h3>
-              @if (row.category) {
-              <span class="text-xs text-gray-500 mt-0.5 inline-block">{{ row.category }}</span>
-              }
-            </div>
-            <div class="flex items-center gap-6">
-              <div class="text-center">
-                <div class="text-xs text-gray-500 uppercase">CM</div>
-                <div class="text-lg font-bold" style="color: #ff6b6b">{{ calculateTotalCM(row) }}h</div>
-              </div>
-              <div class="text-center">
-                <div class="text-xs text-gray-500 uppercase">TD</div>
-                <div class="text-lg font-bold" style="color: #4ecdc4">{{ calculateTotalTD(row) }}h</div>
-              </div>
-              <div class="text-center">
-                <div class="text-xs text-gray-500 uppercase">TP</div>
-                <div class="text-lg font-bold" style="color: #a864a8">{{ calculateTotalTP(row) }}h</div>
-              </div>
-              <div class="text-center">
-                <div class="text-xs text-gray-500 uppercase">Total</div>
-                <div class="text-lg font-bold text-gray-800">{{ calculateTotalHours(row) }}h</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-        <div class="flex flex-nowrap gap-4 pl-4 overflow-x-auto">
-          @for (week of getAllWeeks(); track $index) {
-          @if (week.type === 'S') {
-
-                  <div class="flex-none w-44 bg-amber-50 border border-amber-300 rounded-lg p-4 text-center hover:shadow-lg transition-shadow duration-200">
-            <div class="font-bold text-amber-700 mb-3 pb-2 border-b border-amber-200 text-sm">S{{ week.num }}
-              <span class="text-xs text-amber-500 font-normal ml-1">{{ week.date }}</span>
-            </div>
-            <div class="text-xs text-amber-600 font-medium">Entreprise</div>
-          </div>
-          } @else {
-
-          <div class="flex-none w-44 bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
-            <div class="font-bold text-gray-800 mb-3 pb-2 border-b border-gray-200 text-sm">S{{ week.num }}
-              <span class="text-xs text-gray-500 font-normal ml-1">{{ week.date }}</span>
-            </div>
-            <div class="space-y-2">
-
-              <div class="flex justify-between items-center text-sm">
-                        <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #ffe8e8; color: #ff6b6b">CM</span>
-                        <input type="number" min="0"
-                          [value]="row.hoursPerWeek[week.num.toString()]?.cm || 0"
-                          (input)="updateScheduleHoursByType(row.id, week.num, 'cm', $event)"
-                          [readonly]="!isEditing()"
-                  class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-red-500 focus:outline-none text-sm">
-              </div>
-
-              <div class="flex justify-between items-center text-sm">
-                        <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #e0f7f6; color: #4ecdc4">TD</span>
-                        <input type="number" min="0"
-                          [value]="row.hoursPerWeek[week.num.toString()]?.td || 0"
-                          (input)="updateScheduleHoursByType(row.id, week.num, 'td', $event)"
-                          [readonly]="!isEditing()"
-                  class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:outline-none text-sm">
-              </div>
-
-              <div class="flex justify-between items-center text-sm">
-                        <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #f3e5f3; color: #a864a8">TP</span>
-                        <input type="number" min="0"
-                          [value]="row.hoursPerWeek[week.num.toString()]?.tp || 0"
-                          (input)="updateScheduleHoursByType(row.id, week.num, 'tp', $event)"
-                          [readonly]="!isEditing()"
-                  class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
-              </div>
-
-              <div class="flex justify-between items-center text-sm pt-2 border-t border-gray-200">
-                <span class="text-gray-600 font-semibold">Total</span>
-                <span class="font-bold text-gray-800">{{ getWeekTotal(row.hoursPerWeek, week.num) }}h</span>
-              </div>
-            </div>
-          </div>
-          }
-          }
-        </div>
-      </div>
-      }
-
-      <div class="space-y-3">
-          <div class="bg-green-50 rounded-lg shadow-sm border border-gray-200 border-l-4 border-green-500 p-4 hover:shadow-lg transition-shadow duration-200">
-          <div class="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h3 class="text-base font-semibold text-green-800">Projet SAE</h3>
-              <span class="text-xs text-green-600 mt-0.5 inline-block">{{ projectData().name }}</span>
-            </div>
-            <div class="flex items-center gap-6">
-              <div class="text-center">
-                <div class="text-xs text-gray-500">Total</div>
-                <div class="text-lg font-bold text-green-700">{{ calculateProjectTotal() }}h</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex flex-nowrap gap-4 pl-4 overflow-x-auto">
-          @for (week of getAllWeeks(); track $index) {
-          @if (week.type === 'S') {
-                <div class="flex-none w-44 bg-amber-50 border border-amber-300 rounded-lg p-4 text-center hover:shadow-lg transition-shadow duration-200">
-            <div class="font-bold text-amber-700 mb-3 pb-2 border-b border-amber-200 text-sm">S{{ week.num }}
-              <span class="text-xs text-amber-500 font-normal ml-1">{{ week.date }}</span>
-            </div>
-            <div class="text-xs text-amber-600 font-medium">Entreprise</div>
-          </div>
-          } @else {
-          <div class="flex-none w-44 bg-green-50 border border-green-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
-            <div class="font-bold text-green-800 mb-3 pb-2 border-b border-green-200 text-sm">S{{ week.num }}
-              <span class="text-xs text-green-500 font-normal ml-1">{{ week.date }}</span>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between items-center text-sm">
-                      <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #ffe8e8; color: #ff6b6b">CM</span>
-                      <input type="number" min="0"
-                        [value]="projectData().hoursPerWeek[week.num.toString()]?.cm || 0"
-                        (input)="updateProjectHoursByType(week.num, 'cm', $event)"
-                        [readonly]="!isEditing()"
-                  class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-red-500 focus:outline-none text-sm">
-              </div>
-              <div class="flex justify-between items-center text-sm">
-                      <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #e0f7f6; color: #4ecdc4">TD</span>
-                      <input type="number" min="0"
-                        [value]="projectData().hoursPerWeek[week.num.toString()]?.td || 0"
-                        (input)="updateProjectHoursByType(week.num, 'td', $event)"
-                        [readonly]="!isEditing()"
-                  class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
-              </div>
-              <div class="flex justify-between items-center text-sm">
-                      <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #f3e5f3; color: #a864a8">TP</span>
-                      <input type="number" min="0"
-                        [value]="projectData().hoursPerWeek[week.num.toString()]?.tp || 0"
-                        (input)="updateProjectHoursByType(week.num, 'tp', $event)"
-                        [readonly]="!isEditing()"
-                  class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
-              </div>
-              <div class="flex justify-between items-center text-sm pt-2 border-t border-green-200">
-                <span class="text-green-700 font-semibold">Total</span>
-                <span class="font-bold text-green-800">{{ getWeekTotal(projectData().hoursPerWeek, week.num) }}h</span>
-              </div>
-            </div>
-          </div>
-          }
-          }
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="text-sm font-semibold text-gray-700">Total hors projet</h3>
-            <span class="text-xl font-bold text-blue-600">{{ calculateMaquetteGrandTotal() }}h</span>
-          </div>
-          <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
-            @for (week of getAllWeeks(); track $index) {
-            @if (week.type === 'E') {
-            <div class="bg-blue-50 rounded p-2 text-center">
-              <div class="text-xs text-gray-500">S{{ week.num }}</div>
-              <div class="text-sm font-semibold text-blue-700">{{ calculateWeekTotal(week.num) }}</div>
-            </div>
-            } @else {
-            <div class="bg-gray-100 rounded p-2 text-center">
-              <div class="text-xs text-gray-400">S{{ week.num }}</div>
-              <div class="text-xs text-gray-400">-</div>
-            </div>
-            }
-            }
-          </div>
-        </div>
-
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="text-sm font-semibold text-gray-700">Total avec projet</h3>
-            <span class="text-xl font-bold text-green-600">{{ calculateGrandTotalWithProject() }}h</span>
-          </div>
-          <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
-            @for (week of getAllWeeks(); track $index) {
-            @if (week.type === 'E') {
-            <div class="bg-green-50 rounded p-2 text-center">
-              <div class="text-xs text-gray-500">S{{ week.num }}</div>
-              <div class="text-sm font-semibold text-green-700">{{ calculateWeekTotalWithProject(week.num) }}</div>
-            </div>
-            } @else {
-            <div class="bg-gray-100 rounded p-2 text-center">
-              <div class="text-xs text-gray-400">S{{ week.num }}</div>
-              <div class="text-xs text-gray-400">-</div>
-            </div>
-            }
-            }
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-blue-50 rounded-lg p-4">
-        <div class="grid grid-cols-3 gap-4">
-          <div>
-            <div class="text-sm text-gray-600">Total ressources</div>
-            <div class="text-2xl font-bold text-gray-800">{{ calculateMaquetteGrandTotal() }}h</div>
-          </div>
-          <div>
-            <div class="text-sm text-gray-600">Total avec projet</div>
-            <div class="text-2xl font-bold text-green-600">{{ calculateGrandTotalWithProject() }}h</div>
-          </div>
-          <div>
-            <div class="text-sm text-gray-600">Semaines entreprise</div>
-            <div class="text-2xl font-bold text-orange-600">{{ getCompanyWeeksCount() }}</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <app-maquette-tab
+      [scheduleData]="scheduleData()"
+      [projectData]="projectData()"
+      [weeks]="weeks()"
+      [isEditing]="isEditing()"
+      [successMessage]="successMessage()"
+      [errorMessage]="errorMessage()"
+      (editingEnabled)="enableEditing()"
+      (editingValidated)="validateEditing()"
+      (editingCancelled)="cancelEditing()"
+      (scheduleHoursChanged)="onScheduleHoursChanged($event)"
+      (projectHoursChanged)="onProjectHoursChanged($event)"
+    />
     }
 
     @if (activeTab() === 'validation' && !isLoading()) {
-    <div class="p-6">
-
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-        <div class="grid grid-cols-12 gap-4 border-b border-gray-200 pb-4 mb-4 text-gray-500 text-sm font-medium">
-          <div class="col-span-4">Module / Ressource</div>
-          <div class="col-span-2 text-center">Total Prév.</div>
-          <div class="col-span-2 text-center">CM</div>
-          <div class="col-span-2 text-center">TD</div>
-          <div class="col-span-2 text-center">TP</div>
-        </div>
-
-        <div>
-          @if (filteredServices().length === 0){
-          <div class="text-center py-10 text-gray-400 italic">
-            Aucun service trouvé pour cette année.
-          </div>
-          }
-
-          @for(service of filteredServices(); track $index ){
-
-          <div class="py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition">
-            <div class="grid grid-cols-12 gap-4 items-center">
-              <div class="col-span-4 font-bold text-gray-800">{{ service.resourceTitle }}</div>
-              <div class="col-span-2 text-center font-bold text-blue-600">{{ service.totalHours }}h</div>
-              <div class="col-span-2 text-center">{{ service.hoursCM > 0 ? service.hoursCM + 'h' : '-' }}</div>
-              <div class="col-span-2 text-center">{{ service.hoursTD > 0 ? service.hoursTD + 'h' : '-' }}</div>
-              <div class="col-span-2 text-center">{{ service.hoursTP > 0 ? service.hoursTP + 'h' : '-' }}</div>
-            </div>
-          </div>
-          }
-        </div>
-      </div>
-
-      <div class="flex justify-center w-full mb-12 mt-8">
-        <div class="flex items-center w-full max-w-2xl">
-
-          <div class="flex flex-col items-center relative">
-            <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300"
-              [class]="(validationStatus() === 'SUBMITTED' || validationStatus() === 'VALIDATED')
-                  ? 'bg-green-100 border-green-500 text-green-600'
-                  : 'bg-gray-100 border-gray-300 text-gray-400'">
-              <i class="fa-solid fa-paper-plane text-xl"></i>
-            </div>
-            <span class="absolute -bottom-8 text-sm font-medium text-gray-600 w-32 text-center">Validation envoyée</span>
-          </div>
-
-          <div class="flex-1 h-1 mx-4 rounded transition-all duration-300"
-            [class]="validationStatus() === 'VALIDATED' ? 'bg-green-500' : 'bg-gray-200'">
-          </div>
-
-          <div class="flex flex-col items-center relative">
-            <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300"
-              [class]="validationStatus() === 'VALIDATED'
-                  ? 'bg-green-100 border-green-500 text-green-600'
-                  : 'bg-gray-100 border-gray-300 text-gray-400'">
-              <i class="fa-solid fa-circle-check text-xl"></i>
-            </div>
-            <span class="absolute -bottom-8 text-sm font-medium text-gray-600 w-32 text-center">Validé par le chef</span>
-          </div>
-
-        </div>
-      </div>
-
-      @if (validationStatus() === 'NONE') {
-      <div class="flex justify-center gap-6 mt-16">
-        <button
-          class="px-8 py-4 bg-red-100 text-red-700 font-semibold rounded-xl hover:bg-red-200 transition duration-200 shadow-sm flex items-center gap-2"
-          (click)="openTicketModal()">
-          <i class="fa-regular fa-circle-exclamation"></i>
-          Signaler un problème
-        </button>
-        <button (click)="requestValidation()"
-          class="px-8 py-4 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition duration-200 shadow-md flex items-center gap-2 transform hover:scale-105">
-          <i class="fa-solid fa-check"></i>
-          Valider le service
-        </button>
-      </div>
-      } @else {
-      <div class="text-center mt-12 p-6 bg-blue-50 rounded-xl border border-blue-100 max-w-2xl mx-auto">
-        <p class="text-blue-800 font-medium">
-          <i class="fa-solid fa-info-circle mr-2"></i>
-          Votre service a été transmis pour validation. Vous serez notifié une fois qu'il sera validé par le chef de département.
-        </p>
-      </div>
-      }
-    </div>
+    <app-validation-tab
+      [selectedYear]="selectedYear()"
+      (ticketRequested)="showModal.set(true)"
+    />
     }
 
-    @if (showValidationConfirm()) {
-    <div class="fixed bottom-6 right-6 z-50 animate-bounce-in">
-      <div class="bg-white rounded-lg shadow-2xl border border-gray-200 p-6 max-w-sm flex flex-col gap-4">
-        <div>
-          <h3 class="font-bold text-gray-800 text-lg mb-2">Confirmer la validation</h3>
-          <p class="text-sm text-gray-600">
-            Une fois validé, vous ne pourrez plus signaler de problèmes. Êtes-vous sûr de vouloir soumettre votre service au chef de département ?
-          </p>
-        </div>
-        <div class="flex justify-end gap-3">
-          <button (click)="cancelValidation()"
-            class="px-4 py-2 bg-gray-100 text-gray-600 font-medium rounded hover:bg-gray-200 transition">
-            Annuler
-          </button>
-          <button (click)="confirmValidation()"
-            class="px-4 py-2 bg-green-600 text-white font-medium rounded hover:bg-green-700 transition shadow-sm">
-            Envoyer
-          </button>
-        </div>
-      </div>
-    </div>
-    }
-
-    @if(showModal){
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-
-      <div class="bg-white rounded-xl shadow-2xl overflow-hidden w-full max-w-lg mx-4 transform transition-all">
-
-        <div class="px-8 py-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-          <div>
-            <h2 class="text-xl font-bold text-gray-800">Reporter un problème</h2>
-            <p class="mt-1 text-sm text-gray-500">Décrivez l'erreur constatée dans vos services.</p>
-          </div>
-          <button (click)="closeTicketModal()" class="text-gray-400 hover:text-gray-600">
-            <i class="fa-solid fa-xmark text-xl"></i>
-          </button>
-        </div>
-
-        <div class="px-8 py-6 space-y-6">
-
-          <div class="relative">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Sujet du problème <span class="text-red-500">*</span>
-            </label>
-            <input type="text" [(ngModel)]="ticketData.title"
-              class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              placeholder="Ex: Erreur d'heures sur le module Java">
-          </div>
-
-          <div class="relative">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Description détaillée <span class="text-red-500">*</span>
-            </label>
-            <textarea rows="4" [(ngModel)]="ticketData.description"
-              class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
-              placeholder="Décrivez précisément le problème..."></textarea>
-          </div>
-
-          <div class="flex justify-end gap-3 mt-4">
-            <button (click)="closeTicketModal()"
-              class="px-6 py-2.5 text-gray-700 font-medium hover:bg-gray-100 rounded-lg transition">
-              Annuler
-            </button>
-            <button (click)="submitTicket()"
-              class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md font-medium flex items-center gap-2">
-              Envoyer le ticket <i class="fa-regular fa-paper-plane"></i>
-            </button>
-          </div>
-
-        </div>
-      </div>
-    </div>
-    }
-
+    <app-ticket-modal
+      [isOpen]="showModal()"
+      (closed)="showModal.set(false)"
+    />
 
   </div>
 </div>

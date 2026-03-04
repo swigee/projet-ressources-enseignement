@@ -1,67 +1,26 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { RessourcesService } from '../../services/ressources/ressources-service';
-import {
-  RessourceRow, RessourcesTotals,
-  ScheduleConflict,
-  TeacherBadge
-} from '../../models/ressources/ressources.model';
-import {MonthDTO,WeekDTO,ValidationRequestDTO,WeekHoursDTO,UpdateHoursDTO,ValidationResponseDTO,ScheduleStatisticsDTO,RessourceScheduleDTO,PedagogicalScheduleDTO,ProjectScheduleDTO} from '../../models/schedule/schedule.model';
-import {
-  PedagogicalScheduleService
-} from '../../services/pedagogical-schedule/pedagogical-schedule-service';
-import { UserService } from '../../services/user/user-service';
-import { Router } from '@angular/router';
-import { PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser, AsyncPipe, NgIf, NgFor } from '@angular/common';
-import { TicketService, CreateTicketDTO } from '../../services/ticket/ticket.service';
-import { ServiceSheetService } from '../../services/professor-service/service-sheet.service';
-import { ServiceSummary } from '../../models/service-summary.model';
-
+import { RessourceRow, RessourcesTotals, ScheduleConflict, TeacherBadge } from '../../models/ressources/ressources.model';
+import { MonthDTO, RessourceScheduleDTO, ProjectScheduleDTO, UpdateHoursDTO, ValidationRequestDTO, WeekHoursDTO } from '../../models/schedule/schedule.model';
+import { PedagogicalScheduleService } from '../../services/pedagogical-schedule/pedagogical-schedule-service';
+import { FilterControls } from './filter-controls/filter-controls';
+import { ResourcesTab } from './resources-tab/resources-tab';
+import { MaquetteTab, ScheduleHoursDelta, ProjectHoursDelta } from './maquette-tab/maquette-tab';
+import { ValidationTab } from './validation-tab/validation-tab';
+import { TicketModal } from './ticket-modal/ticket-modal';
 
 @Component({
   selector: 'app-ressource',
   standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-  ],
+  imports: [FilterControls, ResourcesTab, MaquetteTab, ValidationTab, TicketModal],
   templateUrl: './ressource.html'
 })
 export class Ressource implements OnInit {
   private readonly ressourcesTableService = inject(RessourcesService);
   private readonly pedagogicalScheduleService = inject(PedagogicalScheduleService);
-  private readonly userService = inject(UserService);
-  private readonly router = inject(Router);
-  private readonly platformId = inject(PLATFORM_ID);
-  private readonly serviceSheetService = inject(ServiceSheetService);
-  private readonly ticketService = inject(TicketService);
-
 
   activeTab = signal<string>('ressources');
-
-
-  validationStatus = signal<string>('NONE');
-  showValidationConfirm = signal<boolean>(false);
-  services = signal<ServiceSummary[]>([]);
-
-  filteredServices = computed(() => {
-    const allServices = this.services();
-    const year = this.selectedYear();
-    return allServices.filter(service => service.year === year);
-  });
-
-  showModal = false;
-  ticketData: CreateTicketDTO = {
-    title: '',
-    description: ''
-  };
-
-  searchQuery = signal<string>('');
-  selectedTeacherIds = signal<number[]>([]);
-  teacherSearchQuery = signal<string>('');
-  showTeacherDropdown = signal<boolean>(false);
   selectedYear = signal<string>('1');
   selectedClass = signal<string>('Classe A');
   selectedSemester = signal<string>('1');
@@ -80,30 +39,30 @@ export class Ressource implements OnInit {
   weeks = signal<MonthDTO[]>([]);
   isEditing = signal<boolean>(false);
 
+  searchQuery = signal<string>('');
+  selectedTeacherIds = signal<number[]>([]);
+
+  showModal = signal<boolean>(false);
+
   classData: Record<string, { name: string; classes: string[] }> = {
     '1': { name: 'Annee 1', classes: ['Classe A', 'Classe B'] },
     '2': { name: 'Annee 2', classes: ['Classe A', 'Classe B'] },
     '3': { name: 'Annee 3 (Alternance)', classes: ['Classe A', 'Classe B'] }
   };
 
-  filteredRessources = computed(() => {
+  filteredRessources = computed<RessourceRow[]>(() => {
     let result = this.ressources();
     const query = this.searchQuery().toLowerCase();
     const selectedTeachers = this.selectedTeacherIds();
-
     if (query) {
       result = result.filter(r =>
         r.moduleName.toLowerCase().includes(query) ||
         (r.category && r.category.toLowerCase().includes(query))
       );
     }
-
     if (selectedTeachers.length > 0) {
-      result = result.filter(r =>
-        r.assignedTeachers.some(t => selectedTeachers.includes(t.teacherId))
-      );
+      result = result.filter(r => r.assignedTeachers.some(t => selectedTeachers.includes(t.teacherId)));
     }
-
     return result;
   });
 
@@ -118,34 +77,19 @@ export class Ressource implements OnInit {
     };
   });
 
-  filteredConflicts = computed(() => {
-    const selectedTeachers = this.selectedTeacherIds();
-    if (selectedTeachers.length === 0) {
-      return this.conflicts();
-    }
-    return this.conflicts().filter(c => selectedTeachers.includes(c.teacherId));
-  });
-
-  filteredTeacherSuggestions = computed(() => {
-    const query = this.teacherSearchQuery().toLowerCase().trim();
+  filteredConflicts = computed<ScheduleConflict[]>(() => {
     const selected = this.selectedTeacherIds();
-    const teachers = this.availableTeachers();
-    if (!query) return [];
-    return teachers.filter(t =>
-      t.fullName.toLowerCase().includes(query) && !selected.includes(t.teacherId)
-    );
+    if (selected.length === 0) return this.conflicts();
+    return this.conflicts().filter(c => selected.includes(c.teacherId));
   });
 
   ngOnInit(): void {
     this.loadData();
-    this.loadValidationStatus();
-    this.loadServices();
   }
 
   loadData(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
-
     forkJoin({
       ressourcesData: this.ressourcesTableService.getRessourcesTable(this.selectedYear(), this.selectedClass(), this.selectedSemester()),
       scheduleData: this.pedagogicalScheduleService.getCompleteSchedule(this.selectedYear(), this.selectedClass(), this.selectedSemester())
@@ -154,11 +98,9 @@ export class Ressource implements OnInit {
         this.ressources.set(data.ressourcesData.ressources);
         this.availableTeachers.set(data.ressourcesData.availableTeachers);
         this.conflicts.set(data.ressourcesData.conflicts);
-
         this.scheduleData.set(data.scheduleData.scheduleData);
         this.projectData.set(data.scheduleData.projectData);
         this.weeks.set(data.scheduleData.weeks);
-
         this.isLoading.set(false);
       },
       error: (error) => {
@@ -175,16 +117,12 @@ export class Ressource implements OnInit {
     this.availableTeachers.set([]);
     this.conflicts.set([]);
     this.scheduleData.set([]);
-    this.projectData.set({
-      id: 'project-sae', name: 'Projet SAE', hoursPerWeek: {}, hoursPerHalfGroup: 0, totalHours: 0
-    });
+    this.projectData.set({ id: 'project-sae', name: 'Projet SAE', hoursPerWeek: {}, hoursPerHalfGroup: 0, totalHours: 0 });
     this.weeks.set([]);
   }
 
   setActiveTab(tab: string): void {
-    if (this.isEditing()) {
-      this.cancelEditing();
-    }
+    if (this.isEditing()) this.cancelEditing();
     this.activeTab.set(tab);
   }
 
@@ -195,7 +133,8 @@ export class Ressource implements OnInit {
     this.loadData();
   }
 
-  onClassChange(): void {
+  onClassChange(cls: string): void {
+    this.selectedClass.set(cls);
     this.loadData();
   }
 
@@ -204,74 +143,20 @@ export class Ressource implements OnInit {
     this.loadData();
   }
 
-  getYearKeys(): string[] {
-    return Object.keys(this.classData);
-  }
-
-  getAvailableClasses(): string[] {
-    return this.classData[this.selectedYear()]?.classes || [];
-  }
-
   toggleTeacherFilter(teacherId: number): void {
     const current = this.selectedTeacherIds();
-    if (current.includes(teacherId)) {
-      this.selectedTeacherIds.set(current.filter(id => id !== teacherId));
-    } else {
-      this.selectedTeacherIds.set([...current, teacherId]);
-    }
-  }
-
-  isTeacherSelected(teacherId: number): boolean {
-    return this.selectedTeacherIds().includes(teacherId);
-  }
-
-  clearFilters(): void {
-    this.searchQuery.set('');
-    this.selectedTeacherIds.set([]);
-    this.teacherSearchQuery.set('');
-    this.showTeacherDropdown.set(false);
-  }
-
-  onTeacherSearchInput(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.teacherSearchQuery.set(target.value);
-    this.showTeacherDropdown.set(target.value.trim().length > 0);
-  }
-
-  selectTeacherFromDropdown(teacherId: number): void {
-    const current = this.selectedTeacherIds();
-    if (!current.includes(teacherId)) {
-      this.selectedTeacherIds.set([...current, teacherId]);
-    }
-    this.teacherSearchQuery.set('');
-    this.showTeacherDropdown.set(false);
+    this.selectedTeacherIds.set(
+      current.includes(teacherId) ? current.filter(id => id !== teacherId) : [...current, teacherId]
+    );
   }
 
   removeTeacherFilter(teacherId: number): void {
     this.selectedTeacherIds.set(this.selectedTeacherIds().filter(id => id !== teacherId));
   }
 
-  getTeacherName(teacherId: number): string {
-    const teacher = this.availableTeachers().find(t => t.teacherId === teacherId);
-    return teacher ? teacher.fullName : '';
-  }
-
-  closeTeacherDropdown(): void {
-    setTimeout(() => this.showTeacherDropdown.set(false), 200);
-  }
-
-  hasConflict(ressource: RessourceRow): boolean {
-    const conflictingModules = this.conflicts().flatMap(c => c.conflictingModules);
-    return conflictingModules.includes(ressource.moduleName);
-  }
-
-  getConflictDetails(ressource: RessourceRow): ScheduleConflict | undefined {
-    return this.conflicts().find(c => c.conflictingModules.includes(ressource.moduleName));
-  }
-
-  onSearchInput(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.searchQuery.set(target.value);
+  clearFilters(): void {
+    this.searchQuery.set('');
+    this.selectedTeacherIds.set([]);
   }
 
   enableEditing(): void {
@@ -289,42 +174,32 @@ export class Ressource implements OnInit {
       hoursPerHalfGroup: row.hoursPerHalfGroup
     }));
 
-    const projectDTO: UpdateHoursDTO = {
-      ressourceId: 0,
-      hoursPerWeek: this.projectData().hoursPerWeek,
-      hoursPerHalfGroup: this.projectData().hoursPerHalfGroup
-    };
-
     const validationRequest: ValidationRequestDTO = {
       selectedYear: this.selectedYear(),
       selectedClass: this.selectedClass(),
       selectedSemester: this.selectedSemester(),
       ressources: ressourcesDTO,
-      project: projectDTO
+      project: { ressourceId: 0, hoursPerWeek: this.projectData().hoursPerWeek, hoursPerHalfGroup: this.projectData().hoursPerHalfGroup }
     };
 
-    this.pedagogicalScheduleService.validateSchedule(validationRequest)
-      .subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.successMessage.set('Planning validé et sauvegardé avec succès !');
-            setTimeout(() => this.successMessage.set(''), 5000);
-            this.isEditing.set(false);
-            this.loadData();
-          } else {
-            this.errorMessage.set(response.message);
-            if (response.errors && response.errors.length > 0) {
-              this.errorMessage.set('Erreurs détectées:\n' + response.errors.join('\n'));
-            }
-          }
-          this.isLoading.set(false);
-        },
-        error: (error) => {
-          console.error('Error validating:', error);
-          this.errorMessage.set('Erreur lors de la sauvegarde du planning');
-          this.isLoading.set(false);
+    this.pedagogicalScheduleService.validateSchedule(validationRequest).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.successMessage.set('Planning validé et sauvegardé avec succès !');
+          setTimeout(() => this.successMessage.set(''), 5000);
+          this.isEditing.set(false);
+          this.loadData();
+        } else {
+          this.errorMessage.set(response.errors?.length ? 'Erreurs détectées:\n' + response.errors.join('\n') : response.message);
         }
-      });
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Error validating:', error);
+        this.errorMessage.set('Erreur lors de la sauvegarde du planning');
+        this.isLoading.set(false);
+      }
+    });
   }
 
   cancelEditing(): void {
@@ -333,211 +208,22 @@ export class Ressource implements OnInit {
     this.loadData();
   }
 
-  getAllWeeks(): WeekDTO[] {
-    return this.weeks().flatMap(month => month.weeks);
-  }
-
-  calculateTotalHours(row: RessourceScheduleDTO): number {
-    if (!row.hoursPerWeek) return 0;
-    return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.cm || 0) + (w.td || 0) + (w.tp || 0), 0);
-  }
-
-  calculateTotalCM(row: RessourceScheduleDTO): number {
-    if (!row.hoursPerWeek) return 0;
-    return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.cm || 0), 0);
-  }
-
-  calculateTotalTD(row: RessourceScheduleDTO): number {
-    if (!row.hoursPerWeek) return 0;
-    return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.td || 0), 0);
-  }
-
-  calculateTotalTP(row: RessourceScheduleDTO): number {
-    if (!row.hoursPerWeek) return 0;
-    return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.tp || 0), 0);
-  }
-
-  get maquetteTotalCM(): number {
-    return this.scheduleData().reduce((s, r) => s + this.calculateTotalCM(r), 0);
-  }
-
-  get maquetteTotalTD(): number {
-    return this.scheduleData().reduce((s, r) => s + this.calculateTotalTD(r), 0);
-  }
-
-  get maquetteTotalTP(): number {
-    return this.scheduleData().reduce((s, r) => s + this.calculateTotalTP(r), 0);
-  }
-
-  calculateProjectTotal(): number {
-    const project = this.projectData();
-    if (!project?.hoursPerWeek) return 0;
-    return Object.values(project.hoursPerWeek).reduce((sum, w) => sum + (w.cm || 0) + (w.td || 0) + (w.tp || 0), 0);
-  }
-
-  calculateWeekTotal(weekNum: number): number {
-    return this.scheduleData().reduce((sum, row) => {
-      const w = row.hoursPerWeek[weekNum.toString()];
-      return sum + (w ? (w.cm || 0) + (w.td || 0) + (w.tp || 0) : 0);
-    }, 0);
-  }
-
-  calculateWeekTotalWithProject(weekNum: number): number {
-    const resourcesTotal = this.calculateWeekTotal(weekNum);
-    const pw = this.projectData()?.hoursPerWeek[weekNum.toString()];
-    return resourcesTotal + (pw ? (pw.cm || 0) + (pw.td || 0) + (pw.tp || 0) : 0);
-  }
-
-  calculateMaquetteGrandTotal(): number {
-    return this.scheduleData().reduce((sum, row) => sum + this.calculateTotalHours(row), 0);
-  }
-
-  calculateGrandTotalWithProject(): number {
-    return this.calculateMaquetteGrandTotal() + this.calculateProjectTotal();
-  }
-
-  getCompanyWeeksCount(): number {
-    return this.getAllWeeks().filter(week => week.type === 'S').length;
-  }
-
-  updateScheduleHoursByType(rowId: number, weekNum: number, type: 'cm' | 'td' | 'tp', event: Event): void {
-    const value = Number((event.target as HTMLInputElement).value) || 0;
-    const data = this.scheduleData();
-    const updatedData = data.map(row => {
-      if (row.id === rowId) {
-        const current = row.hoursPerWeek[weekNum.toString()] || { cm: 0, td: 0, tp: 0, total: 0 };
-        const updated = { ...current, [type]: value };
-        updated.total = updated.cm + updated.td + updated.tp;
-        return { ...row, hoursPerWeek: { ...row.hoursPerWeek, [weekNum.toString()]: updated } };
-      }
-      return row;
+  onScheduleHoursChanged(delta: ScheduleHoursDelta): void {
+    const updatedData = this.scheduleData().map(row => {
+      if (row.id !== delta.rowId) return row;
+      const current = row.hoursPerWeek[delta.weekNum.toString()] || { cm: 0, td: 0, tp: 0, total: 0 };
+      const updated = { ...current, [delta.type]: delta.value };
+      updated.total = updated.cm + updated.td + updated.tp;
+      return { ...row, hoursPerWeek: { ...row.hoursPerWeek, [delta.weekNum.toString()]: updated } };
     });
     this.scheduleData.set(updatedData);
   }
 
-  updateScheduleHalfGroup(rowId: number, event: Event): void {
-    const target = event.target as HTMLInputElement;
-    const value = Number(target.value) || 0;
-    const data = this.scheduleData();
-    const updatedData = data.map(row => {
-      if (row.id === rowId) {
-        return { ...row, hoursPerHalfGroup: value };
-      }
-      return row;
-    });
-    this.scheduleData.set(updatedData);
-  }
-
-  updateProjectHoursByType(weekNum: number, type: 'cm' | 'td' | 'tp', event: Event): void {
-    const value = Number((event.target as HTMLInputElement).value) || 0;
+  onProjectHoursChanged(delta: ProjectHoursDelta): void {
     const project = this.projectData();
-    const current = project.hoursPerWeek[weekNum.toString()] || { cm: 0, td: 0, tp: 0, total: 0 };
-    const updated = { ...current, [type]: value };
+    const current = project.hoursPerWeek[delta.weekNum.toString()] || { cm: 0, td: 0, tp: 0, total: 0 };
+    const updated = { ...current, [delta.type]: delta.value };
     updated.total = updated.cm + updated.td + updated.tp;
-    this.projectData.set({
-      ...project,
-      hoursPerWeek: { ...project.hoursPerWeek, [weekNum.toString()]: updated }
-    });
-  }
-
-  getWeekTotal(hoursPerWeek: { [key: string]: WeekHoursDTO }, weekNum: number): number {
-    const w = hoursPerWeek[weekNum.toString()];
-    return w ? (w.cm || 0) + (w.td || 0) + (w.tp || 0) : 0;
-  }
-
-  updateProjectHalfGroup(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    const value = Number(target.value) || 0;
-    const project = this.projectData();
-    this.projectData.set({ ...project, hoursPerHalfGroup: value });
-  }
-
-  loadValidationStatus(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const userId = Number(localStorage.getItem('userId'));
-      if (userId) {
-        this.userService.getUserById(userId).subscribe({
-          next: (user) => {
-            if (user.validationStatus) {
-              this.validationStatus.set(user.validationStatus);
-            }
-          },
-          error: (err) => console.error('Error loading validation status', err)
-        });
-      }
-    }
-  }
-
-  loadServices(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const userId = Number(localStorage.getItem('userId'));
-      if (userId) {
-        this.serviceSheetService.getServicesSheet(userId).subscribe({
-          next: (data) => this.services.set(data),
-          error: (err) => console.error('Error loading services', err)
-        });
-      }
-    }
-  }
-
-  requestValidation(): void {
-    this.showValidationConfirm.set(true);
-  }
-
-  cancelValidation(): void {
-    this.showValidationConfirm.set(false);
-  }
-
-  confirmValidation(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const userId = Number(localStorage.getItem('userId'));
-      this.userService.validateService(userId).subscribe({
-        next: () => {
-          alert("Service validé avec succès !");
-          this.validationStatus.set('SUBMITTED');
-          this.showValidationConfirm.set(false);
-        },
-        error: (err) => {
-          console.error("Error validating service", err);
-          alert("Erreur lors de la validation du service.");
-          this.showValidationConfirm.set(false);
-        }
-      });
-    }
-  }
-
-  openTicketModal() {
-    this.showModal = true;
-  }
-
-  closeTicketModal() {
-    this.showModal = false;
-    this.ticketData = { title: '', description: '' };
-  }
-
-  submitTicket() {
-    if (!this.ticketData.title || !this.ticketData.description) {
-      alert("Veuillez remplir tous les champs obligatoires.");
-      return;
-    }
-
-    if (isPlatformBrowser(this.platformId)) {
-      const userId = Number(localStorage.getItem('userId'));
-      if (!userId) {
-        alert("Utilisateur non connecté.");
-        return;
-      }
-
-      this.ticketService.createTicket(userId, this.ticketData).subscribe({
-        next: () => {
-          alert("Ticket envoyé avec succès !");
-          this.closeTicketModal();
-        },
-        error: (err) => {
-          console.error("Error submitting ticket", err);
-          alert("Erreur lors de l'envoi du ticket.");
-        }
-      });
-    }
+    this.projectData.set({ ...project, hoursPerWeek: { ...project.hoursPerWeek, [delta.weekNum.toString()]: updated } });
   }
 }

@@ -1,6 +1,6 @@
 # Ressources Enseignements SAE
 
-Ce projet est une application web de gestion des ressources d'enseignements, développée avec Angular (frontend) et Spring Boot (backend). Il permet la gestion des utilisateurs, des rôles, des formations, des tickets et des affectations enseignants.
+Ce projet est une application web de gestion des ressources d'enseignements. Il permet la gestion des utilisateurs, des rôles, des formations, des tickets et des affectations enseignants.
 
 ## Prérequis
 
@@ -30,14 +30,15 @@ Ce projet est une application web de gestion des ressources d'enseignements, dé
 
 - Maven
 - Java 21
-- Wamp (pour la base de données) (creer une base de données nommée `ressources_enseignements`)
+- WampServer (créer une base de données nommée `ressources_enseignements`)
 
 ### Backend
 
 - Installer Maven : https://maven.apache.org/download.cgi
+- Lancer WampServer
 - Se placer dans `backend/ressources_enseignements` puis lancer :
   ```
-  mvn clean spring-boot:run
+  mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
   ```
 
 ### Frontend
@@ -57,9 +58,9 @@ Ce projet est une application web de gestion des ressources d'enseignements, dé
 
 ## Fonctionnalités principales
 
-- Gestion des utilisateurs et rôles
+- Gestion des utilisateurs
+- Création et modification de maquettes pédagogiques
 - Gestion des formations et affectations
-- Système de tickets
 - Authentification
 
 ## Comptes pour tester
@@ -68,12 +69,12 @@ Ce projet est une application web de gestion des ressources d'enseignements, dé
 
   username: admin
 
-  password: Admin123
+  password: admin123
 - Prof
 
   username: prof
 
-  password: Prof123
+  password: prof123
 
 ## Auteur
 

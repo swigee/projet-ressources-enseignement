@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-/**
- * DTO pour représenter une ligne de ressource dans le tableau
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,11 +15,11 @@ public class RessourceRowDTO {
     private Integer id;
     private String moduleName;
     private String category;
-    private Integer heuresPrevisionnelles;
-    private Integer heuresReelles;
-    private Integer heuresTD;
-    private Integer heuresTP;
-    private Integer heuresCM;
+    private Integer plannedHours;
+    private Integer actualHours;
+    private Integer tdHours;
+    private Integer tpHours;
+    private Integer cmHours;
     private Boolean isHighlighted;
     private List<TeacherBadgeDTO> assignedTeachers;
 }

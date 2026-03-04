@@ -42,7 +42,7 @@ export class Ressource implements OnInit {
   activeTab = signal<string>('ressources');
 
 
-  validationStatus = signal<string>('NONE'); // NONE, SUBMITTED, VALIDATED
+  validationStatus = signal<string>('NONE');
   showValidationConfirm = signal<boolean>(false);
   services = signal<ServiceSummary[]>([]);
 
@@ -58,7 +58,6 @@ export class Ressource implements OnInit {
     description: ''
   };
 
-  // Filter state
   searchQuery = signal<string>('');
   selectedTeacherIds = signal<number[]>([]);
   teacherSearchQuery = signal<string>('');
@@ -67,7 +66,6 @@ export class Ressource implements OnInit {
   selectedClass = signal<string>('Classe A');
   selectedSemester = signal<string>('1');
 
-  // Data state
   ressources = signal<RessourceRow[]>([]);
   availableTeachers = signal<TeacherBadge[]>([]);
   conflicts = signal<ScheduleConflict[]>([]);
@@ -75,7 +73,6 @@ export class Ressource implements OnInit {
   errorMessage = signal<string>('');
   successMessage = signal<string>('');
 
-  // Maquette-specific state
   scheduleData = signal<RessourceScheduleDTO[]>([]);
   projectData = signal<ProjectScheduleDTO>({
     id: 'project-sae', name: 'Projet SAE', hoursPerWeek: {}, hoursPerHalfGroup: 0, totalHours: 0
@@ -83,20 +80,17 @@ export class Ressource implements OnInit {
   weeks = signal<MonthDTO[]>([]);
   isEditing = signal<boolean>(false);
 
-  // Class data
   classData: Record<string, { name: string; classes: string[] }> = {
     '1': { name: 'Annee 1', classes: ['Classe A', 'Classe B'] },
     '2': { name: 'Annee 2', classes: ['Classe A', 'Classe B'] },
     '3': { name: 'Annee 3 (Alternance)', classes: ['Classe A', 'Classe B'] }
   };
 
-  // Computed filtered data
   filteredRessources = computed(() => {
     let result = this.ressources();
     const query = this.searchQuery().toLowerCase();
     const selectedTeachers = this.selectedTeacherIds();
 
-    // Apply search filter
     if (query) {
       result = result.filter(r =>
         r.moduleName.toLowerCase().includes(query) ||
@@ -104,7 +98,6 @@ export class Ressource implements OnInit {
       );
     }
 
-    // Apply teacher filter
     if (selectedTeachers.length > 0) {
       result = result.filter(r =>
         r.assignedTeachers.some(t => selectedTeachers.includes(t.teacherId))
@@ -114,19 +107,17 @@ export class Ressource implements OnInit {
     return result;
   });
 
-  // Auto-updating totals
   calculatedTotals = computed<RessourcesTotals>(() => {
     const filtered = this.filteredRessources();
     return {
-      totalPlannedHours: filtered.reduce((sum, r) => sum + r.heuresPrevisionnelles, 0),
-      totalActualHours: filtered.reduce((sum, r) => sum + r.heuresReelles, 0),
-      totalTDHours: filtered.reduce((sum, r) => sum + r.heuresTD, 0),
-      totalTPHours: filtered.reduce((sum, r) => sum + r.heuresTP, 0),
-      totalCMHours: filtered.reduce((sum, r) => sum + r.heuresCM, 0)
+      totalPlannedHours: filtered.reduce((sum, r) => sum + r.plannedHours, 0),
+      totalActualHours: filtered.reduce((sum, r) => sum + r.actualHours, 0),
+      totalTDHours: filtered.reduce((sum, r) => sum + r.tdHours, 0),
+      totalTPHours: filtered.reduce((sum, r) => sum + r.tpHours, 0),
+      totalCMHours: filtered.reduce((sum, r) => sum + r.cmHours, 0)
     };
   });
 
-  // Computed conflicts for filtered rows
   filteredConflicts = computed(() => {
     const selectedTeachers = this.selectedTeacherIds();
     if (selectedTeachers.length === 0) {
@@ -135,7 +126,6 @@ export class Ressource implements OnInit {
     return this.conflicts().filter(c => selectedTeachers.includes(c.teacherId));
   });
 
-  // Autocomplete suggestions for teacher search
   filteredTeacherSuggestions = computed(() => {
     const query = this.teacherSearchQuery().toLowerCase().trim();
     const selected = this.selectedTeacherIds();
@@ -161,12 +151,10 @@ export class Ressource implements OnInit {
       scheduleData: this.pedagogicalScheduleService.getCompleteSchedule(this.selectedYear(), this.selectedClass(), this.selectedSemester())
     }).subscribe({
       next: (data) => {
-        // Ressources tab data
         this.ressources.set(data.ressourcesData.ressources);
         this.availableTeachers.set(data.ressourcesData.availableTeachers);
         this.conflicts.set(data.ressourcesData.conflicts);
 
-        // Maquette tab data
         this.scheduleData.set(data.scheduleData.scheduleData);
         this.projectData.set(data.scheduleData.projectData);
         this.weeks.set(data.scheduleData.weeks);
@@ -174,8 +162,8 @@ export class Ressource implements OnInit {
         this.isLoading.set(false);
       },
       error: (error) => {
-        console.error('Erreur lors du chargement:', error);
-        this.errorMessage.set(error.message || 'Erreur lors du chargement des donnees');
+        console.error('Error loading data:', error);
+        this.errorMessage.set(error.message || 'Erreur lors du chargement des données');
         this.isLoading.set(false);
         this.initializeDefaultData();
       }
@@ -194,7 +182,6 @@ export class Ressource implements OnInit {
   }
 
   setActiveTab(tab: string): void {
-    // Cancel editing when switching tabs
     if (this.isEditing()) {
       this.cancelEditing();
     }
@@ -287,7 +274,6 @@ export class Ressource implements OnInit {
     this.searchQuery.set(target.value);
   }
 
-  // Maquette editing methods
   enableEditing(): void {
     this.successMessage.set('');
     this.isEditing.set(true);
@@ -321,20 +307,20 @@ export class Ressource implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.success) {
-            this.successMessage.set('Planning valide et sauvegarde avec succes !');
+            this.successMessage.set('Planning validé et sauvegardé avec succès !');
             setTimeout(() => this.successMessage.set(''), 5000);
             this.isEditing.set(false);
             this.loadData();
           } else {
             this.errorMessage.set(response.message);
             if (response.errors && response.errors.length > 0) {
-              this.errorMessage.set('Erreurs detectees:\n' + response.errors.join('\n'));
+              this.errorMessage.set('Erreurs détectées:\n' + response.errors.join('\n'));
             }
           }
           this.isLoading.set(false);
         },
         error: (error) => {
-          console.error('Erreur lors de la validation:', error);
+          console.error('Error validating:', error);
           this.errorMessage.set('Erreur lors de la sauvegarde du planning');
           this.isLoading.set(false);
         }
@@ -347,7 +333,6 @@ export class Ressource implements OnInit {
     this.loadData();
   }
 
-  // Maquette calculation methods
   getAllWeeks(): WeekDTO[] {
     return this.weeks().flatMap(month => month.weeks);
   }
@@ -415,7 +400,6 @@ export class Ressource implements OnInit {
     return this.getAllWeeks().filter(week => week.type === 'S').length;
   }
 
-  // Update methods for signal-based inputs
   updateScheduleHoursByType(rowId: number, weekNum: number, type: 'cm' | 'td' | 'tp', event: Event): void {
     const value = Number((event.target as HTMLInputElement).value) || 0;
     const data = this.scheduleData();
@@ -468,8 +452,7 @@ export class Ressource implements OnInit {
     this.projectData.set({ ...project, hoursPerHalfGroup: value });
   }
 
-  // Validation methods
-   loadValidationStatus(): void {
+  loadValidationStatus(): void {
     if (isPlatformBrowser(this.platformId)) {
       const userId = Number(localStorage.getItem('userId'));
       if (userId) {
@@ -515,7 +498,7 @@ export class Ressource implements OnInit {
           this.showValidationConfirm.set(false);
         },
         error: (err) => {
-          console.error("Erreur validation service", err);
+          console.error("Error validating service", err);
           alert("Erreur lors de la validation du service.");
           this.showValidationConfirm.set(false);
         }
@@ -523,7 +506,6 @@ export class Ressource implements OnInit {
     }
   }
 
-  // Ticket Methods
   openTicketModal() {
     this.showModal = true;
   }
@@ -552,7 +534,7 @@ export class Ressource implements OnInit {
           this.closeTicketModal();
         },
         error: (err) => {
-          console.error("Erreur envoi ticket", err);
+          console.error("Error submitting ticket", err);
           alert("Erreur lors de l'envoi du ticket.");
         }
       });

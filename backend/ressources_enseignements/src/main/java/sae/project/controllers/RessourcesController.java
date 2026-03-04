@@ -21,10 +21,6 @@ public class RessourcesController {
     @Autowired
     private RessourcesService ressourcesTableService;
 
-    /**
-     * Récupérer les données du tableau de ressources
-     * GET /api/ressources-table/data?year={year}&className={className}&semester={semester}
-     */
     @GetMapping("/data")
     public ResponseEntity<RessourcesResponseDTO> getData(
             @RequestParam String year,
@@ -36,10 +32,6 @@ public class RessourcesController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Récupérer tous les enseignants disponibles
-     * GET /api/ressources-table/teachers
-     */
     @GetMapping("/teachers")
     public ResponseEntity<List<TeacherBadgeDTO>> getAvailableTeachers() {
         log.info("GET /api/ressources-table/teachers");
@@ -48,10 +40,6 @@ public class RessourcesController {
         return ResponseEntity.ok(teachers);
     }
 
-    /**
-     * Détecter les conflits pour un enseignant
-     * GET /api/ressources-table/conflicts?teacherId={teacherId}
-     */
     @GetMapping("/conflicts")
     public ResponseEntity<List<ScheduleConflictDTO>> detectConflicts(
             @RequestParam Integer teacherId) {
@@ -61,10 +49,6 @@ public class RessourcesController {
         return ResponseEntity.ok(conflicts);
     }
 
-    /**
-     * Rechercher des ressources par mot-clé
-     * GET /api/ressources-table/search?keyword={keyword}
-     */
     @GetMapping("/search")
     public ResponseEntity<List<RessourceRowDTO>> searchRessources(
             @RequestParam String keyword) {
@@ -74,10 +58,6 @@ public class RessourcesController {
         return ResponseEntity.ok(ressources);
     }
 
-    /**
-     * Health check
-     * GET /api/ressources-table/health
-     */
     @GetMapping("/health")
     public ResponseEntity<String> healthCheck() {
         return ResponseEntity.ok("Ressources Table API is running");

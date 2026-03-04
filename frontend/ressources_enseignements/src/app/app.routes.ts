@@ -10,11 +10,11 @@ import { authGuard } from './services/auth/auth.guard';
 import { roleGuard } from './services/auth/role.guard';
 
 export const routes: Routes = [
-    // {
-    //   path:'',
-    //   redirectTo:'login',
-    //   pathMatch:'full',
-    // },
+  // {
+  //   path:'',
+  //   redirectTo:'login',
+  //   pathMatch:'full',
+  // },
   {
     path: 'login',
     component: Login
@@ -22,11 +22,11 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: Dashboard,
-    canActivate: [authGuard] 
+    canActivate: [authGuard]
   },
   {
     path: 'syllabus',
-    component: Dashboard, 
+    component: Dashboard,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['STUDENT', 'TEACHER'] }
   },
@@ -44,16 +44,16 @@ export const routes: Routes = [
   },
   {
         path:'education-manager',
-        component: EducationalManager
-    },
-    {
+    component: EducationalManager
+  },
+  {
         path:'education-manager/create',
-        component: EducationManagerCreation
-    },
-    {
+    component: EducationManagerCreation
+  },
+  {
         path:'education-manager/edit/:id',
-        component: EducationManagerCreation
-    },
+    component: EducationManagerCreation
+  },
   {
     path: 'user-manager',
     component: UserManager,
@@ -65,6 +65,12 @@ export const routes: Routes = [
     component: Ressource,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['TEACHER'] }
+  },
+  {
+    path: 'ticket-manager',
+    loadComponent: () => import('./components/ticket-manager/ticket-manager').then(m => m.TicketManager),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
   }
 
 ];

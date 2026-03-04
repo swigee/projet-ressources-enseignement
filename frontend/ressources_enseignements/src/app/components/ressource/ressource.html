@@ -14,7 +14,7 @@
           ? 'px-6 py-3 font-medium bg-gray-500 text-white'
           : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'"
       >
-        Ressources
+        Resources
       </button>
       <button
         (click)="setActiveTab('maquette')"
@@ -82,7 +82,7 @@
       </div>
 
       <div class="mt-3 text-sm text-gray-600">
-        <span class="font-medium">Selection :</span> {{ classData[selectedYear()].name }} - {{ selectedClass() }} - Semestre {{ selectedSemester() }}
+        <span class="font-medium">Sélection :</span> {{ classData[selectedYear()].name }} - {{ selectedClass() }} - Semestre {{ selectedSemester() }}
       </div>
     </div>
 
@@ -181,8 +181,8 @@
               <th class="px-4 py-3 text-center text-sm font-semibold" style="color: #4ecdc4">TD</th>
               <th class="px-4 py-3 text-center text-sm font-semibold" style="color: #a864a8">TP</th>
               <th class="px-4 py-3 text-center text-sm font-semibold" style="color: #ff6b6b">CM</th>
-              <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Enseignants</th>
-              <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Statut</th>
+              <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Teachers</th>
+              <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -206,23 +206,23 @@
               </td>
 
               <td class="px-4 py-3 text-center">
-                {{ row.heuresPrevisionnelles }}h
+                {{ row.plannedHours }}h
               </td>
 
               <td class="px-4 py-3 text-center">
-                {{ row.heuresReelles }}h
+                {{ row.actualHours }}h
               </td>
 
               <td class="px-4 py-3 text-center font-medium" style="color: #4ecdc4">
-                {{ row.heuresTD }}h
+                {{ row.tdHours }}h
               </td>
 
               <td class="px-4 py-3 text-center font-medium" style="color: #a864a8">
-                {{ row.heuresTP }}h
+                {{ row.tpHours }}h
               </td>
 
               <td class="px-4 py-3 text-center font-medium" style="color: #ff6b6b">
-                {{ row.heuresCM }}h
+                {{ row.cmHours }}h
               </td>
 
               <td class="px-4 py-3">
@@ -287,7 +287,7 @@
           @for (conflict of filteredConflicts(); track conflict.teacherId) {
           <li class="text-sm text-orange-700">
             <span class="font-medium">{{ conflict.teacherName }}</span> -
-            Semaine {{ conflict.weekNumber }}, {{ conflict.timeSlot }}:
+            Week {{ conflict.weekNumber }}, {{ conflict.timeSlot }}:
             {{ conflict.conflictingModules.join(', ') }}
           </li>
           }
@@ -299,11 +299,11 @@
       <div class="mt-4 p-4 bg-blue-50 rounded-lg">
         <div class="grid grid-cols-5 gap-4">
           <div>
-            <div class="text-sm text-gray-600">Total Prev.</div>
+            <div class="text-sm text-gray-600">Total Prév.</div>
             <div class="text-xl font-bold text-gray-800">{{ calculatedTotals().totalPlannedHours }}h</div>
           </div>
           <div>
-            <div class="text-sm text-gray-600">Total Reelles</div>
+            <div class="text-sm text-gray-600">Total Réel</div>
             <div class="text-xl font-bold text-blue-600">{{ calculatedTotals().totalActualHours }}h</div>
           </div>
           <div>
@@ -453,28 +453,16 @@
                 <div class="text-xs text-gray-500 uppercase">Total</div>
                 <div class="text-lg font-bold text-gray-800">{{ calculateTotalHours(row) }}h</div>
               </div>
-              <div class="text-center">
-                <div class="text-xs text-gray-500">Demi-groupe</div>
-                    <input
-                      type="number"
-                      min="0"
-                      [value]="row.hoursPerHalfGroup"
-                      (input)="updateScheduleHalfGroup(row.id, $event)"
-                      [readonly]="!isEditing()"
-                  class="w-20 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
-                      placeholder="0"
-                    />
-              </div>
             </div>
           </div>
         </div>
 
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-4">
+        <div class="flex flex-nowrap gap-4 pl-4 overflow-x-auto">
           @for (week of getAllWeeks(); track $index) {
           @if (week.type === 'S') {
 
-                  <div class="bg-amber-50 border border-amber-300 rounded-lg p-4 text-center hover:shadow-lg transition-shadow duration-200">
+                  <div class="flex-none w-44 bg-amber-50 border border-amber-300 rounded-lg p-4 text-center hover:shadow-lg transition-shadow duration-200">
             <div class="font-bold text-amber-700 mb-3 pb-2 border-b border-amber-200 text-sm">S{{ week.num }}
               <span class="text-xs text-amber-500 font-normal ml-1">{{ week.date }}</span>
             </div>
@@ -482,7 +470,7 @@
           </div>
           } @else {
 
-          <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
+          <div class="flex-none w-44 bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
             <div class="font-bold text-gray-800 mb-3 pb-2 border-b border-gray-200 text-sm">S{{ week.num }}
               <span class="text-xs text-gray-500 font-normal ml-1">{{ week.date }}</span>
             </div>
@@ -539,33 +527,21 @@
                 <div class="text-xs text-gray-500">Total</div>
                 <div class="text-lg font-bold text-green-700">{{ calculateProjectTotal() }}h</div>
               </div>
-              <div class="text-center">
-                <div class="text-xs text-gray-500">Demi-groupe</div>
-                  <input
-                    type="number"
-                    min="0"
-                    [value]="projectData().hoursPerHalfGroup"
-                    (input)="updateProjectHalfGroup($event)"
-                    [readonly]="!isEditing()"
-                  class="w-20 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:outline-none text-sm"
-                    placeholder="0"
-                  />
-              </div>
             </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-4">
+        <div class="flex flex-nowrap gap-4 pl-4 overflow-x-auto">
           @for (week of getAllWeeks(); track $index) {
           @if (week.type === 'S') {
-                <div class="bg-amber-50 border border-amber-300 rounded-lg p-4 text-center hover:shadow-lg transition-shadow duration-200">
+                <div class="flex-none w-44 bg-amber-50 border border-amber-300 rounded-lg p-4 text-center hover:shadow-lg transition-shadow duration-200">
             <div class="font-bold text-amber-700 mb-3 pb-2 border-b border-amber-200 text-sm">S{{ week.num }}
               <span class="text-xs text-amber-500 font-normal ml-1">{{ week.date }}</span>
             </div>
             <div class="text-xs text-amber-600 font-medium">Entreprise</div>
           </div>
           } @else {
-          <div class="bg-green-50 border border-green-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
+          <div class="flex-none w-44 bg-green-50 border border-green-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
             <div class="font-bold text-green-800 mb-3 pb-2 border-b border-green-200 text-sm">S{{ week.num }}
               <span class="text-xs text-green-500 font-normal ml-1">{{ week.date }}</span>
             </div>
@@ -715,8 +691,7 @@
                   : 'bg-gray-100 border-gray-300 text-gray-400'">
               <i class="fa-solid fa-paper-plane text-xl"></i>
             </div>
-            <span class="absolute -bottom-8 text-sm font-medium text-gray-600 w-32 text-center">Validation
-              envoyée</span>
+            <span class="absolute -bottom-8 text-sm font-medium text-gray-600 w-32 text-center">Validation envoyée</span>
           </div>
 
           <div class="flex-1 h-1 mx-4 rounded transition-all duration-300"
@@ -730,8 +705,7 @@
                   : 'bg-gray-100 border-gray-300 text-gray-400'">
               <i class="fa-solid fa-circle-check text-xl"></i>
             </div>
-            <span class="absolute -bottom-8 text-sm font-medium text-gray-600 w-32 text-center">Validé par le
-              chef</span>
+            <span class="absolute -bottom-8 text-sm font-medium text-gray-600 w-32 text-center">Validé par le chef</span>
           </div>
 
         </div>
@@ -755,8 +729,7 @@
       <div class="text-center mt-12 p-6 bg-blue-50 rounded-xl border border-blue-100 max-w-2xl mx-auto">
         <p class="text-blue-800 font-medium">
           <i class="fa-solid fa-info-circle mr-2"></i>
-          Votre service a été transmis pour validation. Vous serez notifié dès qu'il sera validé par le chef de
-          département.
+          Votre service a été transmis pour validation. Vous serez notifié une fois qu'il sera validé par le chef de département.
         </p>
       </div>
       }
@@ -769,15 +742,13 @@
         <div>
           <h3 class="font-bold text-gray-800 text-lg mb-2">Confirmer la validation</h3>
           <p class="text-sm text-gray-600">
-            Une fois validé, vous ne pourrez plus signaler de problèmes. Êtes-vous sûr de vouloir envoyer votre service
-            au
-            chef de département ?
+            Une fois validé, vous ne pourrez plus signaler de problèmes. Êtes-vous sûr de vouloir soumettre votre service au chef de département ?
           </p>
         </div>
         <div class="flex justify-end gap-3">
           <button (click)="cancelValidation()"
             class="px-4 py-2 bg-gray-100 text-gray-600 font-medium rounded hover:bg-gray-200 transition">
-            Abandonner
+            Annuler
           </button>
           <button (click)="confirmValidation()"
             class="px-4 py-2 bg-green-600 text-white font-medium rounded hover:bg-green-700 transition shadow-sm">

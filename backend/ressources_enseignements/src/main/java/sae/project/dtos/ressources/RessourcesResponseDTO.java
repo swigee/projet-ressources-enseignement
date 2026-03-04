@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-/**
- * DTO pour la réponse complète de l'API ressources-table
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

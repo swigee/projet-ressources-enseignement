@@ -61,13 +61,17 @@ INSERT INTO user_role (role_id, user_id) VALUES
 -- =========================
 -- FORMATIONS (BUT Informatique)
 -- =========================
-INSERT INTO formation (id, name, year, class_name) VALUES
-(1, 'Informatique', '1', 'Classe A'),
-(2, 'Informatique', '1', 'Classe B'),
-(3, 'Informatique', '2', 'Classe A'),
-(4, 'Informatique', '2', 'Classe B'),
-(5, 'Informatique', '3', 'Classe A'),
-(6, 'Informatique', '3', 'Classe B');
+INSERT INTO formation (id, name, year, class_name, description) VALUES
+(1, 'Informatique', '1', 'Classe A', 'Formation BUT Informatique annee 1 - groupe A'),
+(2, 'Informatique', '1', 'Classe B', 'Formation BUT Informatique annee 1 - groupe B'),
+(3, 'Informatique', '2', 'Classe A', 'Formation BUT Informatique annee 2 - groupe A'),
+(4, 'Informatique', '2', 'Classe B', 'Formation BUT Informatique annee 2 - groupe B'),
+(5, 'Informatique', '3', 'Classe A', 'Formation BUT Informatique annee 3 - groupe A'),
+(6, 'Informatique', '3', 'Classe B', 'Formation BUT Informatique annee 3 - groupe B'),
+(7, 'Reseaux et Telecommunications', '1', 'Classe A', 'Formation BUT R&T annee 1 - fondamentaux reseaux'),
+(8, 'Reseaux et Telecommunications', '2', 'Classe A', 'Formation BUT R&T annee 2 - administration et securite'),
+(9, 'Science des Donnees', '1', 'Classe A', 'Formation BUT SD annee 1 - statistiques et programmation'),
+(10, 'Science des Donnees', '2', 'Classe A', 'Formation BUT SD annee 2 - machine learning et BI');
 
 -- =========================
 -- USER FORMATION

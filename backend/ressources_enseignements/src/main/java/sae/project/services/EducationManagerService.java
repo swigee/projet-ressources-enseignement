@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sae.project.model.Formation;
 import sae.project.model.Resource;
+import sae.project.model.User;
 import sae.project.repositories.EducationManagerRepository;
 import sae.project.repositories.ResourceRepository;
 
@@ -42,5 +43,9 @@ public class EducationManagerService {
     
     public Formation update(Formation f){
         return emrep.save(f);
+    }
+    public List<User> getUsersByFormation(Integer id){
+        Formation f = emrep.getById(id);
+        return f.getUsersList();
     }
 }

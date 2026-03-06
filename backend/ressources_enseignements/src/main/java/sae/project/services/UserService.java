@@ -41,9 +41,9 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
+//    public User saveUser(User user) {
+//        return userRepository.save(user);
+//    }
 
     @Transactional
     public void deleteUser(int id) {
@@ -73,10 +73,6 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public List<Role> getUserRoles(int id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.map(User::getRoleList).orElse(null);
-    }
 
     public void updateUserRoles(int id, List<Integer> roles) {
         if (roles == null) {

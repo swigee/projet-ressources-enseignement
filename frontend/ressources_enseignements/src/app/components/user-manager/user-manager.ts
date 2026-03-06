@@ -6,20 +6,23 @@ import { RoleService } from '../../services/role/role-service';
 import { PageTitle } from '../../services/page-title/page-title-service';
 
 @Component({
-  selector: 'app-user-manager',
-  templateUrl: './user-manager.html'
+    selector: 'app-user-manager',
+    imports: [
+
+    ],
+    templateUrl: './user-manager.html'
 })
 export class UserManager {
   private readonly pageTitle = inject(PageTitle);
   private readonly userService = inject(UserService);
   private readonly roleService = inject(RoleService);
+  errorMessage = '';
+  isLoading = true;
 
   readonly tabRoles = signal<RoleModel[]>([]);
   readonly tabUsers = signal<UserModel[]>([]);
   readonly showFilter = signal(false);
   readonly searchName = signal('');
-  readonly selectedRoles = signal<string[]>([]);
-  readonly editingUserId = signal<number | null>(null);
 
   readonly showAddRolePopup = signal<number | null>(null);
   readonly searchRoleText = signal('');
@@ -27,7 +30,41 @@ export class UserManager {
 
   readonly selectedRoleFilter = signal<number[]>([]);
 
-  // Suppression des signaux temporaires et méthodes associées à la validation différée des filtres
+  ngOnInit() {
+    this.pageTitle.title.set('Gestion des utilisateurs');
+    this.loadUsers();
+    this.loadRoles();
+  }
+
+  loadUsers() {
+    this.isLoading = true;
+    this.userService.getAllUsers().subscribe({
+      next: (users) => {
+        this.tabUsers.set(users);
+        this.isLoading = false;
+        console.log(this.isLoading);
+        console.log(users);
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des utilisateurs', err);
+        this.errorMessage = 'Impossible de charger les utilisateurs.';
+        this.isLoading = false;
+        console.log(this.isLoading);
+      }
+    });
+  }
+
+  loadRoles(){
+    this.roleService.getAllRoles().subscribe({
+      next: (roles) => {
+      this.tabRoles.set(roles);
+      console.log(roles)},
+    error: (err) => {
+        console.error('Erreur lors du chargement des rôles', err);
+        this.errorMessage = 'Impossible de charger les rôles.';
+      }
+    });
+  }
 
   readonly filteredUsers = computed(() => {
     return this.tabUsers().filter(user => {
@@ -40,25 +77,6 @@ export class UserManager {
       return matchName && matchRole;
     });
   });
-
-  ngOnInit() {
-    this.pageTitle.title.set('Gestion des utilisateurs');
-    this.loadUsers();
-    this.loadRoles();
-  }
-
-  loadUsers() {
-    this.userService.getAllUsers().subscribe(users => {
-      this.tabUsers.set(users);
-      console.log(users)
-    });
-  }
-
-  loadRoles(){
-    this.roleService.getAllRoles().subscribe(roles => {
-      this.tabRoles.set(roles);
-      console.log(roles)});
-  }
 
   resetFilters() {
     this.searchName.set('');
@@ -73,16 +91,27 @@ export class UserManager {
 
   removeUser(id: number) {
     console.log(id);
-    this.userService.deleteUser(id).subscribe(() => {
-      this.loadUsers();
-
+    this.userService.deleteUser(id).subscribe({
+      next: () => {
+        this.loadUsers();
+      },
+      error: (err) => {
+        console.error('Erreur lors de la suppression de l\'utilisateur', err);
+        this.errorMessage = 'Impossible de supprimer l\'utilisateur.';
+      }
     });
   }
 
   removeUserRole(iduser: number, id: number) {
-    if (typeof iduser !== 'number' || typeof id !== 'number'){return;};
-    this.userService.deleteUserRole(iduser, id).subscribe(() => {
-      this.loadUsers();
+    if (typeof iduser !== 'number' || typeof id !== 'number'){return};
+    this.userService.deleteUserRole(iduser, id).subscribe({
+      next: () => {
+        this.loadUsers();
+      },
+      error: (err) => {
+        console.error('Erreur lors de la suppression du rôle de l\'utilisateur', err);
+        this.errorMessage = 'Impossible de supprimer le rôle de l\'utilisateur.';
+      }
     });
   }
 

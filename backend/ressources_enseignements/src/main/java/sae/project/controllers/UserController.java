@@ -29,15 +29,12 @@ public class UserController {
                     "is_active", role.getIsActive(),
                     "name", role.getName()
             )).toList() : List.of();
-            // formations : liste de noms ou d'ids sous forme de String
             List<String> formationJsons = user.getFormationList() != null ? user.getFormationList().stream()
                     .map(f -> f.getName() != null ? f.getName() : String.valueOf(f.getId()))
                     .toList() : List.of();
-            // tickets : titre ou id sous forme de String
             List<String> ticketJsons = user.getTicketsList() != null ? user.getTicketsList().stream()
                     .map(t -> t.getTitle() != null ? t.getTitle() : String.valueOf(t.getId()))
                     .toList() : List.of();
-            // assignments : id sous forme de String
             List<String> assignmentJsons = user.getAssignmentList() != null ? user.getAssignmentList().stream()
                     .map(a -> String.valueOf(a.getId()))
                     .toList() : List.of();

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { LessonService } from '../lesson/lesson-service';
 import { map, switchMap } from 'rxjs';
+import { User } from '../../interfaces/user.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -46,14 +47,18 @@ export class EducationalManagerService {
 
   getEducationById(id: number): Observable<Education>{
     return this.http.get<Education>(`${this.api}/${id}`).pipe(
-    switchMap(education =>
-      this.lessonsService.loadLessonsById(id).pipe(
-        map(lessons => {
-          education.lessons = lessons;
-          return education;
-        })
+      switchMap(education =>
+        this.lessonsService.loadLessonsById(id).pipe(
+          map(lessons => {
+            education.lessons = lessons;
+            return education;
+          })
+        )
       )
-    )
-  );
+    );
+  }
+
+  getUsers(id: number): Observable<User[]>{
+    return this.http.get<User[]>(`${this.api}/${id}/users`);
   }
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sae.project.model.Formation;
 import sae.project.model.Role;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import sae.project.model.User;
 import sae.project.repositories.*;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,13 @@ public class UserService {
     private FormationRepository formationRepository;
 
     @Autowired
-    private FormationRepository userFormationRepository;
+    private PasswordEncoder  passwordEncoder;
+
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder  passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public List<User> userList() {
         return userRepository.findAll();
@@ -41,7 +48,8 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-//    public User saveUser(User user) {
+//    public User register(User user) {
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
 //        return userRepository.save(user);
 //    }
 
@@ -72,7 +80,6 @@ public class UserService {
         userRepository.save(user);
         userRepository.deleteById(id);
     }
-
 
     public void updateUserRoles(int id, List<Integer> roles) {
         if (roles == null) {

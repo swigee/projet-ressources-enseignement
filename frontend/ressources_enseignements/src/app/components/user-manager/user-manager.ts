@@ -7,9 +7,7 @@ import { PageTitle } from '../../services/page-title/page-title-service';
 
 @Component({
     selector: 'app-user-manager',
-    imports: [
-
-    ],
+    imports: [],
     templateUrl: './user-manager.html'
 })
 export class UserManager {

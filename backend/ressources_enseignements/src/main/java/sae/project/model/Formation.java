@@ -49,6 +49,9 @@ public class Formation implements Serializable {
     @Column(name = "class_name", length = 50)
     private String className;
 
+    @Column(name = "description", length = 255)
+    private String description;
+    
     @ManyToMany
     @JoinTable(name = "user_formation", joinColumns = @JoinColumn(name = "formation_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     @JsonIgnore
@@ -59,7 +62,8 @@ public class Formation implements Serializable {
     @JoinTable(name = "formation_resource", joinColumns = @JoinColumn(name = "formation_id"), inverseJoinColumns = @JoinColumn(name = "resource_id"))
     @JsonIgnore
     private List<Resource> resourceList;
-
+    
+    
     /**
      * Constructeur avec ID uniquement
      */

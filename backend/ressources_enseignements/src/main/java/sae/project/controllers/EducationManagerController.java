@@ -1,5 +1,6 @@
 package sae.project.controllers;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.server.ResponseStatusException;
 import sae.project.model.Formation;
 import sae.project.model.Resource;
+import sae.project.model.User;
 import sae.project.services.EducationManagerService;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -62,5 +64,9 @@ public class EducationManagerController {
     public void delete(@PathVariable Integer id) {
         emrep.delete(id);
     }
-
+    
+    @GetMapping("/{id}/users")
+    public Iterable<User> getUsers(@PathVariable Integer id) {
+        return emrep.getUsersByFormation(id);
+    }
 }

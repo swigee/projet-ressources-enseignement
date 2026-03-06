@@ -148,7 +148,23 @@ public class RessourcesService {
 
         List<Assignment> assignments = assignmentRepository.findByResourceId(resource.getId());
         List<TeacherBadgeDTO> assignedTeachers = assignments.stream()
-                .map(this::mapAssignmentToTeacherBadge)
+                .collect(Collectors.groupingBy(
+                        a -> a.getUser().getId(),
+                        Collectors.summingInt(a -> a.getAssignedTimes() != null ? a.getAssignedTimes() : 0)
+                ))
+                .entrySet().stream()
+                .map(entry -> {
+                    User user = assignments.stream()
+                            .filter(a -> a.getUser().getId().equals(entry.getKey()))
+                            .findFirst().orElseThrow().getUser();
+                    String lastName = user.getLastName() != null ? user.getLastName().toUpperCase() : "";
+                    String firstName = user.getFirstName() != null ? user.getFirstName() : "";
+                    return TeacherBadgeDTO.builder()
+                            .teacherId(user.getId())
+                            .fullName((lastName + " " + firstName).trim())
+                            .assignedHours(entry.getValue())
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         return RessourceRowDTO.builder()

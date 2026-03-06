@@ -1,0 +1,103 @@
+<div class="p-6">
+
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+    <div class="grid grid-cols-12 gap-4 border-b border-gray-200 pb-4 mb-4 text-gray-500 text-sm font-medium">
+      <div class="col-span-4">Module / Ressource</div>
+      <div class="col-span-2 text-center">Total Prév.</div>
+      <div class="col-span-2 text-center">CM</div>
+      <div class="col-span-2 text-center">TD</div>
+      <div class="col-span-2 text-center">TP</div>
+    </div>
+
+    <div>
+      @if (filteredServices().length === 0) {
+      <div class="text-center py-10 text-gray-400 italic">Aucun service trouvé pour cette année.</div>
+      }
+
+      @for (service of filteredServices(); track $index) {
+      <div class="py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition">
+        <div class="grid grid-cols-12 gap-4 items-center">
+          <div class="col-span-4 font-bold text-gray-800">{{ service.resourceTitle }}</div>
+          <div class="col-span-2 text-center font-bold text-blue-600">{{ service.totalHours }}h</div>
+          <div class="col-span-2 text-center">{{ service.hoursCM > 0 ? service.hoursCM + 'h' : '-' }}</div>
+          <div class="col-span-2 text-center">{{ service.hoursTD > 0 ? service.hoursTD + 'h' : '-' }}</div>
+          <div class="col-span-2 text-center">{{ service.hoursTP > 0 ? service.hoursTP + 'h' : '-' }}</div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+
+  <div class="flex justify-center w-full mb-12 mt-8">
+    <div class="flex items-center w-full max-w-2xl">
+
+      <div class="flex flex-col items-center relative">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+          [class]="(validationStatus() === 'SUBMITTED' || validationStatus() === 'VALIDATED')
+              ? 'bg-green-100 border-green-500 text-green-600'
+              : 'bg-gray-100 border-gray-300 text-gray-400'">
+          <i class="fa-solid fa-paper-plane text-xl"></i>
+        </div>
+        <span class="absolute -bottom-8 text-sm font-medium text-gray-600 w-32 text-center">Validation envoyée</span>
+      </div>
+
+      <div class="flex-1 h-1 mx-4 rounded transition-all duration-300"
+        [class]="validationStatus() === 'VALIDATED' ? 'bg-green-500' : 'bg-gray-200'">
+      </div>
+
+      <div class="flex flex-col items-center relative">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+          [class]="validationStatus() === 'VALIDATED'
+              ? 'bg-green-100 border-green-500 text-green-600'
+              : 'bg-gray-100 border-gray-300 text-gray-400'">
+          <i class="fa-solid fa-circle-check text-xl"></i>
+        </div>
+        <span class="absolute -bottom-8 text-sm font-medium text-gray-600 w-32 text-center">Validé par le chef</span>
+      </div>
+
+    </div>
+  </div>
+
+  @if (validationStatus() === 'NONE') {
+  <div class="flex justify-center gap-6 mt-16">
+    <button (click)="requestValidation()"
+      class="px-8 py-4 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition duration-200 shadow-md flex items-center gap-2 transform hover:scale-105">
+      <i class="fa-solid fa-check"></i>
+      Valider le service
+    </button>
+  </div>
+  } @else {
+  <div class="text-center mt-12 p-6 bg-blue-50 rounded-xl border border-blue-100 max-w-2xl mx-auto">
+    <p class="text-blue-800 font-medium">
+      <i class="fa-solid fa-info-circle mr-2"></i>
+      Votre service a été transmis pour validation. Vous serez notifié une fois qu'il sera validé par le chef de
+      département.
+    </p>
+  </div>
+  }
+
+</div>
+
+@if (showValidationConfirm()) {
+<div class="fixed bottom-6 right-6 z-50 animate-bounce-in">
+  <div class="bg-white rounded-lg shadow-2xl border border-gray-200 p-6 max-w-sm flex flex-col gap-4">
+    <div>
+      <h3 class="font-bold text-gray-800 text-lg mb-2">Confirmer la validation</h3>
+      <p class="text-sm text-gray-600">
+        Une fois validé, vous ne pourrez plus signaler de problèmes. Êtes-vous sûr de vouloir soumettre votre service au
+        chef de département ?
+      </p>
+    </div>
+    <div class="flex justify-end gap-3">
+      <button (click)="cancelValidation()"
+        class="px-4 py-2 bg-gray-100 text-gray-600 font-medium rounded hover:bg-gray-200 transition">
+        Annuler
+      </button>
+      <button (click)="confirmValidation()"
+        class="px-4 py-2 bg-green-600 text-white font-medium rounded hover:bg-green-700 transition shadow-sm">
+        Envoyer
+      </button>
+    </div>
+  </div>
+</div>
+}

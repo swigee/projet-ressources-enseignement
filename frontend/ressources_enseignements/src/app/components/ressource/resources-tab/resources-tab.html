@@ -1,0 +1,193 @@
+<div class="p-6 border-b border-gray-200">
+  <div class="relative mb-4">
+    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+    <input
+      type="text"
+      placeholder="Rechercher une ressource..."
+      [value]="searchQuery"
+      (input)="onSearchInput($event)"
+      class="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <div class="relative">
+    <span class="text-sm font-medium text-gray-700 mb-2 block">Filtrer par enseignant:</span>
+    <div class="relative">
+      <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <input
+        type="text"
+        placeholder="Rechercher un enseignant..."
+        [value]="teacherSearchQuery()"
+        (input)="onTeacherSearchInput($event)"
+        (blur)="closeTeacherDropdown()"
+        class="w-full pl-9 pr-4 py-2 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+      />
+      @if (showTeacherDropdown() && filteredTeacherSuggestions().length > 0) {
+      <div class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-48 overflow-y-auto">
+        @for (teacher of filteredTeacherSuggestions(); track teacher.teacherId) {
+        <button
+          (mousedown)="selectTeacherFromDropdown(teacher.teacherId)"
+          class="w-full text-left px-4 py-2 text-sm hover:bg-blue-50 transition-colors"
+        >
+          {{ teacher.fullName }}
+        </button>
+        }
+      </div>
+      }
+      @if (showTeacherDropdown() && teacherSearchQuery().trim() && filteredTeacherSuggestions().length === 0) {
+      <div class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 px-4 py-3">
+        <span class="text-sm text-gray-400 italic">Aucun enseignant trouve</span>
+      </div>
+      }
+    </div>
+
+    @if (selectedTeacherIds.length > 0) {
+    <div class="flex flex-wrap gap-2 mt-3 items-center">
+      @for (teacherId of selectedTeacherIds; track teacherId) {
+      <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-blue-500 text-white">
+        {{ getTeacherName(teacherId) }}
+        <button (click)="teacherFilterRemoved.emit(teacherId)" class="ml-1 hover:text-blue-200 transition-colors">&times;</button>
+      </span>
+      }
+    </div>
+    }
+
+    @if (selectedTeacherIds.length > 0 || searchQuery) {
+    <button
+      (click)="filtersCleared.emit()"
+      class="mt-3 px-3 py-1 rounded-full text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
+    >
+      Effacer les filtres
+    </button>
+    }
+  </div>
+</div>
+
+<div class="p-6">
+  <div class="overflow-x-auto border border-gray-300 rounded-lg">
+    <table class="w-full border-collapse text-sm">
+      <thead>
+        <tr class="bg-gray-50 border-b border-gray-300">
+          <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Module</th>
+          <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Heures Prev.</th>
+          <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Heures Reelles</th>
+          <th class="px-4 py-3 text-center text-sm font-semibold" style="color: #4ecdc4">TD</th>
+          <th class="px-4 py-3 text-center text-sm font-semibold" style="color: #a864a8">TP</th>
+          <th class="px-4 py-3 text-center text-sm font-semibold" style="color: #ff6b6b">CM</th>
+          <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Teachers</th>
+          <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (filteredRessources.length === 0) {
+        <tr>
+          <td colspan="8" class="text-center text-gray-500 italic py-8">Aucune ressource trouvee</td>
+        </tr>
+        } @else {
+        @for (row of filteredRessources; track row.id) {
+        <tr [class]="(row.isHighlighted ? 'bg-blue-100' : 'bg-white') + ' border-b border-gray-300 hover:bg-blue-50'">
+          <td [class]="'px-4 py-3 font-medium ' + (row.isHighlighted ? 'bg-blue-100' : '')">
+            {{ row.moduleName }}
+            @if (row.category) {
+            <div class="text-xs text-gray-600 mt-1">{{ row.category }}</div>
+            }
+          </td>
+          <td class="px-4 py-3 text-center">{{ row.plannedHours }}h</td>
+          <td class="px-4 py-3 text-center">{{ row.actualHours }}h</td>
+          <td class="px-4 py-3 text-center font-medium" style="color: #4ecdc4">{{ row.tdHours }}h</td>
+          <td class="px-4 py-3 text-center font-medium" style="color: #a864a8">{{ row.tpHours }}h</td>
+          <td class="px-4 py-3 text-center font-medium" style="color: #ff6b6b">{{ row.cmHours }}h</td>
+          <td class="px-4 py-3">
+            <div class="flex flex-wrap gap-1">
+              @for (teacher of row.assignedTeachers; track teacher.teacherId) {
+              <span class="px-2 py-1 rounded-full text-xs bg-blue-200 text-blue-800">
+                {{ teacher.fullName }} ({{ teacher.assignedHours }}h)
+              </span>
+              }
+              @if (row.assignedTeachers.length === 0) {
+              <span class="text-gray-400 italic text-xs">Non assigne</span>
+              }
+            </div>
+          </td>
+          <td class="px-4 py-3 text-center">
+            @if (hasConflict(row)) {
+            <div class="flex items-center justify-center" title="Conflit d'emploi du temps detecte">
+              <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            } @else {
+            <div class="flex items-center justify-center">
+              <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            }
+          </td>
+        </tr>
+        }
+        }
+      </tbody>
+      <tfoot>
+        <tr class="bg-gray-100 border-t-2 border-gray-400 font-semibold">
+          <td class="px-4 py-3">Total</td>
+          <td class="px-4 py-3 text-center">{{ calculatedTotals.totalPlannedHours }}h</td>
+          <td class="px-4 py-3 text-center">{{ calculatedTotals.totalActualHours }}h</td>
+          <td class="px-4 py-3 text-center" style="color: #4ecdc4">{{ calculatedTotals.totalTDHours }}h</td>
+          <td class="px-4 py-3 text-center" style="color: #a864a8">{{ calculatedTotals.totalTPHours }}h</td>
+          <td class="px-4 py-3 text-center" style="color: #ff6b6b">{{ calculatedTotals.totalCMHours }}h</td>
+          <td class="px-4 py-3" colspan="2"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  @if (filteredConflicts.length > 0) {
+  <div class="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+    <h3 class="text-sm font-semibold text-orange-800 mb-2">
+      <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      Conflits detectes ({{ filteredConflicts.length }})
+    </h3>
+    <ul class="space-y-1">
+      @for (conflict of filteredConflicts; track conflict.teacherId) {
+      <li class="text-sm text-orange-700">
+        <span class="font-medium">{{ conflict.teacherName }}</span> -
+        Week {{ conflict.weekNumber }}, {{ conflict.timeSlot }}:
+        {{ conflict.conflictingModules.join(', ') }}
+      </li>
+      }
+    </ul>
+  </div>
+  }
+
+  <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+    <div class="grid grid-cols-5 gap-4">
+      <div>
+        <div class="text-sm text-gray-600">Total Prév.</div>
+        <div class="text-xl font-bold text-gray-800">{{ calculatedTotals.totalPlannedHours }}h</div>
+      </div>
+      <div>
+        <div class="text-sm text-gray-600">Total Réel</div>
+        <div class="text-xl font-bold text-blue-600">{{ calculatedTotals.totalActualHours }}h</div>
+      </div>
+      <div>
+        <div class="text-sm text-gray-600">Total TD</div>
+        <div class="text-xl font-bold" style="color: #4ecdc4">{{ calculatedTotals.totalTDHours }}h</div>
+      </div>
+      <div>
+        <div class="text-sm text-gray-600">Total TP</div>
+        <div class="text-xl font-bold" style="color: #a864a8">{{ calculatedTotals.totalTPHours }}h</div>
+      </div>
+      <div>
+        <div class="text-sm text-gray-600">Total CM</div>
+        <div class="text-xl font-bold" style="color: #ff6b6b">{{ calculatedTotals.totalCMHours }}h</div>
+      </div>
+    </div>
+  </div>
+</div>

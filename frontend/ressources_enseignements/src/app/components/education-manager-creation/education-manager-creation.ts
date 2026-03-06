@@ -15,14 +15,14 @@ export class EducationManagerCreation {
   lessonsService = inject(LessonService)
   edService = inject(EducationalManagerService)
   selectedLessons: Lesson[] = [];
-  
+
   form!: FormGroup;
   private route = inject(ActivatedRoute);
   constructor(
     private fb: FormBuilder,
     private service: EducationalManagerService,
     private router: Router
-  ) 
+  )
   {
      this.lessonsService.loadLessons();
   }
@@ -80,7 +80,7 @@ export class EducationManagerCreation {
         this.router.navigate(['/education-manager']);
         this.edService.loadEducations();
       });
-    } 
+    }
     else {
       this.service.createEducation(edu).subscribe(() => {
         this.router.navigate(['/education-manager']);

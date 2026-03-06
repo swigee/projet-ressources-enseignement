@@ -9,6 +9,7 @@ import { ResourcesTab } from './resources-tab/resources-tab';
 import { MaquetteTab, ScheduleHoursDelta, ProjectHoursDelta } from './maquette-tab/maquette-tab';
 import { ValidationTab } from './validation-tab/validation-tab';
 import { TicketModal } from './ticket-modal/ticket-modal';
+import {PageTitle} from '../../services/page-title/page-title-service';
 
 @Component({
   selector: 'app-ressource',
@@ -90,7 +91,11 @@ export class Ressource implements OnInit {
   });
 
   ngOnInit(): void {
+    this.pageTitle.title.set("Gestion pédagogique - Ressources et plannings");
     this.loadData();
+  }
+
+  constructor(private pageTitle: PageTitle) {
   }
 
   loadData(): void {

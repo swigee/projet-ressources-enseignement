@@ -2,6 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { GroupTrackingService } from '../../services/group-tracking/group-tracking.service';
 import { StudentGroup, Formation, GroupResourceRow } from '../../models/group-tracking/group-tracking.model';
+import {PageTitle} from '../../services/page-title/page-title-service';
 
 @Component({
   selector: 'app-group-tracking',
@@ -37,8 +38,12 @@ export class GroupTracking implements OnInit {
   });
 
   ngOnInit(): void {
+    this.pageTitle.title.set("Suivis étudiants");
     this.service.getFormations().subscribe(f => this.formations.set(f));
     this.loadGroups();
+  }
+
+  constructor(private pageTitle: PageTitle) {
   }
 
   loadGroups(): void {

@@ -1,6 +1,5 @@
 package sae.project.controllers;
 
-import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +31,7 @@ public class EducationManagerController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Formation> get(@PathVariable Integer id) {
+    public Formation get(@PathVariable Integer id) {
         return emrep.getById(id);
     }
 
@@ -40,15 +39,7 @@ public class EducationManagerController {
     public Iterable<Resource> getRessources() {
         return emrep.getRessourcesList();
     }
-    
-    @GetMapping("/lessons/{id}")
-    public Iterable<Resource> getRessourcesByFormation(@PathVariable Integer id) {
-        Formation formation = emrep.getById(id)
-        .orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND, "Formation non trouvée"
-        ));
-        return emrep.getRessourcesByFormation(formation);
-    }
+   
     
     @PutMapping("/{id}")
     public Formation put(@RequestBody Formation etu) {
@@ -63,10 +54,5 @@ public class EducationManagerController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         emrep.delete(id);
-    }
-    
-    @GetMapping("/{id}/users")
-    public Iterable<User> getUsers(@PathVariable Integer id) {
-        return emrep.getUsersByFormation(id);
     }
 }

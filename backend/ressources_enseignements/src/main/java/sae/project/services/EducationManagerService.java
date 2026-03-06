@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sae.project.model.Formation;
 import sae.project.model.Resource;
-import sae.project.model.User;
 import sae.project.repositories.EducationManagerRepository;
 import sae.project.repositories.ResourceRepository;
 
@@ -18,11 +17,20 @@ public class EducationManagerService {
     private ResourceRepository rrep;
 
     public List<Formation> getAll() {
-        return (List<Formation>) emrep.findAll();
+        List<Formation> formationList = emrep.findAll();
+        for(Formation formation: formationList){
+           formation.getUsersList();
+           formation.getResourceList();
+        }
+        return (List<Formation>) formationList;
     }
        
-    public Optional<Formation> getById(Integer id){
-        return emrep.findById(id);
+    public Formation getById(Integer id){
+        Formation formation = emrep.findById(id)
+                .orElseThrow(() -> new RuntimeException("Formation non trouvée"));
+        formation.getUsersList();
+        formation.getResourceList();
+        return formation;
     }
     
     public void delete(Integer id) {
@@ -34,18 +42,10 @@ public class EducationManagerService {
     }
 
     public List<Resource> getRessourcesList() {
-        return rrep.findAll();
-    }
-    
-    public List<Resource> getRessourcesByFormation(Formation f) {
-        return f.getResourceList();
+       return rrep.findAll();
     }
     
     public Formation update(Formation f){
         return emrep.save(f);
-    }
-    public List<User> getUsersByFormation(Integer id){
-        Formation f = emrep.getById(id);
-        return f.getUsersList();
     }
 }

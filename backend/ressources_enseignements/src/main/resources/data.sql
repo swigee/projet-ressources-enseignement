@@ -62,16 +62,26 @@ INSERT INTO user_role (role_id, user_id) VALUES
 -- FORMATIONS (BUT Informatique)
 -- =========================
 INSERT INTO formation (id, name, year, class_name, description) VALUES
-(1, 'Informatique', '1', 'Classe A', 'Formation BUT Informatique annee 1 - groupe A'),
-(2, 'Informatique', '1', 'Classe B', 'Formation BUT Informatique annee 1 - groupe B'),
-(3, 'Informatique', '2', 'Classe A', 'Formation BUT Informatique annee 2 - groupe A'),
-(4, 'Informatique', '2', 'Classe B', 'Formation BUT Informatique annee 2 - groupe B'),
-(5, 'Informatique', '3', 'Classe A', 'Formation BUT Informatique annee 3 - groupe A'),
-(6, 'Informatique', '3', 'Classe B', 'Formation BUT Informatique annee 3 - groupe B'),
-(7, 'Reseaux et Telecommunications', '1', 'Classe A', 'Formation BUT R&T annee 1 - fondamentaux reseaux'),
-(8, 'Reseaux et Telecommunications', '2', 'Classe A', 'Formation BUT R&T annee 2 - administration et securite'),
-(9, 'Science des Donnees', '1', 'Classe A', 'Formation BUT SD annee 1 - statistiques et programmation'),
-(10, 'Science des Donnees', '2', 'Classe A', 'Formation BUT SD annee 2 - machine learning et BI');
+(1, 'Informatique', '1', 'G1', 'Formation BUT Informatique annee 1 - groupe A'),
+(2, 'Informatique', '1', 'G2', 'Formation BUT Informatique annee 1 - groupe B'),
+(3, 'Informatique', '2', 'G1', 'Formation BUT Informatique annee 2 - groupe A'),
+(4, 'Informatique', '2', 'G2', 'Formation BUT Informatique annee 2 - groupe B'),
+(5, 'Informatique', '3', 'G1', 'Formation BUT Informatique annee 3 - groupe A'),
+(6, 'Informatique', '3', 'G2', 'Formation BUT Informatique annee 3 - groupe B'),
+(7, 'Reseaux et Telecommunications', '1', 'G1', 'Formation BUT R&T annee 1 - fondamentaux reseaux'),
+(8, 'Reseaux et Telecommunications', '2', 'G1', 'Formation BUT R&T annee 2 - administration et securite'),
+(9, 'Science des Donnees', '1', 'G1', 'Formation BUT SD annee 1 - statistiques et programmation'),
+(10, 'Science des Donnees', '2', 'G1', 'Formation BUT SD annee 2 - machine learning et BI'),
+(11, 'Reseaux et Telecommunications', '1', 'G2', 'Formation BUT R&T annee 1 - groupe B'),
+(12, 'Reseaux et Telecommunications', '2', 'G2', 'Formation BUT R&T annee 2 - groupe B'),
+(13, 'Science des Donnees', '1', 'G2', 'Formation BUT SD annee 1 - groupe B'),
+(14, 'Science des Donnees', '2', 'G2', 'Formation BUT SD annee 2 - groupe B'),
+(15, 'Informatique', '1', 'G3', 'Formation BUT Informatique annee 1 - groupe C'),
+(16, 'Informatique', '1', 'G4', 'Formation BUT Informatique annee 1 - groupe D'),
+(17, 'Informatique', '2', 'G3', 'Formation BUT Informatique annee 2 - groupe C'),
+(18, 'Informatique', '2', 'G4', 'Formation BUT Informatique annee 2 - groupe D'),
+(19, 'Informatique', '3', 'G3', 'Formation BUT Informatique annee 3 - groupe C'),
+(20, 'Informatique', '3', 'G4', 'Formation BUT Informatique annee 3 - groupe D');
 
 -- =========================
 -- USER FORMATION
@@ -294,6 +304,119 @@ INSERT INTO resource (
  '{"21":{"cm":0,"td":2,"tp":0,"total":2},"22":{"cm":0,"td":2,"tp":0,"total":2},"23":{"cm":0,"td":2,"tp":0,"total":2},"24":{"cm":0,"td":2,"tp":0,"total":2},"25":{"cm":0,"td":2,"tp":0,"total":2},"26":{"cm":0,"td":2,"tp":0,"total":2},"27":{"cm":0,"td":2,"tp":0,"total":2},"28":{"cm":0,"td":2,"tp":0,"total":2},"29":{"cm":0,"td":2,"tp":0,"total":2},"30":{"cm":0,"td":2,"tp":0,"total":2},"31":{"cm":0,"td":1,"tp":0,"total":1},"32":{"cm":0,"td":1,"tp":0,"total":1},"33":{"cm":0,"td":1,"tp":0,"total":1},"34":{"cm":0,"td":1,"tp":0,"total":1},"35":{"cm":0,"td":1,"tp":0,"total":1},"36":{"cm":0,"td":1,"tp":0,"total":1},"37":{"cm":0,"td":1,"tp":0,"total":1},"38":{"cm":0,"td":1,"tp":0,"total":1},"39":{"cm":0,"td":1,"tp":0,"total":1},"40":{"cm":0,"td":1,"tp":0,"total":1}}',
  0, 2);
 
+
+-- =========================
+-- RESSOURCES R&T et SD
+-- =========================
+INSERT INTO resource (
+    id, title, description, category,
+    cm_state_hours, cm_iut_hours, td_state_hours, td_iut_hours, tp_state_hours, tp_iut_hours,
+    hours_per_week, hours_per_half_group, semester
+) VALUES
+
+(38, 'Reseaux locaux', 'Introduction aux reseaux locaux et Ethernet', 'Reseaux',
+ 20, 0, 20, 0, 20, 0, '{}', 0, 1),
+
+(39, 'Protocoles TCP/IP', 'Modele OSI et protocoles TCP/IP', 'Reseaux',
+ 15, 0, 25, 0, 20, 0, '{}', 0, 1),
+
+(40, 'Systemes Linux', 'Administration Linux et ligne de commande', 'Systemes',
+ 10, 0, 15, 0, 25, 0, '{}', 0, 1),
+
+(41, 'Bases des telecommunications', 'Fondamentaux des telecoms et signaux', 'Telecom',
+ 25, 0, 20, 0, 10, 0, '{}', 0, 1),
+
+-- ========== R&T ANNEE 1 - SEMESTRE 2 ==========
+(42, 'Routage et commutation', 'Protocoles de routage IP et commutation', 'Reseaux',
+ 20, 0, 20, 0, 30, 0, '{}', 0, 2),
+
+(43, 'Securite reseau fondamentaux', 'Introduction a la securite des reseaux', 'Securite',
+ 15, 0, 15, 0, 20, 0, '{}', 0, 2),
+
+(44, 'Telephonie IP', 'VoIP et protocoles SIP', 'Telecom',
+ 20, 0, 20, 0, 20, 0, '{}', 0, 2),
+
+(45, 'Virtualisation', 'Virtualisation de serveurs et VM', 'Systemes',
+ 10, 0, 10, 0, 30, 0, '{}', 0, 2),
+
+-- ========== R&T ANNEE 2 - SEMESTRE 1 ==========
+(46, 'Administration systemes', 'Administration avancee Linux/Windows', 'Systemes',
+ 15, 0, 20, 0, 35, 0, '{}', 0, 1),
+
+(47, 'Reseaux sans fil', 'WiFi, 4G/5G et protocoles mobiles', 'Reseaux',
+ 20, 0, 20, 0, 25, 0, '{}', 0, 1),
+
+(48, 'Securite avancee reseaux', 'Firewall, VPN et audit de securite', 'Securite',
+ 20, 0, 15, 0, 25, 0, '{}', 0, 1),
+
+(49, 'Services cloud', 'AWS, Azure et architectures cloud', 'Cloud',
+ 15, 0, 20, 0, 30, 0, '{}', 0, 1),
+
+-- ========== R&T ANNEE 2 - SEMESTRE 2 ==========
+(50, 'Supervision et monitoring', 'Outils de supervision reseau Nagios/Zabbix', 'Reseaux',
+ 15, 0, 15, 0, 30, 0, '{}', 0, 2),
+
+(51, 'Cryptographie et PKI', 'Cryptographie appliquee et PKI', 'Securite',
+ 25, 0, 20, 0, 15, 0, '{}', 0, 2),
+
+(52, 'Projet reseau S4', 'Projet integre infrastructure reseau', 'Projet',
+ 0, 0, 15, 0, 35, 0, '{}', 0, 2),
+
+(53, 'Telecoms mobiles', 'Architecture des reseaux mobiles 5G', 'Telecom',
+ 20, 0, 20, 0, 20, 0, '{}', 0, 2),
+
+-- ========== SD ANNEE 1 - SEMESTRE 1 ==========
+(54, 'Statistiques descriptives', 'Statistiques et distributions univariees', 'Statistiques',
+ 25, 0, 30, 0, 20, 0, '{}', 0, 1),
+
+(55, 'Programmation Python', 'Python pour la science des donnees', 'Programmation',
+ 15, 0, 20, 0, 35, 0, '{}', 0, 1),
+
+(56, 'Bases de donnees pour SD', 'SQL et modelisation des donnees', 'Data',
+ 20, 0, 20, 0, 20, 0, '{}', 0, 1),
+
+(57, 'Algebre lineaire pour SD', 'Vecteurs, matrices et transformations', 'Mathematiques',
+ 30, 0, 30, 0, 10, 0, '{}', 0, 1),
+
+-- ========== SD ANNEE 1 - SEMESTRE 2 ==========
+(58, 'Probabilites et inference', 'Probabilites et tests statistiques', 'Statistiques',
+ 25, 0, 30, 0, 15, 0, '{}', 0, 2),
+
+(59, 'Analyse de donnees', 'ACP et analyse factorielle', 'Data',
+ 20, 0, 20, 0, 25, 0, '{}', 0, 2),
+
+(60, 'Visualisation de donnees', 'Matplotlib, Seaborn et dashboards', 'Data',
+ 15, 0, 15, 0, 30, 0, '{}', 0, 2),
+
+(61, 'SQL avance', 'SQL avance, vues et optimisation', 'Data',
+ 15, 0, 20, 0, 25, 0, '{}', 0, 2),
+
+-- ========== SD ANNEE 2 - SEMESTRE 1 ==========
+(62, 'Machine Learning', 'Algorithmes ML supervises et non-supervises', 'IA',
+ 25, 0, 20, 0, 25, 0, '{}', 0, 1),
+
+(63, 'Business Intelligence', 'Entrepots de donnees et reporting', 'Data',
+ 20, 0, 20, 0, 25, 0, '{}', 0, 1),
+
+(64, 'Traitement du langage naturel', 'NLP et analyse textuelle', 'IA',
+ 20, 0, 15, 0, 25, 0, '{}', 0, 1),
+
+(65, 'Statistiques avancees', 'Regression, ANOVA et series temporelles', 'Statistiques',
+ 25, 0, 25, 0, 15, 0, '{}', 0, 1),
+
+-- ========== SD ANNEE 2 - SEMESTRE 2 ==========
+(66, 'Deep Learning', 'Reseaux de neurones et frameworks TensorFlow', 'IA',
+ 20, 0, 15, 0, 35, 0, '{}', 0, 2),
+
+(67, 'Big Data et NoSQL', 'Hadoop, Spark et bases NoSQL', 'Data',
+ 20, 0, 20, 0, 30, 0, '{}', 0, 2),
+
+(68, 'Projet data science S4', 'Projet integre analyse et modelisation', 'Projet',
+ 0, 0, 15, 0, 40, 0, '{}', 0, 2),
+
+(69, 'Ethique et IA', "Enjeux sociaux et ethiques de l'IA", 'Transversal',
+ 30, 0, 20, 0, 10, 0, '{}', 0, 2);
+
 -- =========================
 -- FORMATION RESSOURCES
 -- =========================
@@ -337,7 +460,32 @@ INSERT INTO formation_resource (formation_id, resource_id) VALUES
 (5, 34), (6, 34),
 (5, 35), (6, 35),
 (5, 36), (6, 36),
-(5, 37), (6, 37);
+(5, 37), (6, 37),
+-- Informatique G3/G4 Annee 1 (IDs 1-12) -> formations 15 (G3), 16 (G4)
+(15, 1), (16, 1), (15, 2), (16, 2), (15, 3), (16, 3), (15, 4), (16, 4),
+(15, 5), (16, 5), (15, 6), (16, 6), (15, 7), (16, 7), (15, 8), (16, 8),
+(15, 9), (16, 9), (15, 10), (16, 10), (15, 11), (16, 11), (15, 12), (16, 12),
+-- Informatique G3/G4 Annee 2 (IDs 13-25) -> formations 17 (G3), 18 (G4)
+(17, 13), (18, 13), (17, 14), (18, 14), (17, 15), (18, 15), (17, 16), (18, 16),
+(17, 17), (18, 17), (17, 18), (18, 18), (17, 19), (18, 19), (17, 20), (18, 20),
+(17, 21), (18, 21), (17, 22), (18, 22), (17, 23), (18, 23), (17, 24), (18, 24),
+(17, 25), (18, 25),
+-- Informatique G3/G4 Annee 3 (IDs 26-37) -> formations 19 (G3), 20 (G4)
+(19, 26), (20, 26), (19, 27), (20, 27), (19, 28), (20, 28), (19, 29), (20, 29),
+(19, 30), (20, 30), (19, 31), (20, 31), (19, 32), (20, 32), (19, 33), (20, 33),
+(19, 34), (20, 34), (19, 35), (20, 35), (19, 36), (20, 36), (19, 37), (20, 37),
+-- R&T Annee 1 (IDs 38-45) -> formations 7 (G1), 11 (G2)
+(7, 38), (11, 38), (7, 39), (11, 39), (7, 40), (11, 40), (7, 41), (11, 41),
+(7, 42), (11, 42), (7, 43), (11, 43), (7, 44), (11, 44), (7, 45), (11, 45),
+-- R&T Annee 2 (IDs 46-53) -> formations 8 (G1), 12 (G2)
+(8, 46), (12, 46), (8, 47), (12, 47), (8, 48), (12, 48), (8, 49), (12, 49),
+(8, 50), (12, 50), (8, 51), (12, 51), (8, 52), (12, 52), (8, 53), (12, 53),
+-- SD Annee 1 (IDs 54-61) -> formations 9 (G1), 13 (G2)
+(9, 54), (13, 54), (9, 55), (13, 55), (9, 56), (13, 56), (9, 57), (13, 57),
+(9, 58), (13, 58), (9, 59), (13, 59), (9, 60), (13, 60), (9, 61), (13, 61),
+-- SD Annee 2 (IDs 62-69) -> formations 10 (G1), 14 (G2)
+(10, 62), (14, 62), (10, 63), (14, 63), (10, 64), (14, 64), (10, 65), (14, 65),
+(10, 66), (14, 66), (10, 67), (14, 67), (10, 68), (14, 68), (10, 69), (14, 69);
 
 -- =========================
 -- SYLLABUS

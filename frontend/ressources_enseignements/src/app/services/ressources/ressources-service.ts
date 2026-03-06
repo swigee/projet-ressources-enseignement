@@ -16,11 +16,9 @@ export class RessourcesService {
 
   constructor(private http: HttpClient) {}
 
-  getRessourcesTable(year: string, className: string, semester: string): Observable<RessourcesTableResponse> {
-    const params = new HttpParams()
-      .set('year', year)
-      .set('className', className)
-      .set('semester', semester);
+  getRessourcesTable(year: string, className: string, semester: string, formation?: string): Observable<RessourcesTableResponse> {
+    let params = new HttpParams().set('year', year).set('className', className).set('semester', semester);
+    if (formation) params = params.set('formation', formation);
 
     return this.http.get<RessourcesTableResponse>(`${this.apiUrl}/data`, { params })
       .pipe(

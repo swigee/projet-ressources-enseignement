@@ -8,11 +8,14 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './filter-controls.html'
 })
 export class FilterControls {
+  @Input() selectedFormation = 'Informatique';
+  @Input() formations: { id: string; name: string }[] = [];
   @Input() selectedYear = '1';
-  @Input() selectedClass = 'Classe A';
+  @Input() selectedClass = 'G1';
   @Input() selectedSemester = '1';
   @Input() classData: Record<string, { name: string; classes: string[] }> = {};
 
+  @Output() formationChange = new EventEmitter<string>();
   @Output() yearChange = new EventEmitter<string>();
   @Output() classChange = new EventEmitter<string>();
   @Output() semesterChange = new EventEmitter<string>();

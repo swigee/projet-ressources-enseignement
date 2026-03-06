@@ -11,6 +11,7 @@ import {
   AssignmentStatistics
 } from '../../models/teacher/teacher.model';
 import {TeacherAssignmentService} from '../../services/teacher-assignment/teacher-assignment-service'
+import {PageTitle} from '../../services/page-title/page-title-service';
 
 interface DragData {
   type: string;
@@ -27,7 +28,7 @@ interface DragData {
 export class TeacherAssignmentComponent implements OnInit {
   selectedFormation: string = 'Informatique';
   selectedYear: string = '1';
-  selectedClass: string = 'Classe A';
+  selectedClass: string = 'G1';
   selectedSemester: string = '';
   searchQuery: string = '';
   draggedTeacher: Teacher | null = null;
@@ -37,9 +38,10 @@ export class TeacherAssignmentComponent implements OnInit {
   affectationGrid: AffectationRow[] = [];
   statistics: any = null;
 
-  constructor(private teacherService: TeacherAssignmentService) {}
+  constructor(private teacherService: TeacherAssignmentService, private pageTitle: PageTitle) {}
 
   ngOnInit() {
+    this.pageTitle.title.set("Affectation des enseignants");
     console.log('Initialisation avec:', {
       formation: this.selectedFormation,
       year: this.selectedYear,

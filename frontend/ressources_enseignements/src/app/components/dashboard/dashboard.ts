@@ -12,7 +12,7 @@ export class Dashboard {
   }
 
   ngOnInit() {
-    this.pageTitle.title.set("Dashboard");
+    this.pageTitle.title.set("Tableau de bord");
   }
 }
 

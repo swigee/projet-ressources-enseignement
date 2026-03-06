@@ -61,9 +61,12 @@ public class PedagogicalScheduleService {
     /**
      * Récupérer les ressources par année, classe et semestre
      */
-    public List<ResourceScheduleDTO> getByYearAndClass(String year, String className, Integer semester) {
+    public List<ResourceScheduleDTO> getByYearAndClass(String year, String className, Integer semester, String formation) {
         log.info("Récupération des ressources pour l'année {} la classe {} et le semestre {}", year, className, semester);
-        return pedagogicalScheduleRepository.findByYearAndClassAndSemester(year, className, semester).stream()
+        List<Resource> resources = (formation != null && !formation.isBlank())
+                ? pedagogicalScheduleRepository.findByYearAndClassAndSemesterAndFormation(year, className, semester, formation)
+                : pedagogicalScheduleRepository.findByYearAndClassAndSemester(year, className, semester);
+        return resources.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
@@ -71,10 +74,10 @@ public class PedagogicalScheduleService {
     /**
      * Récupérer le planning complet
      */
-    public PedagogicalScheduleDTO getCompleteSchedule(String year, String className, Integer semester) {
+    public PedagogicalScheduleDTO getCompleteSchedule(String year, String className, Integer semester, String formation) {
         log.info("Récupération du planning complet pour {} - {} - semestre {}", year, className, semester);
 
-        List<ResourceScheduleDTO> ressources = getByYearAndClass(year, className, semester);
+        List<ResourceScheduleDTO> ressources = getByYearAndClass(year, className, semester, formation);
         ProjectScheduleDTO project = getProjectData();
         List<MonthDTO> weeks = getWeeksForYearAndSemester(year, semester);
         ScheduleStatisticsDTO statistics = calculateStatistics(ressources, project, weeks);

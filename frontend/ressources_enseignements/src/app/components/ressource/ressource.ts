@@ -9,6 +9,7 @@ import { ResourcesTab } from './resources-tab/resources-tab';
 import { MaquetteTab, ScheduleHoursDelta, ProjectHoursDelta } from './maquette-tab/maquette-tab';
 import { ValidationTab } from './validation-tab/validation-tab';
 import { TicketModal } from './ticket-modal/ticket-modal';
+import {PageTitle} from '../../services/page-title/page-title-service';
 
 @Component({
   selector: 'app-ressource',
@@ -21,8 +22,14 @@ export class Ressource implements OnInit {
   private readonly pedagogicalScheduleService = inject(PedagogicalScheduleService);
 
   activeTab = signal<string>('ressources');
+  selectedFormation = signal<string>('Informatique');
+  readonly formations = [
+    { id: 'Informatique', name: 'BUT Informatique' },
+    { id: 'Reseaux et Telecommunications', name: 'BUT R&T' },
+    { id: 'Science des Donnees', name: 'BUT Science des Donn�es' },
+  ];
   selectedYear = signal<string>('1');
-  selectedClass = signal<string>('Classe A');
+  selectedClass = signal<string>('G1');
   selectedSemester = signal<string>('1');
 
   ressources = signal<RessourceRow[]>([]);
@@ -45,9 +52,9 @@ export class Ressource implements OnInit {
   showModal = signal<boolean>(false);
 
   classData: Record<string, { name: string; classes: string[] }> = {
-    '1': { name: 'Annee 1', classes: ['Classe A', 'Classe B'] },
-    '2': { name: 'Annee 2', classes: ['Classe A', 'Classe B'] },
-    '3': { name: 'Annee 3 (Alternance)', classes: ['Classe A', 'Classe B'] }
+    '1': { name: 'Annee 1', classes: ['G1', 'G2'] },
+    '2': { name: 'Annee 2', classes: ['G1', 'G2'] },
+    '3': { name: 'Annee 3 (Alternance)', classes: ['G1', 'G2'] }
   };
 
   filteredRessources = computed<RessourceRow[]>(() => {
@@ -84,15 +91,19 @@ export class Ressource implements OnInit {
   });
 
   ngOnInit(): void {
+    this.pageTitle.title.set("Gestion pédagogique - Ressources et plannings");
     this.loadData();
+  }
+
+  constructor(private pageTitle: PageTitle) {
   }
 
   loadData(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
     forkJoin({
-      ressourcesData: this.ressourcesTableService.getRessourcesTable(this.selectedYear(), this.selectedClass(), this.selectedSemester()),
-      scheduleData: this.pedagogicalScheduleService.getCompleteSchedule(this.selectedYear(), this.selectedClass(), this.selectedSemester())
+      ressourcesData: this.ressourcesTableService.getRessourcesTable(this.selectedYear(), this.selectedClass(), this.selectedSemester(), this.selectedFormation()),
+      scheduleData: this.pedagogicalScheduleService.getCompleteSchedule(this.selectedYear(), this.selectedClass(), this.selectedSemester(), this.selectedFormation())
     }).subscribe({
       next: (data) => {
         this.ressources.set(data.ressourcesData.ressources);
@@ -124,6 +135,11 @@ export class Ressource implements OnInit {
   setActiveTab(tab: string): void {
     if (this.isEditing()) this.cancelEditing();
     this.activeTab.set(tab);
+  }
+
+  onFormationChange(formation: string): void {
+    this.selectedFormation.set(formation);
+    this.loadData();
   }
 
   onYearChange(year: string): void {

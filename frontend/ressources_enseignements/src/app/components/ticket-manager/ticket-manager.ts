@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TicketService, TicketResponseDTO } from '../../services/ticket/ticket.service';
+import {PageTitle} from '../../services/page-title/page-title-service';
 
 @Component({
   selector: 'app-ticket-manager',
@@ -19,7 +20,7 @@ export class TicketManager implements OnInit {
   resolvedCurrentPage = 1;
   resolvedPageSize = 5;
 
-  constructor(private ticketService: TicketService) { }
+  constructor(private ticketService: TicketService, private pageTitle: PageTitle) { }
 
   get activeTickets(): TicketResponseDTO[] {
     return this.tickets.filter(t => t.status !== 'RESOLVED');
@@ -68,6 +69,7 @@ export class TicketManager implements OnInit {
   }
 
   ngOnInit(): void {
+    this.pageTitle.title.set("Gestion des tickets");
     this.loadTickets();
   }
 

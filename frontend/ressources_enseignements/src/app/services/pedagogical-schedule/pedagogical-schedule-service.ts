@@ -32,11 +32,9 @@ export class PedagogicalScheduleService {
     return this.http.get<RessourceScheduleDTO[]>(`${this.apiUrl}/ressources/filter`, { params });
   }
 
-  getCompleteSchedule(year: string, className: string, semester: string): Observable<PedagogicalScheduleDTO> {
-    const params = new HttpParams()
-      .set('year', year)
-      .set('className', className)
-      .set('semester', semester);
+  getCompleteSchedule(year: string, className: string, semester: string, formation?: string): Observable<PedagogicalScheduleDTO> {
+    let params = new HttpParams().set('year', year).set('className', className).set('semester', semester);
+    if (formation) params = params.set('formation', formation);
 
     return this.http.get<PedagogicalScheduleDTO>(`${this.apiUrl}/schedule`, { params });
   }

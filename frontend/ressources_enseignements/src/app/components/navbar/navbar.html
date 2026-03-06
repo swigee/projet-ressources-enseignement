@@ -17,6 +17,10 @@
     routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
     class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Affectation des enseignants </a>
 
+  <a *ngIf="auth.hasRole(['ADMIN'])" routerLink="/group-tracking"
+    routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
+    class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Suivis étudiants </a>
+
   <a *ngIf="auth.hasRole(['ADMIN'])" routerLink="/education-manager"
     routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
     class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Gestionnaire des formations</a>

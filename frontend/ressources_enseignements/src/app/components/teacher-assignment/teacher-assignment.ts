@@ -27,7 +27,7 @@ interface DragData {
 export class TeacherAssignmentComponent implements OnInit {
   selectedFormation: string = 'Informatique';
   selectedYear: string = '1';
-  selectedClass: string = 'Classe A';
+  selectedClass: string = 'G1';
   selectedSemester: string = '';
   searchQuery: string = '';
   draggedTeacher: Teacher | null = null;

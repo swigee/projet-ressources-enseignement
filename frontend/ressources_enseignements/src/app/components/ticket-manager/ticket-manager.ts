@@ -15,7 +15,57 @@ export class TicketManager implements OnInit {
   isLoading = true;
   errorMessage = '';
 
+  // Pagination state for resolved tickets
+  resolvedCurrentPage = 1;
+  resolvedPageSize = 5;
+
   constructor(private ticketService: TicketService) { }
+
+  get activeTickets(): TicketResponseDTO[] {
+    return this.tickets.filter(t => t.status !== 'RESOLVED');
+  }
+
+  get allResolvedTickets(): TicketResponseDTO[] {
+    return this.tickets.filter(t => t.status === 'RESOLVED');
+  }
+
+  get paginatedResolvedTickets(): TicketResponseDTO[] {
+    const startIndex = (this.resolvedCurrentPage - 1) * this.resolvedPageSize;
+    return this.allResolvedTickets.slice(startIndex, startIndex + this.resolvedPageSize);
+  }
+
+  get totalResolvedItems(): number {
+    return this.allResolvedTickets.length;
+  }
+
+  get hasNextResolvedPage(): boolean {
+    return this.resolvedCurrentPage * this.resolvedPageSize < this.totalResolvedItems;
+  }
+
+  get hasPrevResolvedPage(): boolean {
+    return this.resolvedCurrentPage > 1;
+  }
+
+  nextResolvedPage(): void {
+    if (this.hasNextResolvedPage) {
+      this.resolvedCurrentPage++;
+    }
+  }
+
+  prevResolvedPage(): void {
+    if (this.hasPrevResolvedPage) {
+      this.resolvedCurrentPage--;
+    }
+  }
+
+  get startIndexDisplay(): number {
+    if (this.totalResolvedItems === 0) return 0;
+    return (this.resolvedCurrentPage - 1) * this.resolvedPageSize + 1;
+  }
+
+  get endIndexDisplay(): number {
+    return Math.min(this.resolvedCurrentPage * this.resolvedPageSize, this.totalResolvedItems);
+  }
 
   ngOnInit(): void {
     this.loadTickets();

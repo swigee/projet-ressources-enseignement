@@ -42,6 +42,10 @@ public class Ticket implements Serializable { // Renamed class too, will rename 
     @Temporal(TemporalType.DATE)
     private Date date;
 
+    @Column(name = "resolution_date")
+    @Temporal(TemporalType.DATE)
+    private Date resolutionDate;
+
     @Column(name = "status")
     private String status;
 
@@ -96,6 +100,14 @@ public class Ticket implements Serializable { // Renamed class too, will rename 
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Date getResolutionDate() {
+        return resolutionDate;
+    }
+
+    public void setResolutionDate(Date resolutionDate) {
+        this.resolutionDate = resolutionDate;
     }
 
     public User getUser() {

@@ -8,6 +8,7 @@ public class TicketResponseDto {
     public String title;
     public String description;
     public Date date;
+    public Date resolutionDate;
     public String status;
     public Integer userId;
     public String userName;
@@ -15,12 +16,14 @@ public class TicketResponseDto {
     public TicketResponseDto() {
     }
 
-    public TicketResponseDto(Integer id, String title, String description, Date date, String status, Integer userId,
+    public TicketResponseDto(Integer id, String title, String description, Date date, Date resolutionDate,
+            String status, Integer userId,
             String userName) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.date = date;
+        this.resolutionDate = resolutionDate;
         this.status = status;
         this.userId = userId;
         this.userName = userName;

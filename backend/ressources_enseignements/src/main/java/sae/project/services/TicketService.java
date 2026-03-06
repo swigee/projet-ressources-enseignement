@@ -38,6 +38,7 @@ public class TicketService {
                         t.getTitle(),
                         t.getDescription(),
                         t.getDate(),
+                        t.getResolutionDate(),
                         t.getStatus(),
                         t.getUser() != null ? t.getUser().getId() : null,
                         t.getUser() != null ? t.getUser().getFirstName() + " " + t.getUser().getLastName()
@@ -49,6 +50,11 @@ public class TicketService {
         Ticket ticket = ticketsRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket introuvable"));
         ticket.setStatus(status);
+        if ("RESOLVED".equals(status)) {
+            ticket.setResolutionDate(Date.valueOf(LocalDate.now()));
+        } else {
+            ticket.setResolutionDate(null);
+        }
         ticketsRepository.save(ticket);
     }
 }

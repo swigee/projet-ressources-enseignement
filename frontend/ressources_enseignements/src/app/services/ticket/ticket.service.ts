@@ -12,6 +12,7 @@ export interface TicketResponseDTO {
   title: string;
   description: string;
   date: string;
+  resolutionDate?: string;
   status: string;
   userId: number;
   userName: string;

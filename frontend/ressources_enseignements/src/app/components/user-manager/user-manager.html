@@ -46,12 +46,6 @@
               (click)="resetFilters()">
               Réinitialiser
             </button>
-
-            <button
-              class="px-3 py-1 text-sm bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-800"
-              (click)="showFilter.set(false)">
-              Valider
-            </button>
           </div>
         </div>
       }
@@ -72,9 +66,9 @@
       <table class="w-full text-center border-collapse">
         <thead>
         <tr class="bg-gray-50 border-b border-gray-100">
+          <th class="px-6 py-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Identifiant</th>
           <th class="px-6 py-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Nom</th>
           <th class="px-6 py-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Rôles</th>
-          <th class="px-6 py-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Actions</th>
         </tr>
         </thead>
         @if (isLoading){
@@ -95,6 +89,10 @@
         <tbody>
           @for (user of filteredUsers(); track user.iduser) {
             <tr class="even:bg-gray-100 text-center">
+
+              <td class="px-4 py-4 font-semibold">
+                {{ user.username }}
+              </td>
 
               <td class="px-4 py-4 font-semibold">
                 {{ user.firstname }} {{ user.lastname }}
@@ -179,13 +177,6 @@
                 }
               </td>
 
-              <td class="px-4 py-4">
-                <button
-                  class="p-2 bg-gray-500 text-white rounded cursor-pointer hover:bg-gray-700"
-                  (click)="removeUser(user.iduser)">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </td>
             </tr>
           }
         </tbody>

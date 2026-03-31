@@ -20,10 +20,6 @@ export class UserService {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
-
   updateUserRole(iduser: number, roles: number[]): Observable<any> {
     return this.http.put(`${this.apiUrl}/${iduser}/roles`, { roles });
   }

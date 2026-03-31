@@ -66,7 +66,7 @@ export class UserManager {
 
   readonly filteredUsers = computed(() => {
     return this.tabUsers().filter(user => {
-      const fullName = `${user.firstname} ${user.lastname}`.toLowerCase();
+      const fullName = `${user.firstname} ${user.lastname} ${user.username}`.toLowerCase();
       const matchName = fullName.includes(this.searchName().toLowerCase());
       let matchRole = true;
       if (this.selectedRoleFilter().length > 0) {
@@ -85,19 +85,6 @@ export class UserManager {
     const select = event.target as HTMLSelectElement;
     const selected = Array.from(select.selectedOptions).map(opt => +opt.value);
     this.selectedRoleFilter.set(selected);
-  }
-
-  removeUser(id: number) {
-    console.log(id);
-    this.userService.deleteUser(id).subscribe({
-      next: () => {
-        this.loadUsers();
-      },
-      error: (err) => {
-        console.error('Erreur lors de la suppression de l\'utilisateur', err);
-        this.errorMessage = 'Impossible de supprimer l\'utilisateur.';
-      }
-    });
   }
 
   removeUserRole(iduser: number, id: number) {

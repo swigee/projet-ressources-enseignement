@@ -2,7 +2,6 @@ package sae.project.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sae.project.model.Formation;
 import sae.project.model.Role;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import sae.project.model.User;
@@ -23,15 +22,6 @@ public class UserService {
     private RoleRepository roleRepository;
 
     @Autowired
-    private TeacherAssignmentRepository teacherAssignmentRepository;
-
-    @Autowired
-    private TicketRepository ticketRepository;
-
-    @Autowired
-    private FormationRepository formationRepository;
-
-    @Autowired
     private PasswordEncoder  passwordEncoder;
 
     public UserService(UserRepository userRepository,
@@ -46,39 +36,6 @@ public class UserService {
 
     public Optional<User> getUserById(int id) {
         return userRepository.findById(id);
-    }
-
-//    public User register(User user) {
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        return userRepository.save(user);
-//    }
-
-    @Transactional
-    public void deleteUser(int id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        teacherAssignmentRepository.deleteByUserId(id);
-        ticketRepository.deleteByUserId(id);
-        formationRepository.deleteByUserId(id);
-        if (user.getAssignmentList() != null) {
-            user.getAssignmentList().clear();
-        }
-        if (user.getTicketsList() != null) {
-            user.getTicketsList().clear();
-        }
-        if (user.getFormationList() != null) {
-            for (Formation formation : user.getFormationList()) {
-                if (formation.getUsersList() != null) {
-                    formation.getUsersList().remove(user);
-                }
-            }
-            user.getFormationList().clear();
-        }
-        if (user.getRoleList() != null) {
-            user.getRoleList().clear();
-        }
-        userRepository.save(user);
-        userRepository.deleteById(id);
     }
 
     public void updateUserRoles(int id, List<Integer> roles) {

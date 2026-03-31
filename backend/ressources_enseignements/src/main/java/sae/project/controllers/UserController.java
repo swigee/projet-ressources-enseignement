@@ -63,17 +63,6 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // @PostMapping(path="/add", produces={"application/json"})
-    // public User createUser(@RequestBody User user) {
-    // return userService.saveUser(user);
-    // }
-
-    @DeleteMapping(path = "/{id}", produces = { "application/json" })
-    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
-    }
-
     @PutMapping(path = "/{id}/roles", consumes = "application/json")
     public ResponseEntity<Void> updateUserRoles(@PathVariable int id, @RequestBody Map<String, List<Integer>> body) {
         List<Integer> roles = body.get("roles");

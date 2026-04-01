@@ -170,23 +170,26 @@ export class TeacherAssignmentComponent implements OnInit {
       const usedHours = teacherList.reduce((sum, t) => sum + t.assignedHours, 0);
       const remainingHours = moduleHours - usedHours;
 
-      if (remainingHours <= 0) {
-        alert('Toutes les heures de ce type sont déjà affectées');
-        this.draggedTeacher = null;
-        return;
-      }
-
-      let hoursStr = prompt(`Combien d'heures pour le ${lessonType} ? (max ${remainingHours})`, `${remainingHours}`);
+      const defaultHours = remainingHours > 0 ? remainingHours : moduleHours;
+      let hoursStr = prompt(`Combien d'heures pour le ${lessonType} ? (quota : ${moduleHours}h, utilisées : ${usedHours}h)`, `${defaultHours}`);
       if (!hoursStr) {
         this.draggedTeacher = null;
         return;
       }
 
       let hours = parseInt(hoursStr);
-      if (isNaN(hours) || hours <= 0 || hours > remainingHours) {
-        alert(`Nombre d'heures invalide. Vous pouvez assigner entre 1 et ${remainingHours}h`);
+      if (isNaN(hours) || hours <= 0) {
+        alert(`Nombre d'heures invalide.`);
         this.draggedTeacher = null;
         return;
+      }
+
+      if (usedHours + hours > moduleHours) {
+        const over = usedHours + hours - moduleHours;
+        if (!confirm(`Attention : cette affectation dépasse le quota de ${moduleHours}h de ${over}h. Confirmer quand même ?`)) {
+          this.draggedTeacher = null;
+          return;
+        }
       }
 
       const existingAssignment = teacherList.find(t => t.teacherId === dragData.teacherId);

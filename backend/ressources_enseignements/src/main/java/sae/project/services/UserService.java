@@ -86,10 +86,11 @@ public class UserService {
     }
 
     @Transactional
-    public void validateUser(int id) {
+    public void validateUser(int id, String comment) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setValidationStatus("SUBMITTED");
+        user.setValidationComment(comment);
         userRepository.save(user);
     }
 }

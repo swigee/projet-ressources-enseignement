@@ -67,6 +67,9 @@ public class User implements Serializable {
     @Column(name = "validation_status")
     private String validationStatus = "NONE"; // NONE, SUBMITTED, VALIDATED
 
+    @Column(name = "validation_comment", columnDefinition = "TEXT")
+    private String validationComment;
+
     @ManyToMany(mappedBy = "usersList", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Formation> formationList;
 

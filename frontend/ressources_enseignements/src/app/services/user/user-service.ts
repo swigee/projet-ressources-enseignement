@@ -31,8 +31,8 @@ export class UserService {
   deleteAllUserRole(iduser: number): Observable<UserModel> {
       return this.http.delete<UserModel>(`${this.apiUrl}/${iduser}/allroles`);
     }
-  validateService(userId: number): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/${userId}/validate`, {});
+  validateService(userId: number, comment?: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${userId}/validate`, { comment: comment ?? null });
   }
 }
 

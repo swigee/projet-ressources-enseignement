@@ -34,6 +34,14 @@ export class UserService {
   validateService(userId: number, comment?: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/${userId}/validate`, { comment: comment ?? null });
   }
+
+  importUsersFromCsv(file: File): Observable<{ successCount: number; errorCount: number; errors: string[] }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ successCount: number; errorCount: number; errors: string[] }>(
+      `${this.apiUrl}/import`, formData
+    );
+  }
 }
 
 export default UserService

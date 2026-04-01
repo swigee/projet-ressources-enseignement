@@ -26,6 +26,10 @@ export class UserManager {
   readonly searchRoleText = signal('');
   readonly selectedRolesToAdd = signal<number[]>([]);
 
+  readonly showImportModal = signal(false);
+  importResult = signal<{ successCount: number; errorCount: number; errors: string[] } | null>(null);
+  importLoading = signal(false);
+
   readonly selectedRoleFilter = signal<number[]>([]);
 
   ngOnInit() {
@@ -147,4 +151,35 @@ export class UserManager {
     return user.roles?.some(r => r.id === roleId) ?? false;
   }
 
+  openImportModal() {
+    this.showImportModal.set(true);
+    this.importResult.set(null);
+  }
+
+  closeImportModal() {
+    this.showImportModal.set(false);
+    this.importResult.set(null);
+  }
+
+  onCsvFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.importLoading.set(true);
+    this.importResult.set(null);
+    this.userService.importUsersFromCsv(file).subscribe({
+      next: (result) => {
+        this.importResult.set(result);
+        this.importLoading.set(false);
+        if (result.successCount > 0) this.loadUsers();
+      },
+      error: (err) => {
+        console.error('Erreur import CSV:', err);
+        this.importResult.set({ successCount: 0, errorCount: 1, errors: ['Erreur lors de l\'import.'] });
+        this.importLoading.set(false);
+      }
+    });
+    input.value = '';
+  }
 }

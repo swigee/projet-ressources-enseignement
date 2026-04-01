@@ -3,6 +3,8 @@ package sae.project.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import sae.project.dtos.user.BulkImportResultDTO;
 import sae.project.dtos.user.UserDTO;
 import sae.project.model.Role;
 import sae.project.model.User;
@@ -89,5 +91,14 @@ public class UserController {
     public ResponseEntity<Void> removeAllUserRole(@PathVariable int id) {
         userService.removeAllUserRole(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(path = "/import", consumes = "multipart/form-data", produces = "application/json")
+    public ResponseEntity<BulkImportResultDTO> importUsers(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        BulkImportResultDTO result = userService.importUsersFromCsv(file);
+        return ResponseEntity.ok(result);
     }
 }

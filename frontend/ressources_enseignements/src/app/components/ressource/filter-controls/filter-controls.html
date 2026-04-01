@@ -1,7 +1,10 @@
 <div class="border-b border-gray-200 p-6">
   <div class="flex gap-4">
     <div class="flex-1">
-      <label class="block text-sm font-medium text-gray-700 mb-2">Formation</label>
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+        Formation
+        <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">Sélectionnez la formation (ex : BUT Informatique) pour afficher les ressources associées.</span></span>
+      </label>
       <select
         [ngModel]="selectedFormation"
         (ngModelChange)="formationChange.emit($event)"
@@ -14,7 +17,10 @@
     </div>
 
     <div class="flex-1">
-      <label class="block text-sm font-medium text-gray-700 mb-2">Annee d'etude</label>
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+        Année d'étude
+        <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">Année du parcours (BUT 1, 2 ou 3). Chaque année a ses propres ressources et semestres.</span></span>
+      </label>
       <select
         [ngModel]="selectedYear"
         (ngModelChange)="yearChange.emit($event)"
@@ -27,7 +33,10 @@
     </div>
 
     <div class="flex-1">
-      <label class="block text-sm font-medium text-gray-700 mb-2">Semestre</label>
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+        Semestre
+        <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">Semestre 1 (septembre–janvier) ou Semestre 2 (février–juin).</span></span>
+      </label>
       <select
         [ngModel]="selectedSemester"
         (ngModelChange)="semesterChange.emit($event)"
@@ -39,7 +48,10 @@
     </div>
 
     <div class="flex-1">
-      <label class="block text-sm font-medium text-gray-700 mb-2">Groupe</label>
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+        Groupe
+        <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">Groupe TD/TP (ex : G1, G2). Les ressources affichées correspondent aux heures prévues pour ce groupe.</span></span>
+      </label>
       <select
         [ngModel]="selectedClass"
         (ngModelChange)="classChange.emit($event)"

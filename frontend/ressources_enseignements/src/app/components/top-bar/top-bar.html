@@ -6,9 +6,34 @@
 
   <div class="flex items-center space-x-6">
 
-    <button class="pl-1 pr-1 cursor-pointer hover:text-gray-700 transition" (click)="logout()">
-      <i class="fa-regular fa-bell text-xl"></i>
-    </button>
+    <!-- Bouton cloche avec badge -->
+    <div class="relative">
+      <button (click)="toggleNotificationMenu()" class="pl-1 pr-1 cursor-pointer hover:text-gray-700 transition relative">
+        <i class="fa-regular fa-bell text-xl"></i>
+        <!-- Le badge rouge -->
+        <span *ngIf="notifications.length > 0" class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
+          {{ notifications.length }}
+        </span>
+      </button>
+
+      <!-- Le Menu Dropdown (visible seulement si isNotificationMenuOpen est true) -->
+      <div *ngIf="isNotificationMenuOpen" class="absolute right-0 mt-3 w-80 bg-white rounded-lg shadow-xl border border-gray-100 z-50">
+        <div class="p-3 border-b border-gray-100 font-bold text-gray-700">Notifications</div>
+        
+        <div class="max-h-64 overflow-y-auto">
+          <div *ngIf="notifications.length === 0" class="p-4 text-center text-gray-500 text-sm">
+            Aucune nouvelle notification 😴
+          </div>
+          
+          <div *ngFor="let notif of notifications" 
+               (click)="markAsRead(notif)" 
+               class="p-3 border-b border-gray-50 hover:bg-blue-50 cursor-pointer transition-colors text-left">
+            <p class="text-xs text-gray-400 mb-1">{{ notif.createdAt | date:'short' }}</p>
+            <p class="text-sm text-gray-700">{{ notif.message }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="flex items-center space-x-3">
       <div class="text-right">

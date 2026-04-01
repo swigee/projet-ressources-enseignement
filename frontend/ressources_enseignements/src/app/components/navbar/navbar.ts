@@ -1,11 +1,11 @@
-import { Component, inject } from '@angular/core'; // Added inject
+import { Component, inject } from '@angular/core'; 
 import { RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
-import { Auth } from '../../services/auth/auth'; // Added Auth import
-import { CommonModule } from '@angular/common'; // Added CommonModule for *ngIf
+import { Auth } from '../../services/auth/auth'; 
+import { CommonModule } from '@angular/common'; 
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, RouterLinkActive, RouterModule, CommonModule], // Added CommonModule
+  imports: [RouterLink, RouterLinkActive, RouterModule, CommonModule], 
   templateUrl: './navbar.html',
 })
 export class Navbar {

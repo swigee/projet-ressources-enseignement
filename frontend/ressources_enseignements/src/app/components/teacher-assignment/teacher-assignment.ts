@@ -226,6 +226,32 @@ export class TeacherAssignmentComponent implements OnInit {
     this.draggedTeacher = null;
   }
 
+  editTeacherHours(teacher: TeacherAssignment, resourceId: number, lessonType: 'TD' | 'TP' | 'CM'): void {
+    const hoursStr = prompt(`Modifier les heures de ${teacher.teacherName} (${lessonType}) :`, `${teacher.assignedHours}`);
+    if (!hoursStr) return;
+
+    const hours = parseInt(hoursStr);
+    if (isNaN(hours) || hours <= 0) {
+      alert('Nombre d\'heures invalide.');
+      return;
+    }
+
+    const dto: CreateAssignment = {
+      userId: teacher.teacherId,
+      resourceId,
+      lessonType,
+      assignedTimes: hours
+    };
+
+    this.teacherService.updateAssignment(teacher.assignmentId, dto).subscribe({
+      next: () => this.loadData(),
+      error: (error) => {
+        console.error('Erreur mise à jour:', error);
+        alert('Erreur lors de la modification des heures.');
+      }
+    });
+  }
+
   removeTeacher(assignmentId: number): void {
     if (confirm('Voulez-vous retirer cet enseignant de ce module ?')) {
       this.teacherService.deleteAssignment(assignmentId).subscribe({

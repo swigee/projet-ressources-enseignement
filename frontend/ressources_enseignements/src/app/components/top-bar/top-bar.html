@@ -6,30 +6,54 @@
 
   <div class="flex items-center space-x-6">
 
-    <!-- Bouton cloche avec badge -->
+    
     <div class="relative">
       <button (click)="toggleNotificationMenu()" class="pl-1 pr-1 cursor-pointer hover:text-gray-700 transition relative">
         <i class="fa-regular fa-bell text-xl"></i>
-        <!-- Le badge rouge -->
-        <span *ngIf="notifications.length > 0" class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
-          {{ notifications.length }}
+        
+        <span *ngIf="unreadCount > 0" class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
+          {{ unreadCount }}
         </span>
       </button>
 
-      <!-- Le Menu Dropdown (visible seulement si isNotificationMenuOpen est true) -->
-      <div *ngIf="isNotificationMenuOpen" class="absolute right-0 mt-3 w-80 bg-white rounded-lg shadow-xl border border-gray-100 z-50">
-        <div class="p-3 border-b border-gray-100 font-bold text-gray-700">Notifications</div>
+
+      <div *ngIf="isNotificationMenuOpen" class="absolute right-0 mt-3 w-96 bg-white rounded-lg shadow-xl border border-gray-100 z-50">
+        <div class="p-3 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-lg">
+          <span class="font-bold text-gray-700">Notifications</span>
+          <button *ngIf="unreadCount > 0" (click)="markAllAsRead()" class="text-xs text-blue-600 hover:text-blue-800 font-medium cursor-pointer">
+            Tout marquer comme lu
+          </button>
+        </div>
         
-        <div class="max-h-64 overflow-y-auto">
-          <div *ngIf="notifications.length === 0" class="p-4 text-center text-gray-500 text-sm">
-            Aucune nouvelle notification 😴
+        <div class="max-h-80 overflow-y-auto">
+          <div *ngIf="notifications.length === 0" class="p-6 text-center text-gray-400 text-sm">
+            <i class="fa-regular fa-bell-slash text-xl mb-2"></i><br>
+            Vous n'avez aucune notification.
           </div>
           
           <div *ngFor="let notif of notifications" 
-               (click)="markAsRead(notif)" 
-               class="p-3 border-b border-gray-50 hover:bg-blue-50 cursor-pointer transition-colors text-left">
-            <p class="text-xs text-gray-400 mb-1">{{ notif.createdAt | date:'short' }}</p>
-            <p class="text-sm text-gray-700">{{ notif.message }}</p>
+               [ngClass]="notif.isRead ? 'bg-white' : 'bg-blue-50/40 border-l-2 border-blue-400'"
+               class="p-3 border-b border-gray-50 flex items-start justify-between group transition-colors">
+            
+            <div class="flex-1 pr-3 overflow-hidden">
+              <p class="text-[11px] text-gray-400 mb-1 flex items-center gap-1">
+                <i class="fa-regular fa-clock"></i> {{ notif.createdAt | date:'short' }}
+              </p>
+              <p class="text-sm font-medium break-words overflow-hidden text-ellipsis line-clamp-3" 
+                 [title]="notif.message" 
+                 [ngClass]="notif.isRead ? 'text-gray-600 font-normal' : 'text-gray-800'">
+                {{ notif.message }}
+              </p>
+            </div>
+
+            <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pt-1">
+              <button *ngIf="!notif.isRead" (click)="markAsRead(notif)" class="text-green-500 hover:text-green-600 cursor-pointer" title="Marquer comme lu">
+                <i class="fa-solid fa-check"></i>
+              </button>
+              <button (click)="deleteNotification(notif)" class="text-red-400 hover:text-red-600 cursor-pointer" title="Supprimer">
+                <i class="fa-regular fa-trash-can"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>

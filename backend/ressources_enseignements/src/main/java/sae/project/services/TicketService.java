@@ -58,6 +58,7 @@ public class TicketService {
                 .collect(java.util.stream.Collectors.toList());
     }
 
+    @jakarta.transaction.Transactional
     public void updateStatus(Integer ticketId, String status) {
         Ticket ticket = ticketsRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket introuvable"));

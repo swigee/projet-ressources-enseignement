@@ -17,11 +17,20 @@ export class NotificationService {
 
     constructor(private http: HttpClient) {}
 
-    getUnreadNotifications(userId: number): Observable<NotificationDTO[]> {
-        return this.http.get<NotificationDTO[]>(`${this.apiUrl}/unread/${userId}`);
+    
+    getAllNotifications(userId: number): Observable<NotificationDTO[]> {
+        return this.http.get<NotificationDTO[]>(`${this.apiUrl}/user/${userId}`);
     }
 
     markAsRead(notificationId: number): Observable<void> {
         return this.http.put<void>(`${this.apiUrl}/${notificationId}/read`, {});
+    }
+
+    markAllAsRead(userId: number): Observable<void> {
+        return this.http.put<void>(`${this.apiUrl}/user/${userId}/read-all`, {});
+    }
+
+    deleteNotification(notificationId: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${notificationId}`);
     }
 }

@@ -15,12 +15,11 @@ public class NotificationService {
     @Autowired
     private NotificationRepository notificationRepository;
     
-    // Récupérer les notifs non lues d'un utilisateur
-    public List<Notification> getUnreadNotifications(Integer userId) {
-        return notificationRepository.findByUserIdAndIsReadFalseOrderByCreatedAtDesc(userId);
+    
+    public List<Notification> getAllNotifications(Integer userId) {
+        return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
-    // Marquer une notification comme "Lue"
     public void markAsRead(Integer notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new RuntimeException("Notification introuvable avec l'ID: " + notificationId));
@@ -29,7 +28,15 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-    // Créer une nouvelle notification pour un utilisateur
+    public void markAllAsRead(Integer userId) {
+        notificationRepository.markAllAsReadByUserId(userId);
+    }
+
+    public void deleteNotification(Integer notificationId) {
+        notificationRepository.deleteById(notificationId);
+    }
+
+
     public void createNotification(User user, String message) {
         Notification notification = Notification.builder()
                 .user(user)

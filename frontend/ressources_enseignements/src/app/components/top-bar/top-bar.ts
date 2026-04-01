@@ -19,6 +19,7 @@ export class TopBar implements OnInit {
   readonly currentUser = signal<any>(null);
 
   notifications: NotificationDTO[] = [];
+  unreadCount = 0;
   isNotificationMenuOpen = false;
 
   constructor() {
@@ -38,12 +39,17 @@ export class TopBar implements OnInit {
   }
 
   loadNotifications(userId: number) {
-    this.notifService.getUnreadNotifications(userId).subscribe({
-      next: (data) => {
+    this.notifService.getAllNotifications(userId).subscribe({
+      next: (data: NotificationDTO[]) => {
         this.notifications = data;
+        this.updateUnreadCount();
       },
-      error: (err) => console.error('Erreur notifs', err)
+      error: (err: any) => console.error('Erreur notifs', err)
     });
+  }
+
+  updateUnreadCount() {
+    this.unreadCount = this.notifications.filter(n => !n.isRead).length;
   }
 
   toggleNotificationMenu() {
@@ -51,14 +57,39 @@ export class TopBar implements OnInit {
   }
 
   markAsRead(notification: NotificationDTO) {
+    if (notification.isRead) return;
     this.notifService.markAsRead(notification.id).subscribe({
       next: () => {
+        notification.isRead = true;
+        this.updateUnreadCount();
+      },
+      error: (err: any) => console.error('Erreur markAsRead', err)
+    });
+  }
+
+  markAllAsRead() {
+    const user = this.currentUser();
+    if (user && user.id && this.unreadCount > 0) {
+      this.notifService.markAllAsRead(user.id).subscribe({
+        next: () => {
+          this.notifications.forEach(n => n.isRead = true);
+          this.updateUnreadCount();
+        },
+        error: (err: any) => console.error('Erreur markAll', err)
+      });
+    }
+  }
+
+  deleteNotification(notification: NotificationDTO) {
+    this.notifService.deleteNotification(notification.id).subscribe({
+      next: () => {
         this.notifications = this.notifications.filter(n => n.id !== notification.id);
+        this.updateUnreadCount();
         if (this.notifications.length === 0) {
           this.isNotificationMenuOpen = false;
         }
       },
-      error: (err) => console.error('Erreur markAsRead', err)
+      error: (err: any) => console.error('Erreur delete', err)
     });
   }
 

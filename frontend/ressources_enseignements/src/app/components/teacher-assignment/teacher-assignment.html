@@ -198,15 +198,11 @@
                         <div class="w-full space-y-1">
                           @for (teacher of row.tdTeachers; track teacher.assignmentId) {
                             <div class="flex items-center justify-between p-2 bg-blue-50 border rounded w-full">
-                              <span class="text-sm">
-                                {{ teacher.teacherName }} – {{ teacher.assignedHours }}h
-                              </span>
-                              <button
-                                (click)="removeTeacher(teacher.assignmentId)"
-                                class="text-red-500 hover:text-red-700"
-                              >
-                                ✕
-                              </button>
+                              <span class="text-sm">{{ teacher.teacherName }} – {{ teacher.assignedHours }}h</span>
+                              <div class="flex gap-1">
+                                <button (click)="editTeacherHours(teacher, row.resourceId, 'TD')" class="text-blue-500 hover:text-blue-700" title="Modifier les heures">✏</button>
+                                <button (click)="removeTeacher(teacher.assignmentId)" class="text-red-500 hover:text-red-700" title="Retirer">✕</button>
+                              </div>
                             </div>
                           }
                         </div>
@@ -229,15 +225,11 @@
                         <div class="w-full space-y-1">
                           @for (teacher of row.tpTeachers; track teacher.assignmentId) {
                             <div class="flex items-center justify-between p-2 bg-blue-50 border rounded w-full">
-                              <span class="text-sm">
-                                {{ teacher.teacherName }} – {{ teacher.assignedHours }}h
-                              </span>
-                              <button
-                                (click)="removeTeacher(teacher.assignmentId)"
-                                class="text-red-500 hover:text-red-700"
-                              >
-                                ✕
-                              </button>
+                              <span class="text-sm">{{ teacher.teacherName }} – {{ teacher.assignedHours }}h</span>
+                              <div class="flex gap-1">
+                                <button (click)="editTeacherHours(teacher, row.resourceId, 'TP')" class="text-blue-500 hover:text-blue-700" title="Modifier les heures">✏</button>
+                                <button (click)="removeTeacher(teacher.assignmentId)" class="text-red-500 hover:text-red-700" title="Retirer">✕</button>
+                              </div>
                             </div>
                           }
                         </div>
@@ -260,15 +252,11 @@
                         <div class="w-full space-y-1">
                           @for (teacher of row.cmTeachers; track teacher.assignmentId) {
                             <div class="flex items-center justify-between p-2 bg-blue-50 border rounded w-full">
-                              <span class="text-sm">
-                                {{ teacher.teacherName }} – {{ teacher.assignedHours }}h
-                              </span>
-                              <button
-                                (click)="removeTeacher(teacher.assignmentId)"
-                                class="text-red-500 hover:text-red-700"
-                              >
-                                ✕
-                              </button>
+                              <span class="text-sm">{{ teacher.teacherName }} – {{ teacher.assignedHours }}h</span>
+                              <div class="flex gap-1">
+                                <button (click)="editTeacherHours(teacher, row.resourceId, 'CM')" class="text-blue-500 hover:text-blue-700" title="Modifier les heures">✏</button>
+                                <button (click)="removeTeacher(teacher.assignmentId)" class="text-red-500 hover:text-red-700" title="Retirer">✕</button>
+                              </div>
                             </div>
                           }
                         </div>

@@ -2,12 +2,17 @@ package sae.project.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import sae.project.dtos.user.BulkImportResultDTO;
 import sae.project.model.Role;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import sae.project.model.User;
 import sae.project.repositories.*;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -83,6 +88,61 @@ public class UserService {
         user.getRoleList().removeIf(r -> r.getId().equals(idrole));
 
         userRepository.save(user);
+    }
+
+    @Transactional
+    public BulkImportResultDTO importUsersFromCsv(MultipartFile file) {
+        List<String> errors = new ArrayList<>();
+        int successCount = 0;
+
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+
+            String line;
+            int lineNumber = 0;
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                if (lineNumber == 1 && line.toLowerCase().startsWith("username")) continue; // skip header
+
+                String[] parts = line.split(";");
+                if (parts.length < 3) {
+                    errors.add("Ligne " + lineNumber + " : format invalide (minimum : username;prenom;nom)");
+                    continue;
+                }
+
+                String username = parts[0].trim();
+                String firstName = parts[1].trim();
+                String lastName = parts[2].trim();
+                String email = parts.length > 3 ? parts[3].trim() : null;
+                String rawPassword = parts.length > 4 ? parts[4].trim() : "ChangeMe123";
+
+                if (username.isBlank() || firstName.isBlank() || lastName.isBlank()) {
+                    errors.add("Ligne " + lineNumber + " : username, prénom et nom sont obligatoires");
+                    continue;
+                }
+
+                if (userRepository.findByUsername(username).isPresent()) {
+                    errors.add("Ligne " + lineNumber + " : l'utilisateur '" + username + "' existe déjà");
+                    continue;
+                }
+
+                User user = User.builder()
+                        .username(username)
+                        .firstName(firstName)
+                        .lastName(lastName)
+                        .email(email)
+                        .password(passwordEncoder.encode(rawPassword))
+                        .validationStatus("NONE")
+                        .build();
+
+                userRepository.save(user);
+                successCount++;
+            }
+        } catch (Exception e) {
+            errors.add("Erreur de lecture du fichier : " + e.getMessage());
+        }
+
+        return new BulkImportResultDTO(successCount, errors.size(), errors);
     }
 
     @Transactional

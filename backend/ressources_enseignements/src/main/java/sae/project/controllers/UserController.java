@@ -46,6 +46,7 @@ public class UserController {
                     user.getAddress(),
                     user.getEmail(),
                     user.getValidationStatus(),
+                    user.getValidationComment(),
                     roleJsons,
                     formationJsons,
                     ticketJsons,
@@ -78,8 +79,9 @@ public class UserController {
     }
 
     @PostMapping(path = "/{id}/validate", produces = { "application/json" })
-    public ResponseEntity<Void> validateUser(@PathVariable int id) {
-        userService.validateUser(id);
+    public ResponseEntity<Void> validateUser(@PathVariable int id, @RequestBody(required = false) Map<String, String> body) {
+        String comment = body != null ? body.get("comment") : null;
+        userService.validateUser(id, comment);
         return ResponseEntity.ok().build();
     }
 

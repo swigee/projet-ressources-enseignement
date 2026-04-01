@@ -83,10 +83,16 @@
   <div class="bg-white rounded-lg shadow-2xl border border-gray-200 p-6 max-w-sm flex flex-col gap-4">
     <div>
       <h3 class="font-bold text-gray-800 text-lg mb-2">Confirmer la validation</h3>
-      <p class="text-sm text-gray-600">
+      <p class="text-sm text-gray-600 mb-3">
         Une fois validé, vous ne pourrez plus signaler de problèmes. Êtes-vous sûr de vouloir soumettre votre service au
         chef de département ?
       </p>
+      <textarea
+        [(ngModel)]="validationCommentValue"
+        placeholder="Commentaire (optionnel)..."
+        rows="3"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      ></textarea>
     </div>
     <div class="flex justify-end gap-3">
       <button (click)="cancelValidation()"

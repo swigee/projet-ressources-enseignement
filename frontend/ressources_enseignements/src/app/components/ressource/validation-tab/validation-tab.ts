@@ -1,5 +1,6 @@
 import { Component, inject, Input, OnInit, OnChanges, Output, EventEmitter, signal, computed, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user/user-service';
 import { ServiceSheetService } from '../../../services/professor-service/service-sheet.service';
 import { ServiceSummary } from '../../../models/service-summary.model';
@@ -7,7 +8,7 @@ import { ServiceSummary } from '../../../models/service-summary.model';
 @Component({
   selector: 'app-validation-tab',
   standalone: true,
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './validation-tab.html'
 })
 export class ValidationTab implements OnInit, OnChanges {
@@ -20,6 +21,7 @@ export class ValidationTab implements OnInit, OnChanges {
 
   validationStatus = signal<string>('NONE');
   showValidationConfirm = signal<boolean>(false);
+  validationCommentValue = '';
   services = signal<ServiceSummary[]>([]);
 
   filteredServices = computed(() =>
@@ -62,16 +64,18 @@ export class ValidationTab implements OnInit, OnChanges {
 
   cancelValidation(): void {
     this.showValidationConfirm.set(false);
+    this.validationCommentValue = '';
   }
 
   confirmValidation(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     const userId = Number(localStorage.getItem('userId'));
-    this.userService.validateService(userId).subscribe({
+    this.userService.validateService(userId, this.validationCommentValue).subscribe({
       next: () => {
         alert('Service validé avec succès !');
         this.validationStatus.set('SUBMITTED');
         this.showValidationConfirm.set(false);
+        this.validationCommentValue = '';
       },
       error: (err) => {
         console.error('Error validating service', err);

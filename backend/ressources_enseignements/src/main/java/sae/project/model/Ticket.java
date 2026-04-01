@@ -6,6 +6,10 @@ package sae.project.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -23,6 +27,10 @@ import java.util.Date;
         @NamedQuery(name = "Ticket.findByDescription", query = "SELECT t FROM Ticket t WHERE t.description = :description"),
         @NamedQuery(name = "Ticket.findByDate", query = "SELECT t FROM Ticket t WHERE t.date = :date"),
         @NamedQuery(name = "Ticket.findByStatus", query = "SELECT t FROM Ticket t WHERE t.status = :status") })
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Ticket implements Serializable { // Renamed class too, will rename file next
 
     private static final long serialVersionUID = 1L;
@@ -54,67 +62,7 @@ public class Ticket implements Serializable { // Renamed class too, will rename 
     @ManyToOne
     private User user;
 
-    public Ticket() {
-    }
-
     public Ticket(Integer id) {
         this.id = id;
-    }
-
-    // Getters/Setters manually
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Date getResolutionDate() {
-        return resolutionDate;
-    }
-
-    public void setResolutionDate(Date resolutionDate) {
-        this.resolutionDate = resolutionDate;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

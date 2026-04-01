@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import sae.project.dtos.ticket.TicketDto;
+import sae.project.dtos.ticket.TicketResponseDto;
 import sae.project.model.Ticket;
 import sae.project.model.User;
 import sae.project.repositories.TicketRepository;
 import sae.project.repositories.UserRepository;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class TicketService {
@@ -17,6 +19,8 @@ public class TicketService {
     private TicketRepository ticketsRepository;
     @Autowired
     private UserRepository usersRepository;
+    @Autowired
+    private NotificationService notificationService;
 
     public void createTicket(TicketDto dto) {
         User user = usersRepository.findById(dto.userId).orElseThrow();
@@ -24,16 +28,24 @@ public class TicketService {
         Ticket ticket = new Ticket();
         ticket.setTitle(dto.title);
         ticket.setDescription(dto.description);
-        ticket.setStatus("OPEN"); // Valeur par défaut
-        ticket.setDate(Date.valueOf(LocalDate.now())); // Date d'aujourd'hui
+        ticket.setStatus("OPEN");
+        ticket.setDate(Date.valueOf(LocalDate.now())); 
         ticket.setUser(user);
 
         ticketsRepository.save(ticket);
+
+        User admin = usersRepository.findById(1).orElse(null);
+        if (admin != null) {
+            notificationService.createNotification(
+                admin, 
+                "Nouveau ticket de " + user.getFirstName() + " : " + ticket.getTitle()
+            );
+        }
     }
 
-    public java.util.List<sae.project.dtos.ticket.TicketResponseDto> getAllTickets() {
+    public List<TicketResponseDto> getAllTickets() {
         return ticketsRepository.findAll().stream()
-                .map(t -> new sae.project.dtos.ticket.TicketResponseDto(
+                .map(t -> new TicketResponseDto(
                         t.getId(),
                         t.getTitle(),
                         t.getDescription(),
@@ -56,5 +68,13 @@ public class TicketService {
             ticket.setResolutionDate(null);
         }
         ticketsRepository.save(ticket);
+
+        if (ticket.getUser() != null) {
+            String statusFR = status.equals("RESOLVED") ? "RÉSOLU" : (status.equals("IN_PROGRESS") ? "EN COURS" : "OUVERT");
+            notificationService.createNotification(
+                ticket.getUser(), 
+                "Le statut de votre ticket '" + ticket.getTitle() + "' est passé à : " + statusFR
+            );
+        }
     }
 }

@@ -59,6 +59,18 @@ public interface PedagogicalScheduleRepository extends JpaRepository<Resource, I
         @Query("SELECT DISTINCT r FROM Resource r JOIN r.formationList f WHERE f.year = :year AND f.name = :formation AND r.semester = :semester")
         List<Resource> findByYearAndFormationAndSemester(@Param("year") String year, @Param("formation") String formation, @Param("semester") Integer semester);
 
+        // Requête unifiée — tous les paramètres sont optionnels (passer null pour ignorer)
+        @Query("SELECT DISTINCT r FROM Resource r JOIN r.formationList f " +
+               "WHERE (:year IS NULL OR f.year = :year) " +
+               "AND (:className IS NULL OR f.className = :className) " +
+               "AND (:formation IS NULL OR f.name = :formation) " +
+               "AND (:semester IS NULL OR r.semester = :semester)")
+        List<Resource> findWithFilters(
+                @Param("year") String year,
+                @Param("className") String className,
+                @Param("formation") String formation,
+                @Param("semester") Integer semester);
+
         // Rechercher avec titre contenant
         @Query("SELECT r FROM Resource r WHERE LOWER(r.title) LIKE LOWER(CONCAT('%', :keyword, '%'))")
         List<Resource> searchByTitleContaining(@Param("keyword") String keyword);

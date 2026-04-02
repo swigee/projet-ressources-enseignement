@@ -52,7 +52,7 @@ public class TeacherAssignmentController {
     @GetMapping("/grid")
     public ResponseEntity<AssignmentGridDTO> getAssignmentGrid(
             @RequestParam(required = false) String formation,
-            @RequestParam String year,
+            @RequestParam(required = false) String year,
             @RequestParam(required = false) String className,
             @RequestParam(required = false) String semester) {
         log.info("GET /api/teacher-assignment/grid?formation={}&year={}&className={}&semester={}",

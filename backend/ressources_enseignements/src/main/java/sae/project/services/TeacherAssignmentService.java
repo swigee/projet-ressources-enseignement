@@ -244,10 +244,10 @@ public class TeacherAssignmentService {
         }
 
         private List<AffectationRowDTO> getAffectationRows(String formation, String year, String className, Integer semester) {
-                String yearParam      = nullIfBlank(year);
-                String classParam     = nullIfBlank(className);
-                String formationParam = nullIfBlank(formation);
-                boolean allClasses    = (classParam == null);
+                String yearParam       = nullIfBlank(year);
+                String classParam      = nullIfBlank(className);
+                String formationParam  = nullIfBlank(formation);
+                boolean allClasses     = (classParam == null);
 
                 List<Resource> ressources = ressourcesRepository.findWithFilters(yearParam, classParam, formationParam, semester);
 
@@ -270,6 +270,7 @@ public class TeacherAssignmentService {
                                                         .map(this::mapToTeacherAssignmentDTO)
                                                         .collect(Collectors.toList());
 
+                                        // Groupes concernés (filtré par year et formation si renseignés)
                                         List<String> groupes = null;
                                         int groupCount = 1;
                                         if (allClasses) {

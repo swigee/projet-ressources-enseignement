@@ -1,6 +1,7 @@
 package sae.project.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,6 +64,12 @@ public class EducationManagerController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         emrep.delete(id);
+    }
+
+    @PostMapping("/{id}/duplicate")
+    public Formation duplicate(@PathVariable Integer id, @RequestBody Map<String, String> body) {
+        String newName = body.getOrDefault("newName", "Copie");
+        return emrep.duplicate(id, newName);
     }
     
     @GetMapping("/{id}/users")

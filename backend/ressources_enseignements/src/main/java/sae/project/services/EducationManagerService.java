@@ -44,6 +44,22 @@ public class EducationManagerService {
     public Formation update(Formation f){
         return emrep.save(f);
     }
+
+    public Formation duplicate(Integer id, String newName) {
+        Formation source = emrep.findById(id)
+                .orElseThrow(() -> new RuntimeException("Formation non trouvée : " + id));
+
+        Formation copy = Formation.builder()
+                .name(newName)
+                .year(source.getYear())
+                .className(source.getClassName())
+                .description(source.getDescription())
+                .resourceList(new java.util.ArrayList<>(source.getResourceList()))
+                .build();
+
+        return emrep.save(copy);
+    }
+
     public List<User> getUsersByFormation(Integer id){
         Formation f = emrep.getById(id);
         return f.getUsersList();

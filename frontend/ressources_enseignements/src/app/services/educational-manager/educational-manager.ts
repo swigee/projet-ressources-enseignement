@@ -61,4 +61,8 @@ export class EducationalManagerService {
   getUsers(id: number): Observable<User[]>{
     return this.http.get<User[]>(`${this.api}/${id}/users`);
   }
+
+  duplicateEducation(id: number, newName: string): Observable<Education> {
+    return this.http.post<Education>(`${this.api}/${id}/duplicate`, { newName });
+  }
 }

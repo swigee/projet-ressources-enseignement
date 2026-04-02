@@ -30,12 +30,15 @@ public class RessourcesService {
     private TeacherAssignmentRepository assignmentRepository;
 
 
+    private String nullIfBlank(String s) {
+        return (s == null || s.isBlank()) ? null : s;
+    }
+
     public RessourcesResponseDTO getRessourcesTableData(String year, String className, Integer semester, String formation) {
         log.info("Retrieving table data for year={} className={} semester={} formation={}", year, className, semester, formation);
 
-        List<Resource> resources = (formation != null && !formation.isBlank())
-                ? ressourcesRepository.findByYearAndClassAndSemesterAndFormation(year, className, semester, formation)
-                : ressourcesRepository.findByYearAndClassAndSemester(year, className, semester);
+        List<Resource> resources = ressourcesRepository.findWithFilters(
+                nullIfBlank(year), nullIfBlank(className), nullIfBlank(formation), semester);
         List<RessourceRowDTO> ressourceRows = resources.stream()
                 .map(this::mapResourceToRowDTO)
                 .collect(Collectors.toList());

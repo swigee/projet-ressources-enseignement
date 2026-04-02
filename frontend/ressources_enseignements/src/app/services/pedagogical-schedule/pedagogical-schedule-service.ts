@@ -33,7 +33,10 @@ export class PedagogicalScheduleService {
   }
 
   getCompleteSchedule(year: string, className: string, semester: string, formation?: string): Observable<PedagogicalScheduleDTO> {
-    let params = new HttpParams().set('year', year).set('className', className).set('semester', semester);
+    let params = new HttpParams();
+    if (year) params = params.set('year', year);
+    if (className) params = params.set('className', className);
+    if (semester) params = params.set('semester', semester);
     if (formation) params = params.set('formation', formation);
 
     return this.http.get<PedagogicalScheduleDTO>(`${this.apiUrl}/schedule`, { params });

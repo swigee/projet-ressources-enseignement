@@ -61,11 +61,14 @@ public class PedagogicalScheduleService {
     /**
      * Récupérer les ressources par année, classe et semestre
      */
+    private String nullIfBlank(String s) {
+        return (s == null || s.isBlank()) ? null : s;
+    }
+
     public List<ResourceScheduleDTO> getByYearAndClass(String year, String className, Integer semester, String formation) {
         log.info("Récupération des ressources pour l'année {} la classe {} et le semestre {}", year, className, semester);
-        List<Resource> resources = (formation != null && !formation.isBlank())
-                ? pedagogicalScheduleRepository.findByYearAndClassAndSemesterAndFormation(year, className, semester, formation)
-                : pedagogicalScheduleRepository.findByYearAndClassAndSemester(year, className, semester);
+        List<Resource> resources = pedagogicalScheduleRepository.findWithFilters(
+                nullIfBlank(year), nullIfBlank(className), nullIfBlank(formation), semester);
         return resources.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());

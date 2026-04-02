@@ -8,12 +8,13 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './filter-controls.html'
 })
 export class FilterControls {
-  @Input() selectedFormation = 'Informatique';
+  @Input() selectedFormation = '';
   @Input() formations: { id: string; name: string }[] = [];
   @Input() selectedYear = '1';
-  @Input() selectedClass = 'G1';
+  @Input() selectedClass = '';
+  @Input() availableClasses: string[] = [];
   @Input() selectedSemester = '1';
-  @Input() classData: Record<string, { name: string; classes: string[] }> = {};
+  @Input() classData: Record<string, { name: string }> = {};
 
   @Output() formationChange = new EventEmitter<string>();
   @Output() yearChange = new EventEmitter<string>();
@@ -22,9 +23,5 @@ export class FilterControls {
 
   getYearKeys(): string[] {
     return Object.keys(this.classData);
-  }
-
-  getAvailableClasses(): string[] {
-    return this.classData[this.selectedYear]?.classes || [];
   }
 }

@@ -64,4 +64,10 @@ public class EducationManagerService {
         Formation f = emrep.getById(id);
         return f.getUsersList();
     }
+
+    public List<String> getDistinctClasses(String year, String formation) {
+        String yearParam = (year == null || year.isBlank()) ? null : year;
+        String formationParam = (formation == null || formation.isBlank()) ? null : formation;
+        return emrep.findDistinctClassNames(yearParam, formationParam);
+    }
 }

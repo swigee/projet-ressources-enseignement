@@ -23,8 +23,8 @@
           : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'">Validation services</button>
     </div>
 
-    <app-filter-controls [selectedFormation]="selectedFormation()" [formations]="formations" [selectedYear]="selectedYear()" [selectedClass]="selectedClass()"
-      [selectedSemester]="selectedSemester()" [classData]="classData" (formationChange)="onFormationChange($event)" (yearChange)="onYearChange($event)"
+    <app-filter-controls [selectedFormation]="selectedFormation()" [formations]="formations()" [selectedYear]="selectedYear()" [selectedClass]="selectedClass()"
+      [availableClasses]="availableClasses()" [selectedSemester]="selectedSemester()" [classData]="classData" (formationChange)="onFormationChange($event)" (yearChange)="onYearChange($event)"
       (classChange)="onClassChange($event)" (semesterChange)="onSemesterChange($event)" />
 
     @if (isLoading()) {

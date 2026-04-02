@@ -57,8 +57,9 @@
         (ngModelChange)="classChange.emit($event)"
         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
       >
-        @for (classOption of getAvailableClasses(); track classOption) {
-        <option [value]="classOption">{{ classOption }}</option>
+        <option value="">Tous les groupes</option>
+        @for (classOption of availableClasses; track classOption) {
+          <option [value]="classOption">{{ classOption }}</option>
         }
       </select>
     </div>

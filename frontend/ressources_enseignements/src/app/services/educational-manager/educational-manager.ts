@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Education } from '../../models/education/education.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { LessonService } from '../lesson/lesson-service';
@@ -64,5 +64,23 @@ export class EducationalManagerService {
 
   duplicateEducation(id: number, newName: string): Observable<Education> {
     return this.http.post<Education>(`${this.api}/${id}/duplicate`, { newName });
+  }
+
+  getDistinctFormationNames(): string[] {
+    const names = this.educationList().map(e => e.name);
+    return [...new Set(names)].sort();
+  }
+
+  loadDistinctFormationNames(): Observable<string[]> {
+    return this.http.get<Education[]>(`${this.api}/list`).pipe(
+      map(educations => [...new Set(educations.map(e => e.name))].sort())
+    );
+  }
+
+  getDistinctClasses(year?: string, formation?: string): Observable<string[]> {
+    let params = new HttpParams();
+    if (year) params = params.set('year', year);
+    if (formation) params = params.set('formation', formation);
+    return this.http.get<string[]>(`${this.api}/classes`, { params });
   }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import sae.project.model.Formation;
 import sae.project.model.Resource;
@@ -75,5 +76,12 @@ public class EducationManagerController {
     @GetMapping("/{id}/users")
     public Iterable<User> getUsers(@PathVariable Integer id) {
         return emrep.getUsersByFormation(id);
+    }
+
+    @GetMapping("/classes")
+    public List<String> getDistinctClasses(
+            @RequestParam(required = false) String year,
+            @RequestParam(required = false) String formation) {
+        return emrep.getDistinctClasses(year, formation);
     }
 }

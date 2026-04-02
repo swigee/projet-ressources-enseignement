@@ -1,0 +1,81 @@
+
+<div class="grid grid-cols-3 gap-5 mb-6">
+
+  <div class="bg-white rounded-2xl px-6 py-5 flex items-center justify-between shadow-sm">
+    @if (isLoading){
+      <span class="text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin fa-2xl"></i></span>
+    }
+    @if(!isLoading && hourForecast() !== 0){
+      <span class="text-4xl font-extrabold text-gray-900">{{hourForecast()}}</span>
+    }
+    <span class="text-sm font-semibold text-gray-400 italic text-right leading-snug">Heures<br>prévisionnelles</span>
+  </div>
+
+  <div class="bg-white rounded-2xl px-6 py-5 flex items-center justify-between shadow-sm">
+    @if (isLoading){
+      <span class="text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin fa-2xl"></i></span>
+    }
+    @if(!isLoading && hourForecast() !== 0){
+      <span class="text-4xl font-extrabold text-gray-900">{{hourForecast()}}</span>
+    }    <span class="text-sm font-semibold text-gray-400 italic text-right leading-snug">Heures<br>réelles</span>
+  </div>
+
+  <div class="bg-white rounded-2xl px-6 py-5 flex items-center justify-between shadow-sm">
+    @if (isLoading){
+      <span class="text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin fa-2xl"></i></span>
+    }
+    @if(!isLoading && hourForecast() !== 0){
+      <span class="text-4xl font-extrabold text-gray-900">{{hourForecast()}}</span>
+    }    <span class="text-4xl font-extrabold text-gray-900"></span>
+  </div>
+
+</div>
+
+<div class="grid grid-cols-3 gap-5">
+
+  <div class="col-span-2 bg-white rounded-2xl shadow-sm p-6 flex flex-col gap-5">
+
+    <h2 class="text-center text-base font-semibold text-gray-700 tracking-wide">Ressources</h2>
+
+    <div class="flex justify-center">
+      <select class="w-72 px-5 py-3 rounded-xl border border-gray-300 text-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white cursor-pointer text-center pr-10">
+        <option value="" disabled selected>Menu déroulant</option>
+        <option>Mathématiques</option>
+        <option>Informatique</option>
+        <option>Physique</option>
+        <option>Gestion de projet</option>
+      </select>
+    </div>
+
+    <div class="relative" style="height: 300px;">
+      <canvas id="pieChart"></canvas>
+    </div>
+
+  </div>
+
+  <!-- Right column -->
+  <div class="flex flex-col gap-5">
+
+    <!-- Alternance card -->
+    <div class="bg-white rounded-2xl px-6 py-5 flex items-center justify-between shadow-sm">
+      <span class="text-4xl font-extrabold text-gray-900">20</span>
+      <span class="text-sm font-semibold text-gray-400 italic text-right leading-snug">Nombre élèves<br>suivi alternance</span>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="bg-white rounded-2xl shadow-sm p-6 flex flex-col gap-4 flex-1">
+      <h2 class="text-center text-lg font-bold text-gray-800 flex items-center justify-center gap-2">
+        Actions rapides
+      </h2>
+      <div class="flex flex-col gap-3 mt-1">
+        <button class="w-full py-3 rounded-xl bg-green-700 hover:bg-green-800 text-white text-sm font-bold transition-colors cursor-pointer">
+          Consulter la fiche de service
+        </button>
+        <button class="w-full py-3 rounded-xl bg-red-800 hover:bg-red-900 text-white text-sm font-bold transition-colors cursor-pointer">
+          Ouvrir un ticket
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

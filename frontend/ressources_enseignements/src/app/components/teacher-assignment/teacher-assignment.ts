@@ -28,7 +28,7 @@ interface DragData {
 export class TeacherAssignmentComponent implements OnInit {
   selectedFormation: string = 'Informatique';
   selectedYear: string = '1';
-  selectedClass: string = 'G1';
+  selectedClass: string = '';
   selectedSemester: string = '';
   searchQuery: string = '';
   draggedTeacher: Teacher | null = null;
@@ -50,9 +50,12 @@ export class TeacherAssignmentComponent implements OnInit {
     this.loadData();
   }
 
+  get allClassesMode(): boolean {
+    return !this.selectedClass;
+  }
+
   loadData(): void {
-    if (!this.selectedYear || !this.selectedClass) {
-      console.warn('Année ou classe non sélectionnée');
+    if (!this.selectedYear) {
       this.affectationGrid = [];
       return;
     }

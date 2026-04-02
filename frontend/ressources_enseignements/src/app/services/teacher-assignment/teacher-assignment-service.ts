@@ -22,9 +22,11 @@ export class TeacherAssignmentService {
   getAssignmentGrid(formation: string, year: string, className: string, semester?: string): Observable<AssignmentGrid> {
     let params = new HttpParams()
       .set('formation', formation)
-      .set('year', year)
-      .set('className', className);
+      .set('year', year);
 
+    if (className) {
+      params = params.set('className', className);
+    }
     if (semester) {
       params = params.set('semester', semester);
     }

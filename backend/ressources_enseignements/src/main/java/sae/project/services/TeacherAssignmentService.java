@@ -239,24 +239,35 @@ public class TeacherAssignmentService {
          * Récupérer les lignes d'affectation pour une formation
          */
         private List<AffectationRowDTO> getAffectationRows(String formation, String year, String className, Integer semester) {
+                boolean allClasses = (className == null || className.isBlank());
                 List<Resource> ressources;
-                if (formation != null && !formation.isBlank()) {
-                        ressources = semester != null
-                                ? ressourcesRepository.findByYearAndClassAndSemesterAndFormation(year, className, semester, formation)
-                                : ressourcesRepository.findByYearAndClassAndFormation(year, className, formation);
-                } else if (semester != null) {
-                        ressources = ressourcesRepository.findByYearAndClassAndSemester(year, className, semester);
+
+                if (allClasses) {
+                        if (formation != null && !formation.isBlank()) {
+                                ressources = semester != null
+                                        ? ressourcesRepository.findByYearAndFormationAndSemester(year, formation, semester)
+                                        : ressourcesRepository.findByYearAndFormation(year, formation);
+                        } else {
+                                ressources = semester != null
+                                        ? ressourcesRepository.findByYearAndSemester(year, semester)
+                                        : ressourcesRepository.findByYear(year);
+                        }
                 } else {
-                        ressources = ressourcesRepository.findByYearAndClass(year, className);
+                        if (formation != null && !formation.isBlank()) {
+                                ressources = semester != null
+                                        ? ressourcesRepository.findByYearAndClassAndSemesterAndFormation(year, className, semester, formation)
+                                        : ressourcesRepository.findByYearAndClassAndFormation(year, className, formation);
+                        } else if (semester != null) {
+                                ressources = ressourcesRepository.findByYearAndClassAndSemester(year, className, semester);
+                        } else {
+                                ressources = ressourcesRepository.findByYearAndClass(year, className);
+                        }
                 }
 
                 return ressources.stream()
                                 .map(ressource -> {
-                                        // Récupérer toutes les affectations pour cette ressource
-                                        List<Assignment> assignments = assignmentRepository
-                                                        .findByResourceId(ressource.getId());
+                                        List<Assignment> assignments = assignmentRepository.findByResourceId(ressource.getId());
 
-                                        // Filtrer par type de cours
                                         List<TeacherAssignmentDTO> tdTeachers = assignments.stream()
                                                         .filter(a -> "TD".equals(a.getLessonType()))
                                                         .map(this::mapToTeacherAssignmentDTO)
@@ -272,9 +283,19 @@ public class TeacherAssignmentService {
                                                         .map(this::mapToTeacherAssignmentDTO)
                                                         .collect(Collectors.toList());
 
+                                        List<String> groupes = allClasses
+                                                ? ressource.getFormationList().stream()
+                                                        .filter(f -> year.equals(f.getYear()))
+                                                        .map(f -> f.getClassName())
+                                                        .distinct()
+                                                        .sorted()
+                                                        .collect(Collectors.toList())
+                                                : null;
+
                                         return AffectationRowDTO.builder()
                                                         .resourceId(ressource.getId())
                                                         .module(ressource.getTitle())
+                                                        .groupes(groupes)
                                                         .tdHours(ressource.getTdStateHours() != null ? ressource.getTdStateHours() : 0)
                                                         .tpHours(ressource.getTpStateHours() != null ? ressource.getTpStateHours() : 0)
                                                         .cmHours(ressource.getCmStateHours() != null ? ressource.getCmStateHours() : 0)

@@ -53,7 +53,7 @@ public class TeacherAssignmentController {
     public ResponseEntity<AssignmentGridDTO> getAssignmentGrid(
             @RequestParam(required = false) String formation,
             @RequestParam String year,
-            @RequestParam String className,
+            @RequestParam(required = false) String className,
             @RequestParam(required = false) String semester) {
         log.info("GET /api/teacher-assignment/grid?formation={}&year={}&className={}&semester={}",
                 formation, year, className, semester);

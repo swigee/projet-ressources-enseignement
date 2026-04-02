@@ -26,10 +26,10 @@ export class Ressource implements OnInit {
   activeTab = signal<string>('ressources');
   selectedFormation = signal<string>('');
   formations = signal<{ id: string; name: string }[]>([]);
-  selectedYear = signal<string>('1');
+  selectedYear = signal<string>('');
   selectedClass = signal<string>('');
   availableClasses = signal<string[]>([]);
-  selectedSemester = signal<string>('1');
+  selectedSemester = signal<string>('');
 
   ressources = signal<RessourceRow[]>([]);
   availableTeachers = signal<TeacherBadge[]>([]);
@@ -174,7 +174,7 @@ export class Ressource implements OnInit {
 
   onYearChange(year: string): void {
     this.selectedYear.set(year);
-    this.selectedSemester.set('1');
+    this.selectedSemester.set('');
     this.loadClasses();
     this.loadData();
   }

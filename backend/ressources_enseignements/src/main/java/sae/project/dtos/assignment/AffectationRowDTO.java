@@ -20,6 +20,7 @@ import sae.project.dtos.teacher.TeacherAssignmentDTO;
 public class AffectationRowDTO {
     private Integer resourceId;
     private String module;
+    private List<String> groupes; // groupes concernés (null = filtre classe actif)
 
     // Heures prévues
     private Integer tdHours;

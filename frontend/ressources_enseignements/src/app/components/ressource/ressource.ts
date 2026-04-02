@@ -51,9 +51,9 @@ export class Ressource implements OnInit {
   showModal = signal<boolean>(false);
 
   classData: Record<string, { name: string }> = {
-    '1': { name: 'Annee 1' },
-    '2': { name: 'Annee 2' },
-    '3': { name: 'Annee 3 (Alternance)' }
+    '1': { name: 'Année 1' },
+    '2': { name: 'Année 2' },
+    '3': { name: 'Année 3' }
   };
 
   filteredRessources = computed<RessourceRow[]>(() => {

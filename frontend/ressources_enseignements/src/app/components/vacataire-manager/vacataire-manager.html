@@ -1,0 +1,473 @@
+<!-- ===== VUE LISTE ===== -->
+@if (view() === 'list') {
+<div class="p-8 space-y-6">
+
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-gray-900">Gestionnaire des vacataires</h1>
+    <button (click)="openCreate()"
+      class="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      Nouveau vacataire
+    </button>
+  </div>
+
+  @if (successMessage()) {
+  <div class="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm">
+    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+    </svg>
+    {{ successMessage() }}
+  </div>
+  }
+
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+    <div class="p-4 border-b border-gray-100">
+      <input type="text" placeholder="Rechercher un vacataire..."
+        [value]="searchTerm()"
+        (input)="onSearch($any($event.target).value)"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+    </div>
+
+    @if (isLoading()) {
+    <div class="p-8 text-center text-gray-400">Chargement...</div>
+    } @else if (vacataires().length === 0) {
+    <div class="p-8 text-center text-gray-400">Aucun vacataire enregistré.</div>
+    } @else {
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-gray-100 bg-gray-50 text-left text-xs text-gray-500 uppercase tracking-wide">
+          <th class="px-6 py-3">Nom</th>
+          <th class="px-6 py-3">Prénom</th>
+          <th class="px-6 py-3">Département</th>
+          <th class="px-6 py-3">Statut</th>
+          <th class="px-6 py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (v of vacataires(); track v.id) {
+        <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
+          <td class="px-6 py-4 font-medium text-gray-900">{{ v.nom }}</td>
+          <td class="px-6 py-4 text-gray-700">{{ v.prenom }}</td>
+          <td class="px-6 py-4 text-gray-500">{{ v.departement || '-' }}</td>
+          <td class="px-6 py-4">
+            <span class="px-2 py-1 rounded-full text-xs font-medium" [ngClass]="statutClass(v.statut)">
+              {{ statutLabel(v.statut) }}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex justify-end gap-2">
+              <button (click)="openSummary(v)" title="Voir le résumé"
+                class="p-1.5 rounded hover:bg-blue-50 text-blue-600 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+              </button>
+              <button (click)="openEdit(v)" title="Modifier"
+                class="p-1.5 rounded hover:bg-amber-50 text-amber-600 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z"/>
+                </svg>
+              </button>
+              <button (click)="delete(v)" title="Supprimer"
+                class="p-1.5 rounded hover:bg-red-50 text-red-500 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0a1 1 0 001-1h4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+    }
+  </div>
+</div>
+}
+
+<!-- ===== VUE RÉSUMÉ ===== -->
+@if (view() === 'summary') {
+<div class="p-8 max-w-3xl mx-auto space-y-6">
+  <div class="flex items-center gap-3">
+    <button (click)="backToList()" class="p-2 rounded-lg hover:bg-gray-100 transition text-gray-600">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+      </svg>
+    </button>
+    <h1 class="text-xl font-bold text-gray-900">Résumé de la candidature</h1>
+  </div>
+
+  @if (selectedVacataire(); as v) {
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
+    <div class="flex items-start justify-between">
+      <div>
+        <h2 class="text-lg font-bold text-gray-900">{{ v.prenom }} {{ v.nom }}</h2>
+        <span class="mt-1 inline-block px-2 py-1 rounded-full text-xs font-medium" [ngClass]="statutClass(v.statut)">
+          {{ statutLabel(v.statut) }}
+        </span>
+      </div>
+      <button (click)="openEdit(v)"
+        class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z"/>
+        </svg>
+        Modifier
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm border-t pt-4">
+      <div>
+        <span class="text-gray-500 text-xs uppercase">Responsable recrutement</span>
+        <p class="font-medium text-gray-800 mt-0.5">{{ v.responsableRecrutement || '-' }}</p>
+      </div>
+      <div>
+        <span class="text-gray-500 text-xs uppercase">Date de naissance</span>
+        <p class="font-medium text-gray-800 mt-0.5">{{ v.dateNaissance || '-' }}</p>
+      </div>
+      <div>
+        <span class="text-gray-500 text-xs uppercase">Département / Service</span>
+        <p class="font-medium text-gray-800 mt-0.5">{{ v.departement || '-' }}</p>
+      </div>
+      <div>
+        <span class="text-gray-500 text-xs uppercase">Fonction</span>
+        <p class="font-medium text-gray-800 mt-0.5">{{ v.fonction || '-' }}</p>
+      </div>
+      <div>
+        <span class="text-gray-500 text-xs uppercase">Expérience</span>
+        <p class="font-medium text-gray-800 mt-0.5">{{ v.experience || '-' }}</p>
+      </div>
+      <div>
+        <span class="text-gray-500 text-xs uppercase">Profil requis</span>
+        <p class="font-medium text-gray-800 mt-0.5">{{ v.profil || '-' }}</p>
+      </div>
+    </div>
+
+    @if (v.competences) {
+    <div class="border-t pt-4 text-sm">
+      <span class="text-gray-500 text-xs uppercase">Compétences</span>
+      <p class="text-gray-800 mt-0.5 whitespace-pre-wrap">{{ v.competences }}</p>
+    </div>
+    }
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm border-t pt-4">
+      <div>
+        <span class="text-gray-500 text-xs uppercase">Vue en amont</span>
+        <p class="font-medium text-gray-800 mt-0.5">{{ v.vueEnAmont === true ? 'Oui' : v.vueEnAmont === false ? 'Non' : '-' }}</p>
+      </div>
+      <div>
+        <span class="text-gray-500 text-xs uppercase">Établissement</span>
+        <p class="font-medium text-gray-800 mt-0.5">{{ v.etablissement || '-' }}</p>
+      </div>
+      <div>
+        <span class="text-gray-500 text-xs uppercase">Site</span>
+        <p class="font-medium text-gray-800 mt-0.5">{{ v.site || '-' }}</p>
+      </div>
+      <div>
+        <span class="text-gray-500 text-xs uppercase">Transmis responsable TUT</span>
+        <p class="font-medium text-gray-800 mt-0.5">{{ v.transmisResponsable === true ? 'Oui' : v.transmisResponsable === false ? 'Non' : '-' }}</p>
+      </div>
+      <div class="sm:col-span-2">
+        <span class="text-gray-500 text-xs uppercase">Signature responsable</span>
+        <p class="font-medium text-gray-800 mt-0.5">{{ v.signatureResponsable || '-' }}</p>
+      </div>
+    </div>
+
+    <div class="border-t pt-4 text-sm">
+      <span class="text-gray-500 text-xs uppercase">Source de connaissance</span>
+      <p class="font-medium text-gray-800 mt-0.5">{{ sourceLabel(v.sourceConnaissance) }}</p>
+      @if (v.sourceConnaissance === 'AUTRE' && v.sourceConnaissanceAutre) {
+      <p class="text-gray-600 mt-1 italic">{{ v.sourceConnaissanceAutre }}</p>
+      }
+    </div>
+  </div>
+  }
+</div>
+}
+
+<!-- ===== VUE WIZARD ===== -->
+@if (view() === 'wizard') {
+<div class="p-8 max-w-2xl mx-auto space-y-6">
+
+  <!-- Header + indicateur étapes -->
+  <div class="flex items-center gap-3">
+    <button (click)="backToList()" class="p-2 rounded-lg hover:bg-gray-100 transition text-gray-600">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+      </svg>
+    </button>
+    <div>
+      <h1 class="text-xl font-bold text-gray-900">{{ editId() ? 'Modifier' : 'Nouveau' }} vacataire</h1>
+      <p class="text-sm text-gray-500">Étape {{ step() }} / 3</p>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="flex gap-2">
+    @for (s of [1, 2, 3]; track s) {
+    <div class="flex-1 h-1.5 rounded-full transition-colors"
+      [class]="step() >= s ? 'bg-blue-500' : 'bg-gray-200'"></div>
+    }
+  </div>
+
+  @if (errorMessage()) {
+  <div class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
+
+    <!-- ======= ÉTAPE 1 – Fiche de recrutement ======= -->
+    @if (step() === 1) {
+    <h2 class="text-sm font-bold text-gray-700 uppercase tracking-widest border-b pb-3">
+      Fiche de recrutement des vacataires
+    </h2>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Personne en charge du recrutement</label>
+        <input type="text" [value]="formData().responsableRecrutement"
+          (input)="updateField('responsableRecrutement', $any($event.target).value)"
+          placeholder="Nom du responsable"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Prénom <span class="text-red-500">*</span></label>
+          <input type="text" [value]="formData().prenom"
+            (input)="updateField('prenom', $any($event.target).value)"
+            placeholder="Prénom"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Nom <span class="text-red-500">*</span></label>
+          <input type="text" [value]="formData().nom"
+            (input)="updateField('nom', $any($event.target).value)"
+            placeholder="Nom de famille"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Date de naissance</label>
+          <input type="date" [value]="formData().dateNaissance"
+            (input)="updateField('dateNaissance', $any($event.target).value)"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Département / Service</label>
+          <input type="text" [value]="formData().departement"
+            (input)="updateField('departement', $any($event.target).value)"
+            placeholder="Ex: Informatique"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Fonction enseignée</label>
+        <input type="text" [value]="formData().fonction"
+          (input)="updateField('fonction', $any($event.target).value)"
+          placeholder="Ex: Math, BCD, LP..."
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Expérience</label>
+        <input type="text" [value]="formData().experience"
+          (input)="updateField('experience', $any($event.target).value)"
+          placeholder="Ex: 3 ans CPGE, supérieur..."
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Profil requis</label>
+        <div class="flex gap-4 flex-wrap pt-1">
+          @for (p of ['professionnel', 'pédagogique', 'public pédagogique']; track p) {
+          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
+            <input type="radio" name="profil" [value]="p"
+              [checked]="formData().profil === p"
+              (change)="updateField('profil', p)"
+              class="accent-blue-600"/>
+            {{ p | titlecase }}
+          </label>
+          }
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Compétences du vacataire</label>
+        <textarea rows="3" [value]="formData().competences || ''"
+          (input)="updateField('competences', $any($event.target).value)"
+          placeholder="Décrivez les compétences..."
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Statut</label>
+        <select [value]="formData().statut"
+          (change)="updateField('statut', $any($event.target).value)"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          <option value="A_CONTACTER">À contacter</option>
+          <option value="EN_COURS">En cours</option>
+          <option value="VALIDE">Validé</option>
+        </select>
+      </div>
+    </div>
+    }
+
+    <!-- ======= ÉTAPE 2 – Tableau de bord ======= -->
+    @if (step() === 2) {
+    <h2 class="text-sm font-bold text-gray-700 uppercase tracking-widest border-b pb-3">
+      Tableau de bord — Informations complémentaires
+    </h2>
+
+    <div class="space-y-5">
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-2">
+          Cette personne a-t-elle été vue en amont ?
+        </label>
+        <div class="flex gap-6">
+          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
+            <input type="radio" name="vueEnAmont" [value]="true"
+              [checked]="formData().vueEnAmont === true"
+              (change)="updateField('vueEnAmont', true)"
+              class="accent-blue-600"/> Oui
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
+            <input type="radio" name="vueEnAmont" [value]="false"
+              [checked]="formData().vueEnAmont === false"
+              (change)="updateField('vueEnAmont', false)"
+              class="accent-blue-600"/> Non
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Nom de l'établissement</label>
+        <input type="text" [value]="formData().etablissement"
+          (input)="updateField('etablissement', $any($event.target).value)"
+          placeholder="Ex: IUT Lyon 1"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-2">Site</label>
+        <div class="flex gap-6">
+          @for (site of ['Villeurbanne', 'Bron-Oullins']; track site) {
+          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
+            <input type="radio" name="site" [value]="site"
+              [checked]="formData().site === site"
+              (change)="updateField('site', site)"
+              class="accent-blue-600"/> {{ site }}
+          </label>
+          }
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-2">
+          Cette personne sera-t-elle transmise au responsable CI / TUT ?
+        </label>
+        <div class="flex gap-6">
+          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
+            <input type="radio" name="transmis" [value]="true"
+              [checked]="formData().transmisResponsable === true"
+              (change)="updateField('transmisResponsable', true)"
+              class="accent-blue-600"/> Oui
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
+            <input type="radio" name="transmis" [value]="false"
+              [checked]="formData().transmisResponsable === false"
+              (change)="updateField('transmisResponsable', false)"
+              class="accent-blue-600"/> Non
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Signature du responsable du recrutement</label>
+        <input type="text" [value]="formData().signatureResponsable"
+          (input)="updateField('signatureResponsable', $any($event.target).value)"
+          placeholder="Nom et prénom"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+      </div>
+    </div>
+    }
+
+    <!-- ======= ÉTAPE 3 – Source de connaissance ======= -->
+    @if (step() === 3) {
+    <h2 class="text-sm font-bold text-gray-700 uppercase tracking-widest border-b pb-3">
+      Source de connaissance
+    </h2>
+    <p class="text-sm text-gray-600">
+      Comment la personne a-t-elle eu connaissance de la vacation proposée ?
+    </p>
+
+    <div class="space-y-3 pt-1">
+      @for (opt of [
+        { value: 'COLLEGUE', label: 'Par un collègue' },
+        { value: 'CV', label: 'Par son CV personnel' },
+        { value: 'F2P', label: 'Par le biais de la F2P' },
+        { value: 'RESPONSABLE', label: 'Par la personne en charge du recrutement' },
+        { value: 'BUREAU', label: 'Par le bureau à accès' },
+        { value: 'AUTRE', label: 'Autre (précisez)' }
+      ]; track opt.value) {
+      <label class="flex items-center gap-3 cursor-pointer text-sm text-gray-700 py-1">
+        <input type="radio" name="sourceConnaissance" [value]="opt.value"
+          [checked]="formData().sourceConnaissance === opt.value"
+          (change)="updateField('sourceConnaissance', opt.value)"
+          class="accent-blue-600"/>
+        {{ opt.label }}
+      </label>
+      }
+
+      @if (formData().sourceConnaissance === 'AUTRE') {
+      <input type="text" [value]="formData().sourceConnaissanceAutre"
+        (input)="updateField('sourceConnaissanceAutre', $any($event.target).value)"
+        placeholder="Précisez..."
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none mt-2"/>
+      }
+    </div>
+    }
+
+  </div>
+
+  <!-- Navigation wizard -->
+  <div class="flex justify-between">
+    @if (step() > 1) {
+    <button (click)="prevStep()"
+      class="inline-flex items-center gap-2 px-5 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-sm">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Précédent
+    </button>
+    } @else {
+    <div></div>
+    }
+
+    @if (step() < 3) {
+    <button (click)="nextStep()"
+      class="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm">
+      Suivant
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
+    </button>
+    } @else {
+    <button (click)="save()" [disabled]="isLoading()"
+      class="inline-flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition font-medium text-sm">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+      {{ isLoading() ? 'Enregistrement...' : 'Terminer' }}
+    </button>
+    }
+  </div>
+</div>
+}

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, AfterViewInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MonthDTO, WeekDTO, WeekHoursDTO, RessourceScheduleDTO, ProjectScheduleDTO } from '../../../models/schedule/schedule.model';
 
@@ -21,7 +21,7 @@ export interface ProjectHoursDelta {
   imports: [FormsModule],
   templateUrl: './maquette-tab.html'
 })
-export class MaquetteTab {
+export class MaquetteTab implements AfterViewInit {
   @Input() scheduleData: RessourceScheduleDTO[] = [];
   @Input() projectData: ProjectScheduleDTO = {
     id: 'project-sae', name: 'Projet SAE', hoursPerWeek: {}, hoursPerHalfGroup: 0, totalHours: 0
@@ -36,6 +36,31 @@ export class MaquetteTab {
   @Output() editingCancelled = new EventEmitter<void>();
   @Output() scheduleHoursChanged = new EventEmitter<ScheduleHoursDelta>();
   @Output() projectHoursChanged = new EventEmitter<ProjectHoursDelta>();
+
+  @ViewChildren('weeksRow') weeksRows!: QueryList<ElementRef<HTMLDivElement>>;
+  scrollTrackWidth = 0;
+  private syncing = false;
+
+  ngAfterViewInit() {
+    this.updateScrollTrackWidth();
+    this.weeksRows.changes.subscribe(() => this.updateScrollTrackWidth());
+  }
+
+  private updateScrollTrackWidth() {
+    setTimeout(() => {
+      if (this.weeksRows.length > 0) {
+        this.scrollTrackWidth = this.weeksRows.first.nativeElement.scrollWidth;
+      }
+    });
+  }
+
+  syncFromScrollbar(event: Event) {
+    if (this.syncing) return;
+    this.syncing = true;
+    const scrollLeft = (event.target as HTMLElement).scrollLeft;
+    this.weeksRows.forEach(r => (r.nativeElement.scrollLeft = scrollLeft));
+    this.syncing = false;
+  }
 
   getAllWeeks(): WeekDTO[] {
     return this.weeks.flatMap(month => month.weeks);

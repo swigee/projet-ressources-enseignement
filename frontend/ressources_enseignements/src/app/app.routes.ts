@@ -7,6 +7,7 @@ import { TeacherAssignmentComponent } from './components/teacher-assignment/teac
 import { UserManager } from './components/user-manager/user-manager';
 import { Ressource } from './components/ressource/ressource';
 import { GroupTracking } from './components/group-tracking/group-tracking';
+import { VacataireManager } from './components/vacataire-manager/vacataire-manager';
 import { authGuard } from './services/auth/auth.guard';
 import { roleGuard } from './services/auth/role.guard';
 
@@ -82,6 +83,12 @@ export const routes: Routes = [
   {
     path: 'group-tracking',
     component: GroupTracking,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
+  },
+  {
+    path: 'vacataire-manager',
+    component: VacataireManager,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['ADMIN'] }
   }

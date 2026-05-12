@@ -1,0 +1,87 @@
+<div class="h-full flex flex-col p-6 space-y-6 overflow-hidden bg-gray-50/50">
+    
+    <!-- Top Navigation & Tags -->
+    <div class="flex flex-col gap-4">
+        <!-- Back button & Title -->
+        <div class="flex items-center gap-4">
+            <button (click)="goBack()" class="p-2 text-gray-500 hover:bg-gray-200 rounded-full transition-colors cursor-pointer" title="Retour à la liste">
+                <i class="fa-solid fa-arrow-left text-lg"></i>
+            </button>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">{{ resourceInfo.title }}</h1>
+                <p class="text-sm font-bold text-gray-500">{{ resourceInfo.code }} <span class="font-normal mx-2">|</span> {{ resourceInfo.meta }}</p>
+            </div>
+        </div>
+
+        <!-- Multi-select Tags -->
+        <div class="flex flex-wrap gap-2 pt-2">
+            <button *ngFor="let section of sections" 
+                    (click)="toggleSection(section.id)"
+                    [ngClass]="isSectionActive(section.id) ? 'bg-gray-600 text-white border-transparent' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-300 line-through opacity-70'"
+                    class="px-4 py-1.5 rounded-full border text-xs font-semibold transition-all shadow-sm">
+                {{ section.label }}
+            </button>
+            <span class="text-xs text-gray-400 italic flex items-center ml-2">(Cliquez pour masquer/afficher)</span>
+        </div>
+    </div>
+
+    <!-- Split Screen Area -->
+    <div class="flex flex-col lg:flex-row gap-6 flex-1 overflow-hidden">
+        
+        <!-- Left: Programme National (Read-only) -->
+        <div class="flex-1 flex flex-col bg-gray-100 rounded-[2rem] border border-gray-200 shadow-inner overflow-hidden relative">
+            
+            <div class="absolute top-0 left-0 right-0 bg-gray-200/80 backdrop-blur-sm px-6 py-3 border-b border-gray-300 z-10 flex justify-between items-center">
+                <span class="font-bold text-gray-700 uppercase tracking-wider text-xs"><i class="fa-solid fa-university mr-2"></i>Programme National</span>
+                <span class="text-[10px] text-gray-500 font-medium bg-gray-300 px-2 py-0.5 rounded">Lecture Seule</span>
+            </div>
+
+            <div class="p-8 md:p-10 pt-16 flex-1 overflow-y-auto">
+                <div class="prose prose-sm max-w-none text-gray-700">
+                    <ng-container *ngFor="let section of sections">
+                        <div *ngIf="isSectionActive(section.id)" class="mb-8 bg-white/50 p-4 rounded-xl border border-gray-200/50">
+                            <h3 class="text-sm font-bold text-gray-900 mb-2 border-b border-gray-200 pb-1">{{ section.label }}</h3>
+                            <div class="font-medium leading-relaxed text-[13px]" [innerHTML]="formatContent(section.content)"></div>
+                        </div>
+                    </ng-container>
+                    
+                    <div *ngIf="activeSections.size === 0" class="text-center text-gray-400 py-10">
+                        <i class="fa-regular fa-eye-slash text-3xl mb-2 block"></i>
+                        Toutes les sections sont masquées.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Programme Personnel (Editable) -->
+        <div class="flex-1 flex flex-col bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
+            
+            <div class="bg-gray-50 px-6 py-3 border-b border-gray-100 flex justify-between items-center">
+                <span class="font-bold text-blue-700 uppercase tracking-wider text-xs"><i class="fa-solid fa-user-pen mr-2"></i>Programme Personnel</span>
+            </div>
+
+            <!-- Fake Toolbar -->
+            <div class="px-6 py-3 border-b border-gray-100 flex items-center gap-3 text-gray-500 bg-white shadow-sm z-10">
+                <button class="hover:text-black transition-colors font-serif text-lg font-bold">Aa</button>
+                <div class="w-px h-4 bg-gray-200 mx-1"></div>
+                <button class="hover:text-black transition-colors font-bold w-6 h-6 rounded hover:bg-gray-100">B</button>
+                <button class="hover:text-black transition-colors italic font-serif w-6 h-6 rounded hover:bg-gray-100">I</button>
+                <button class="hover:text-black transition-colors underline decoration-2 underline-offset-2 w-6 h-6 rounded hover:bg-gray-100">U</button>
+                <div class="w-px h-4 bg-gray-200 mx-1"></div>
+                <button class="hover:text-black transition-colors text-sm w-6 h-6 rounded hover:bg-gray-100"><i class="fa-solid fa-list-ul"></i></button>
+                <button class="hover:text-black transition-colors text-sm w-6 h-6 rounded hover:bg-gray-100"><i class="fa-solid fa-link"></i></button>
+            </div>
+
+            <!-- Fake Editor Content -->
+            <div class="p-8 md:p-10 flex-1 overflow-y-auto cursor-text" contenteditable="true" style="outline: none;">
+                <p class="text-gray-400 text-sm italic">Cliquez ici pour rédiger vos notes personnelles, adapter le contenu ou ajouter des précisions locales pour cette matière...</p>
+                <br>
+                <ul class="list-disc pl-5 text-gray-700 text-sm space-y-2 mt-4 hidden">
+                    <li>Remplacer Java par C# pour ce TP.</li>
+                    <li>Inviter l'intervenant externe pour la SAE 5.01.</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>

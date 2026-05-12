@@ -9,6 +9,7 @@ import { Ressource } from './components/ressource/ressource';
 import { GroupTracking } from './components/group-tracking/group-tracking';
 import { authGuard } from './services/auth/auth.guard';
 import { roleGuard } from './services/auth/role.guard';
+import { SyllabusComponent } from './components/syllabus/syllabus';
 
 export const routes: Routes = [
   {
@@ -27,7 +28,7 @@ export const routes: Routes = [
   },
   {
     path: 'syllabus',
-    component: Dashboard,
+    component: SyllabusComponent,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['STUDENT', 'TEACHER'] }
   },

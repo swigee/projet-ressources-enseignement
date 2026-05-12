@@ -1,5 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {PageTitle} from '../../services/page-title/page-title-service';
+import {RessourcesService} from '../../services/ressources/ressources-service';
+import {RessourcesTableResponse} from '../../models/ressources/ressources.model';
+import {RoleModel} from '../../models/role/role.model';
 
 
 @Component({
@@ -8,11 +11,26 @@ import {PageTitle} from '../../services/page-title/page-title-service';
   templateUrl: './dashboard.html',
 })
 export class Dashboard {
+  private readonly ressourcesService:RessourcesService = inject(RessourcesService);
+  hourForecast = signal<number>(0);
+  isLoading = true;
+
   constructor(private pageTitle: PageTitle) {
   }
 
   ngOnInit() {
     this.pageTitle.title.set("Tableau de bord");
+    this.loadData();
   }
+
+  loadData(){
+    this.isLoading = true;
+    this.ressourcesService.getRessourcesTable().subscribe( (data: RessourcesTableResponse) =>{
+      this.hourForecast.set(data.availableTeachers[0].assignedHours);
+      this.isLoading = false;
+      console.log(data)
+    })
+  }
+
 }
 

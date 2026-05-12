@@ -16,7 +16,7 @@ export class RessourcesService {
 
   constructor(private http: HttpClient) {}
 
-  getRessourcesTable(year: string, className: string, semester: string, formation?: string): Observable<RessourcesTableResponse> {
+  getRessourcesTable(year?: string, className?: string, semester?: string, formation?: string): Observable<RessourcesTableResponse> {
     let params = new HttpParams();
     if (year) params = params.set('year', year);
     if (className) params = params.set('className', className);

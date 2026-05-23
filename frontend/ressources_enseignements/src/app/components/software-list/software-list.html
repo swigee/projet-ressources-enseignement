@@ -1,0 +1,315 @@
+<div class="space-y-6">
+
+  @if (successMessage()) {
+  <div class="p-3 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm">
+    {{ successMessage() }}
+  </div>
+  }
+
+  @if (errorMessage()) {
+  <div class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  @if (isLoading()) {
+  <div class="flex justify-center p-8">
+    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+  </div>
+  }
+
+  <!-- Logiciels demandés -->
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-gray-800">
+        Logiciels demandés - anné {{ currentYear }}
+      </h2>
+      <button (click)="exportSoftware()"
+        class="px-4 py-1.5 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors">
+        Exporter
+      </button>
+    </div>
+
+    @if (requestedSoftware().length === 0 && !isLoading()) {
+    <p class="text-gray-400 italic text-sm">Aucun logiciel demandé.</p>
+    }
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+      @for (item of requestedSoftware(); track item.id) {
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+
+        <!-- Nom + icônes -->
+        <div class="flex items-start justify-between gap-1 mb-1">
+          <div class="flex items-center gap-1 min-w-0">
+            <span class="font-semibold text-sm text-gray-800 truncate">{{ item.name }}</span>
+            <span class="w-2 h-2 rounded-full bg-gray-700 flex-shrink-0"></span>
+          </div>
+          <div class="flex gap-1 flex-shrink-0">
+            <button (click)="infoModal.set(item)"
+              class="text-gray-400 hover:text-blue-500 transition-colors" title="Détails">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                <line x1="12" y1="8" x2="12" y2="8" stroke-width="2" stroke-linecap="round"/>
+                <line x1="12" y1="12" x2="12" y2="16" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <button (click)="openEdit(item)"
+              class="text-gray-400 hover:text-blue-600 transition-colors" title="Modifier">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
+            </button>
+            <button (click)="requestDelete(item.id!)"
+              class="text-gray-400 hover:text-red-500 transition-colors" title="Supprimer">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <p class="text-xs text-gray-500 mb-1">{{ item.version }}</p>
+
+        @if (item.license) {
+        <p class="text-xs text-gray-600">Licence: {{ item.license | lowercase }}</p>
+        }
+        @if (item.period) {
+        <p class="text-xs text-gray-600 mt-0.5">Période: {{ item.period }}</p>
+        }
+        @if (item.userFullName) {
+        <p class="text-xs text-blue-600 mt-0.5 font-medium">{{ item.userFullName }}</p>
+        }
+        @if (item.resourceNames?.length) {
+        <div class="flex flex-wrap gap-1 mt-1">
+          @for (r of item.resourceNames!; track r) {
+          <span class="px-1.5 py-0.5 bg-red-100 text-red-700 rounded text-xs">{{ r }}</span>
+          }
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Formulaire de création -->
+  <div class="border-2 border-blue-300 rounded-xl p-5">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <!-- Colonne 1 -->
+      <div class="space-y-3">
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Nom du logiciel</label>
+          <input [(ngModel)]="form.name" type="text"
+            class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Version</label>
+          <input [(ngModel)]="form.version" type="text"
+            class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Plugin/Bibliothèques</label>
+          <input [(ngModel)]="form.plugins" type="text"
+            class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        </div>
+      </div>
+
+      <!-- Colonne 2 -->
+      <div class="space-y-3">
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Licence</label>
+          <select [(ngModel)]="form.license"
+            class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white">
+            <option value="Gratuite">Gratuite</option>
+            <option value="Payante">Payante</option>
+            <option value="Open Source">Open Source</option>
+            <option value="Académique">Académique</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Période</label>
+          <input [(ngModel)]="form.period" type="text" placeholder="ex: toute l'année, S1, S2"
+            class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        </div>
+      </div>
+
+      <!-- Colonne 3 : Ressources -->
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">Ressources</label>
+        <input
+          [ngModel]="resourceTagInput()"
+          (ngModelChange)="resourceTagInput.set($event)"
+          (keydown.enter)="addResourceTag($event)"
+          (blur)="onResourceBlur()"
+          type="text"
+          placeholder="Tapez une ressource et appuyez sur Entrée"
+          class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        <div class="flex flex-wrap gap-1 mt-2">
+          @for (tag of form.resourceNames; track tag) {
+          <span class="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
+            {{ tag }}
+            <button (click)="removeResourceTag(tag)" class="hover:text-red-900 leading-none">×</button>
+          </span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-center mt-5">
+      <button (click)="createSoftware()"
+        class="px-8 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors">
+        Créer
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal confirmation suppression -->
+@if (confirmDeleteId() !== null) {
+<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-xl p-6 w-80 max-w-full">
+    <h3 class="font-bold text-gray-800 mb-2">Supprimer ce logiciel ?</h3>
+    <p class="text-sm text-gray-500 mb-5">Cette action est irréversible.</p>
+    <div class="flex justify-end gap-3">
+      <button (click)="cancelDelete()"
+        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50">
+        Annuler
+      </button>
+      <button (click)="confirmDelete()"
+        class="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">
+        Supprimer
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Info modal -->
+@if (infoModal()) {
+<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50" (click)="infoModal.set(null)">
+  <div class="bg-white rounded-xl shadow-xl p-6 w-80 max-w-full" (click)="$event.stopPropagation()">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-bold text-lg text-gray-800">{{ infoModal()?.name }}</h3>
+      <button (click)="infoModal.set(null)" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+    </div>
+    <div class="space-y-2 text-sm">
+      <div class="flex gap-2">
+        <span class="text-gray-500 w-28">Version</span>
+        <span class="text-gray-800">{{ infoModal()?.version }}</span>
+      </div>
+      @if (infoModal()?.plugins) {
+      <div class="flex gap-2">
+        <span class="text-gray-500 w-28">Plugins</span>
+        <span class="text-gray-800">{{ infoModal()?.plugins }}</span>
+      </div>
+      }
+      <div class="flex gap-2">
+        <span class="text-gray-500 w-28">Licence</span>
+        <span class="text-gray-800">{{ infoModal()?.license }}</span>
+      </div>
+      <div class="flex gap-2">
+        <span class="text-gray-500 w-28">Période</span>
+        <span class="text-gray-800">{{ infoModal()?.period }}</span>
+      </div>
+      @if (infoModal()?.userFullName) {
+      <div class="flex gap-2">
+        <span class="text-gray-500 w-28">Professeur</span>
+        <span class="text-blue-600 font-medium">{{ infoModal()?.userFullName }}</span>
+      </div>
+      }
+      @if (infoModal()?.resourceNames?.length) {
+      <div class="flex gap-2">
+        <span class="text-gray-500 w-28">Ressources</span>
+        <div class="flex flex-wrap gap-1">
+          @for (r of infoModal()?.resourceNames; track r) {
+          <span class="px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs">{{ r }}</span>
+          }
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+}
+
+<!-- Edit modal -->
+@if (editingSoftware()) {
+<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50" (click)="cancelEdit()">
+  <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-lg mx-4" (click)="$event.stopPropagation()">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-bold text-lg text-gray-800">Modifier le logiciel</h3>
+      <button (click)="cancelEdit()" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+    </div>
+
+    <div class="space-y-3">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Nom du logiciel</label>
+          <input [(ngModel)]="editForm.name" type="text"
+            class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Version</label>
+          <input [(ngModel)]="editForm.version" type="text"
+            class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">Plugin/Bibliothèques</label>
+        <input [(ngModel)]="editForm.plugins" type="text"
+          class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Licence</label>
+          <select [(ngModel)]="editForm.license"
+            class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-300">
+            <option value="Gratuite">Gratuite</option>
+            <option value="Payante">Payante</option>
+            <option value="Open Source">Open Source</option>
+            <option value="Académique">Académique</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">Période</label>
+          <input [(ngModel)]="editForm.period" type="text"
+            class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">Ressources</label>
+        <input
+          [ngModel]="editResourceTagInput()"
+          (ngModelChange)="editResourceTagInput.set($event)"
+          (keydown.enter)="addEditResourceTag($event)"
+          (blur)="onEditResourceBlur()"
+          type="text"
+          placeholder="Tapez une ressource et appuyez sur Entrée"
+          class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        <div class="flex flex-wrap gap-1 mt-2">
+          @for (tag of editForm.resourceNames; track tag) {
+          <span class="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
+            {{ tag }}
+            <button (click)="removeEditResourceTag(tag)" class="hover:text-red-900 leading-none">×</button>
+          </span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 mt-5">
+      <button (click)="cancelEdit()"
+        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50">
+        Annuler
+      </button>
+      <button (click)="saveEdit()"
+        class="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">
+        Sauvegarder
+      </button>
+    </div>
+  </div>
+</div>
+}

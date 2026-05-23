@@ -196,7 +196,7 @@
       </div>
     </div>
 
-    <div class="flex flex-nowrap gap-4 pl-4 overflow-x-hidden" #weeksRow>
+    <div #weeksRow class="flex flex-nowrap gap-4 pl-4 overflow-x-hidden">
       @for (week of getAllWeeks(); track $index) {
       @if (week.type === 'S') {
       <div class="flex-none w-44 bg-amber-50 border border-amber-300 rounded-lg p-4 text-center hover:shadow-lg transition-shadow duration-200">

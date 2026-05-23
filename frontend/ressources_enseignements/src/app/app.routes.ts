@@ -11,6 +11,7 @@ import { VacataireManager } from './components/vacataire-manager/vacataire-manag
 import { authGuard } from './services/auth/auth.guard';
 import { roleGuard } from './services/auth/role.guard';
 import { SyllabusComponent } from './components/syllabus/syllabus';
+import { SyllabusDetailComponent } from './components/syllabus-detail/syllabus-detail';
 
 export const routes: Routes = [
   {
@@ -31,7 +32,13 @@ export const routes: Routes = [
     path: 'syllabus',
     component: SyllabusComponent,
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['STUDENT', 'TEACHER'] }
+    data: { roles: ['STUDENT', 'TEACHER', 'ADMIN'] }
+  },
+  {
+    path: 'syllabus/:id',
+    component: SyllabusDetailComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['STUDENT', 'TEACHER', 'ADMIN'] }
   },
   {
     path: 'educational-model',

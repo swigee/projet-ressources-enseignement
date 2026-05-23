@@ -3,14 +3,18 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PageTitle } from '../../services/page-title/page-title-service';
+import { SyllabusService } from '../../services/syllabus/syllabus.service';
+import { SyllabusResource } from '../../models/syllabus/syllabus.model';
+import { Auth } from '../../services/auth/auth';
 
-interface ResourceSummary {
-  id: string;
+interface ResourceDisplay {
+  id: number;
   code: string;
   title: string;
   semester: string;
   parcours: string;
   description: string;
+  isAdapted: boolean;
 }
 
 @Component({
@@ -29,30 +33,81 @@ export class SyllabusComponent implements OnInit {
   semesters = ['Tous', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6'];
   parcoursOptions = ['Tous', 'RA', 'AGED', 'DACS'];
 
-  // Dummy Data
-  resources: ResourceSummary[] = [
-    { id: '1', code: 'R1.01', title: 'Initiation au développement', semester: 'S1', parcours: 'Tronc Commun', description: 'Bases de la programmation.' },
-    { id: '2', code: 'R2.01', title: 'Développement orienté objet', semester: 'S2', parcours: 'Tronc Commun', description: 'Concepts POO en Java.' },
-    { id: '3', code: 'R3.01', title: 'Développement WEB', semester: 'S3', parcours: 'RA', description: 'HTML, CSS, JS, frameworks front.' },
-    { id: '4', code: 'R3.02', title: 'Administration système', semester: 'S3', parcours: 'DACS', description: 'Linux, droits, bash.' },
-    { id: '5', code: 'R5.Real.05', title: 'Programmation avancée', semester: 'S5', parcours: 'RA', description: 'Design patterns, optimisation.' },
-    { id: '6', code: 'R5.A.04', title: 'Qualité algorithmique', semester: 'S5', parcours: 'AGED', description: 'Big data et traitement de graphes.' },
-  ];
+  // Data loaded from backend
+  resources: ResourceDisplay[] = [];
+  isLoading: boolean = true;
+  isUploading: boolean = false;
+  isAdmin: boolean = false;
+  errorMessage: string = '';
+  successMessage: string = '';
 
-  constructor(private pageTitle: PageTitle, private router: Router) {}
+  constructor(
+    private pageTitle: PageTitle, 
+    private router: Router,
+    private syllabusService: SyllabusService,
+    private auth: Auth
+  ) {}
 
   ngOnInit(): void {
     this.pageTitle.title.set('Syllabus - Liste des ressources');
+    this.isAdmin = this.auth.hasRole(['ADMIN']);
+    this.loadResources();
   }
 
-  // Lógica inteligente pour forcer Tronc Commun sur S1/S2
+  loadResources(): void {
+    this.isLoading = true;
+    this.syllabusService.getAll().subscribe({
+      next: (data: SyllabusResource[]) => {
+        this.resources = data.map(r => ({
+          id: r.id,
+          code: r.code || '',
+          title: r.title || '',
+          semester: SyllabusService.getSemestreFromCode(r.code || ''),
+          parcours: SyllabusService.getParcoursFromCode(r.code || ''),
+          description: r.description || '',
+          isAdapted: !!(r.personalDescription || r.personalSavoirs || r.personalApprentissages || r.personalVolume)
+        }));
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Erreur chargement syllabus:', err);
+        this.errorMessage = 'Impossible de charger les ressources du syllabus.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.isUploading = true;
+      this.errorMessage = '';
+      this.successMessage = '';
+
+      this.syllabusService.uploadCsv(file).subscribe({
+        next: (response) => {
+          this.successMessage = 'Programme National importé avec succès !';
+          this.isUploading = false;
+          this.loadResources(); // Refresh the list
+          setTimeout(() => this.successMessage = '', 5000);
+        },
+        error: (err) => {
+          this.errorMessage = 'Erreur lors de l\'importation : ' + err.message;
+          this.isUploading = false;
+        }
+      });
+    }
+  }
+
+  // Lógica intelligente pour forcer Tronc Commun sur S1/S2
+
   onSemesterChange() {
     if (this.selectedSemester === 'S1' || this.selectedSemester === 'S2') {
       this.selectedParcours = 'Tous';
     }
   }
 
-  get filteredResources(): ResourceSummary[] {
+  get filteredResources(): ResourceDisplay[] {
     return this.resources.filter(res => {
       // Filtre texte
       const matchesSearch = res.title.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
@@ -76,7 +131,7 @@ export class SyllabusComponent implements OnInit {
     });
   }
 
-  goToDetail(id: string) {
+  goToDetail(id: number) {
     this.router.navigate(['/syllabus', id]);
   }
 }

@@ -7,12 +7,13 @@ import {
   ScheduleConflict,
   RessourcesTableResponse
 } from '../../models/ressources/ressources.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RessourcesService {
-  private apiUrl = 'http://localhost:8080/api/ressources-table';
+  private apiUrl = `${environment.apiUrl}/api/ressources-table`;
 
   constructor(private http: HttpClient) {}
 

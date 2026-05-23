@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { SyllabusResource } from '../../models/syllabus/syllabus.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SyllabusService {
-  private apiUrl = 'http://localhost:8080/api/syllabus';
+  private apiUrl = `${environment.apiUrl}/api/syllabus`;
 
   constructor(private http: HttpClient) {}
 

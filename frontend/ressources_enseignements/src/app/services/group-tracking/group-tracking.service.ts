@@ -5,12 +5,13 @@ import { catchError, map } from 'rxjs/operators';
 import { GroupTrackingResponse, StudentGroup, Formation } from '../../models/group-tracking/group-tracking.model';
 import { RessourcesService } from '../ressources/ressources-service';
 import { RessourceRow } from '../../models/ressources/ressources.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class GroupTrackingService {
   private readonly http = inject(HttpClient);
   private readonly ressourcesService = inject(RessourcesService);
-  private readonly apiUrl = 'http://localhost:8080/api/group-tracking';
+  private readonly apiUrl = `${environment.apiUrl}/api/group-tracking`;
 
   // G1 et G2 correspondent aux class_name en base
   private readonly CLASSES = ['G1', 'G2', 'G3', 'G4'];

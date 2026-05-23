@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { LessonService } from '../lesson/lesson-service';
 import { map, switchMap } from 'rxjs';
 import { User } from '../../interfaces/user.interface';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,7 @@ export class EducationalManagerService {
 
   private readonly http = inject(HttpClient)
 
-  api = "http://localhost:8080/api/education-manager"
+  api = `${environment.apiUrl}/api/education-manager`
 
   private readonly educationListDatabase = signal<Education[]>([]);
   educationList = this.educationListDatabase.asReadonly()

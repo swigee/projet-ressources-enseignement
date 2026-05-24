@@ -1,11 +1,12 @@
 import { Injectable, inject } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SoftwareModel } from '../../models/software/software.model';
 
 @Injectable({ providedIn: 'root' })
 export class SoftwareService {
-  private readonly apiUrl = 'http://localhost:8080/api/software';
+  private readonly apiUrl = `${environment.apiUrl}/api/software`;
   private readonly http = inject(HttpClient);
 
   getAll(): Observable<SoftwareModel[]> {

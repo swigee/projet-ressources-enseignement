@@ -1,4 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { Education } from '../../models/education/education.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -14,7 +15,7 @@ export class EducationalManagerService {
 
   private readonly http = inject(HttpClient)
 
-  api = "http://localhost:8080/api/education-manager"
+  api = `${environment.apiUrl}/api/education-manager`
 
   private readonly educationListDatabase = signal<Education[]>([]);
   educationList = this.educationListDatabase.asReadonly()

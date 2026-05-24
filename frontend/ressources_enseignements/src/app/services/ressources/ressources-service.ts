@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { Observable, catchError, throwError } from 'rxjs';
 import {
   RessourceRow,
@@ -12,7 +13,7 @@ import {
   providedIn: 'root'
 })
 export class RessourcesService {
-  private apiUrl = 'http://localhost:8080/api/ressources-table';
+  private apiUrl = `${environment.apiUrl}/api/ressources-table`;
 
   constructor(private http: HttpClient) {}
 

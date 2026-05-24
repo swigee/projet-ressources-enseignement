@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, forkJoin } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -10,7 +11,7 @@ import { RessourceRow } from '../../models/ressources/ressources.model';
 export class GroupTrackingService {
   private readonly http = inject(HttpClient);
   private readonly ressourcesService = inject(RessourcesService);
-  private readonly apiUrl = 'http://localhost:8080/api/group-tracking';
+  private readonly apiUrl = `${environment.apiUrl}/api/group-tracking`;
 
   // G1 et G2 correspondent aux class_name en base
   private readonly CLASSES = ['G1', 'G2', 'G3', 'G4'];

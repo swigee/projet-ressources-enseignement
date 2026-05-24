@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import {AssignmentGrid,TeacherAssignment,Teacher,AssignmentStatistics,CreateAssignment,AssignmentValidationResponse,AffectationRow} from '../../models/teacher/teacher.model';
 @Injectable({
   providedIn: 'root'
 })
 export class TeacherAssignmentService {
-  private apiUrl = 'http://localhost:8080/api/teacher-assignment';
-  private educationApiUrl = 'http://localhost:8080/api/education-manager';
+  private apiUrl = `${environment.apiUrl}/api/teacher-assignment`;
+  private educationApiUrl = `${environment.apiUrl}/api/education-manager`;
 
   constructor(private http: HttpClient) {}
 

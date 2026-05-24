@@ -45,7 +45,7 @@ public class Resource implements Serializable {
     private String title;
 
     @Lob
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "category", length = 100)

@@ -21,7 +21,7 @@ INSERT INTO position (id, name, is_active) VALUES
 -- =========================
 -- USERS
 -- =========================
-INSERT INTO user (id, address, email, first_name, last_name, password, phone_number, validation_status, username) VALUES
+INSERT INTO users (id, address, email, first_name, last_name, password, phone_number, validation_status, username) VALUES
 (1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', '$2a$10$G9CG3yuKGV9l6mDuxZy/ZuHgKgp62NAm/1ZXhcqXoZM4Om021JV3K', '0101010101', 'NONE', 'P2600001'),
 (2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', '$2a$10$1hrZWYwDa5MopVXf1LeGmusoN2lrzH06tFHBGLTIsk92dHE6p3p8G', '0202020202', 'VALIDATED', 'P2600002'),
 (3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', '$2a$10$x9fz8aI5xHPa4L5N1tBtaOtXE0dLjzFvyjPVRoWRXwyK9FYgCS8AO', '0303030303', 'NONE', 'P2600003'),

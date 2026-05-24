@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.server.ResponseStatusException;
+import sae.project.dtos.education.EducationDTO;
 import sae.project.model.Formation;
 import sae.project.model.Resource;
 import sae.project.model.User;
@@ -41,11 +42,10 @@ public class EducationManagerController {
     }
    
     
-    @PutMapping("/{id}")
-    public Formation put(@RequestBody Formation etu) {
-        return emrep.update(etu);
+    @PatchMapping("/{id}")
+    public Formation patch(@PathVariable Integer id, @RequestBody EducationDTO request) {
+        return emrep.update(id, request);
     }
-
     @PostMapping
     public void post(@RequestBody Formation f) {
         emrep.create(f);

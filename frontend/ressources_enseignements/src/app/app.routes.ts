@@ -2,19 +2,19 @@ import { Routes } from '@angular/router';
 import { Dashboard } from './components/dashboard/dashboard';
 import { EducationalManager } from './components/educational-manager/educational-manager';
 import { Login } from './components/login/login'
-import { EducationManagerCreation } from './components/education-manager-creation/education-manager-creation';
 import { TeacherAssignmentComponent } from './components/teacher-assignment/teacher-assignment';
 import { UserManager } from './components/user-manager/user-manager';
 import { Ressource } from './components/ressource/ressource';
+import { GroupTracking } from './components/group-tracking/group-tracking';
 import { authGuard } from './services/auth/auth.guard';
 import { roleGuard } from './services/auth/role.guard';
 
 export const routes: Routes = [
-  // {
-  //   path:'',
-  //   redirectTo:'login',
-  //   pathMatch:'full',
-  // },
+  {
+    path:'',
+    redirectTo:'login',
+    pathMatch:'full'
+  },
   {
     path: 'login',
     component: Login
@@ -43,16 +43,10 @@ export const routes: Routes = [
     data: { roles: ['ADMIN'] }
   },
   {
-        path:'education-manager',
-    component: EducationalManager
-  },
-  {
-        path:'education-manager/create',
-    component: EducationManagerCreation
-  },
-  {
-        path:'education-manager/edit/:id',
-    component: EducationManagerCreation
+    path:'education-manager',
+    component: EducationalManager,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN', 'TEACHER'] }
   },
   {
     path: 'user-manager',
@@ -69,6 +63,12 @@ export const routes: Routes = [
   {
     path: 'ticket-manager',
     loadComponent: () => import('./components/ticket-manager/ticket-manager').then(m => m.TicketManager),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
+  },
+  {
+    path: 'group-tracking',
+    component: GroupTracking,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['ADMIN'] }
   }

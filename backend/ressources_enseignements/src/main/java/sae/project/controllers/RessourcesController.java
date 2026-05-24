@@ -25,10 +25,11 @@ public class RessourcesController {
     public ResponseEntity<RessourcesResponseDTO> getData(
             @RequestParam String year,
             @RequestParam String className,
-            @RequestParam Integer semester) {
-        log.info("GET /api/ressources-table/data?year={}&className={}&semester={}", year, className, semester);
+            @RequestParam Integer semester,
+            @RequestParam(required = false) String formation) {
+        log.info("GET /api/ressources-table/data?year={}&className={}&semester={}&formation={}", year, className, semester, formation);
 
-        RessourcesResponseDTO response = ressourcesTableService.getRessourcesTableData(year, className, semester);
+        RessourcesResponseDTO response = ressourcesTableService.getRessourcesTableData(year, className, semester, formation);
         return ResponseEntity.ok(response);
     }
 

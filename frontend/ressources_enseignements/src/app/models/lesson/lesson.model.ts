@@ -11,4 +11,5 @@ export interface Lesson{
   category: string;
   hours_per_week: number;
   hours_per_half_group: number;
+  semester?: string | number;
 }

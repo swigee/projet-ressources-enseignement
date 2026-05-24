@@ -11,6 +11,7 @@ import {
   AssignmentStatistics
 } from '../../models/teacher/teacher.model';
 import {TeacherAssignmentService} from '../../services/teacher-assignment/teacher-assignment-service'
+import {PageTitle} from '../../services/page-title/page-title-service';
 
 interface DragData {
   type: string;
@@ -27,7 +28,7 @@ interface DragData {
 export class TeacherAssignmentComponent implements OnInit {
   selectedFormation: string = 'Informatique';
   selectedYear: string = '1';
-  selectedClass: string = 'Classe A';
+  selectedClass: string = 'G1';
   selectedSemester: string = '';
   searchQuery: string = '';
   draggedTeacher: Teacher | null = null;
@@ -37,9 +38,10 @@ export class TeacherAssignmentComponent implements OnInit {
   affectationGrid: AffectationRow[] = [];
   statistics: any = null;
 
-  constructor(private teacherService: TeacherAssignmentService) {}
+  constructor(private teacherService: TeacherAssignmentService, private pageTitle: PageTitle) {}
 
   ngOnInit() {
+    this.pageTitle.title.set("Affectation des enseignants");
     console.log('Initialisation avec:', {
       formation: this.selectedFormation,
       year: this.selectedYear,
@@ -168,23 +170,26 @@ export class TeacherAssignmentComponent implements OnInit {
       const usedHours = teacherList.reduce((sum, t) => sum + t.assignedHours, 0);
       const remainingHours = moduleHours - usedHours;
 
-      if (remainingHours <= 0) {
-        alert('Toutes les heures de ce type sont déjà affectées');
-        this.draggedTeacher = null;
-        return;
-      }
-
-      let hoursStr = prompt(`Combien d'heures pour le ${lessonType} ? (max ${remainingHours})`, `${remainingHours}`);
+      const defaultHours = remainingHours > 0 ? remainingHours : moduleHours;
+      let hoursStr = prompt(`Combien d'heures pour le ${lessonType} ? (quota : ${moduleHours}h, utilisées : ${usedHours}h)`, `${defaultHours}`);
       if (!hoursStr) {
         this.draggedTeacher = null;
         return;
       }
 
       let hours = parseInt(hoursStr);
-      if (isNaN(hours) || hours <= 0 || hours > remainingHours) {
-        alert(`Nombre d'heures invalide. Vous pouvez assigner entre 1 et ${remainingHours}h`);
+      if (isNaN(hours) || hours <= 0) {
+        alert(`Nombre d'heures invalide.`);
         this.draggedTeacher = null;
         return;
+      }
+
+      if (usedHours + hours > moduleHours) {
+        const over = usedHours + hours - moduleHours;
+        if (!confirm(`Attention : cette affectation dépasse le quota de ${moduleHours}h de ${over}h. Confirmer quand même ?`)) {
+          this.draggedTeacher = null;
+          return;
+        }
       }
 
       const existingAssignment = teacherList.find(t => t.teacherId === dragData.teacherId);
@@ -219,6 +224,32 @@ export class TeacherAssignmentComponent implements OnInit {
 
   onDragEnd(): void {
     this.draggedTeacher = null;
+  }
+
+  editTeacherHours(teacher: TeacherAssignment, resourceId: number, lessonType: 'TD' | 'TP' | 'CM'): void {
+    const hoursStr = prompt(`Modifier les heures de ${teacher.teacherName} (${lessonType}) :`, `${teacher.assignedHours}`);
+    if (!hoursStr) return;
+
+    const hours = parseInt(hoursStr);
+    if (isNaN(hours) || hours <= 0) {
+      alert('Nombre d\'heures invalide.');
+      return;
+    }
+
+    const dto: CreateAssignment = {
+      userId: teacher.teacherId,
+      resourceId,
+      lessonType,
+      assignedTimes: hours
+    };
+
+    this.teacherService.updateAssignment(teacher.assignmentId, dto).subscribe({
+      next: () => this.loadData(),
+      error: (error) => {
+        console.error('Erreur mise à jour:', error);
+        alert('Erreur lors de la modification des heures.');
+      }
+    });
   }
 
   removeTeacher(assignmentId: number): void {

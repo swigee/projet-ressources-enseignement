@@ -30,10 +30,12 @@ public class RessourcesService {
     private TeacherAssignmentRepository assignmentRepository;
 
 
-    public RessourcesResponseDTO getRessourcesTableData(String year, String className, Integer semester) {
-        log.info("Retrieving table data for year={} className={} semester={}", year, className, semester);
+    public RessourcesResponseDTO getRessourcesTableData(String year, String className, Integer semester, String formation) {
+        log.info("Retrieving table data for year={} className={} semester={} formation={}", year, className, semester, formation);
 
-        List<Resource> resources = ressourcesRepository.findByYearAndClassAndSemester(year, className, semester);
+        List<Resource> resources = (formation != null && !formation.isBlank())
+                ? ressourcesRepository.findByYearAndClassAndSemesterAndFormation(year, className, semester, formation)
+                : ressourcesRepository.findByYearAndClassAndSemester(year, className, semester);
         List<RessourceRowDTO> ressourceRows = resources.stream()
                 .map(this::mapResourceToRowDTO)
                 .collect(Collectors.toList());
@@ -148,7 +150,23 @@ public class RessourcesService {
 
         List<Assignment> assignments = assignmentRepository.findByResourceId(resource.getId());
         List<TeacherBadgeDTO> assignedTeachers = assignments.stream()
-                .map(this::mapAssignmentToTeacherBadge)
+                .collect(Collectors.groupingBy(
+                        a -> a.getUser().getId(),
+                        Collectors.summingInt(a -> a.getAssignedTimes() != null ? a.getAssignedTimes() : 0)
+                ))
+                .entrySet().stream()
+                .map(entry -> {
+                    User user = assignments.stream()
+                            .filter(a -> a.getUser().getId().equals(entry.getKey()))
+                            .findFirst().orElseThrow().getUser();
+                    String lastName = user.getLastName() != null ? user.getLastName().toUpperCase() : "";
+                    String firstName = user.getFirstName() != null ? user.getFirstName() : "";
+                    return TeacherBadgeDTO.builder()
+                            .teacherId(user.getId())
+                            .fullName((lastName + " " + firstName).trim())
+                            .assignedHours(entry.getValue())
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         return RessourceRowDTO.builder()

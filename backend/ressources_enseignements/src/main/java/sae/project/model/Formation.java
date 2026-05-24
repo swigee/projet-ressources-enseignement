@@ -5,6 +5,7 @@
 package sae.project.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,6 +51,9 @@ public class Formation implements Serializable {
     @Column(name = "class_name", length = 50)
     private String className;
 
+    @Column(name = "parcours", length = 255)
+    private String parcours;
+
     @Column(name = "description", length = 255)
     private String description;
     
@@ -60,8 +65,12 @@ public class Formation implements Serializable {
 
     @ManyToMany
     @JoinTable(name = "formation_resource", joinColumns = @JoinColumn(name = "formation_id"), inverseJoinColumns = @JoinColumn(name = "resource_id"))
-    @JsonIgnore
+    @JsonIgnoreProperties("formationList")
     private List<Resource> resourceList;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "formation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("formation")
+    private List<Semester> semesters = new ArrayList<>();
     
     
     /**

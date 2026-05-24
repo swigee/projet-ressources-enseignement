@@ -1,0 +1,207 @@
+<div class="p-8 bg-gray-50 min-h-screen">
+
+  <!-- Titre -->
+  <h1 class="text-2xl font-bold text-gray-800 mb-6">Suivis des groupes</h1>
+
+  <!-- Carte principale -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+
+    <!-- Barre de filtres -->
+    <div class="p-5 border-b border-gray-200 flex flex-wrap items-center gap-3">
+
+      <!-- Recherche -->
+      <div class="relative flex-1 min-w-52">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input
+          type="text"
+          placeholder="Rechercher..."
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+          class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <!-- Filtre Formation -->
+      <div class="flex flex-col gap-0.5">
+        <label class="text-xs font-medium text-blue-600 uppercase tracking-wide">Formation</label>
+        <select
+          [ngModel]="selectedFormation()"
+          (ngModelChange)="selectedFormation.set($event); loadGroups()"
+          class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+        >
+          @for (f of formations(); track f.id) {
+          <option [value]="f.id">{{ f.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Filtre Année -->
+      <div class="flex flex-col gap-0.5">
+        <label class="text-xs font-medium text-green-600 uppercase tracking-wide">Année</label>
+        <select
+          [ngModel]="selectedYear()"
+          (ngModelChange)="onYearChange($event)"
+          class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+        >
+          @for (y of getYears(); track y) {
+          <option [value]="y">Année {{ y }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Filtre Semestre -->
+      <div class="flex flex-col gap-0.5">
+        <label class="text-xs font-medium text-purple-600 uppercase tracking-wide">Semestre</label>
+        <select
+          [ngModel]="selectedSemester()"
+          (ngModelChange)="selectedSemester.set($event); loadGroups()"
+          class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+        >
+          @for (s of getSemesters(); track s) {
+          <option [value]="s">{{ "Semestre " + s }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Badge Groupe étudiant -->
+      <div class="ml-auto">
+        <span class="px-5 py-2 border-2 border-gray-700 rounded-full text-sm font-medium text-gray-700">
+          Groupe étudiant
+        </span>
+      </div>
+    </div>
+
+    <!-- Chargement -->
+    @if (isLoading()) {
+    <div class="flex justify-center items-center py-16">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+    </div>
+    }
+
+    <!-- Liste des groupes -->
+    @if (!isLoading()) {
+    <div class="divide-y divide-gray-200">
+
+      @if (filteredGroups().length === 0) {
+      <div class="py-16 text-center text-gray-400 italic">Aucun groupe trouvé</div>
+      }
+
+      @for (group of filteredGroups(); track group.id) {
+
+      <!-- En-tête du groupe -->
+      <div
+        class="flex items-center gap-4 px-6 py-4 cursor-pointer select-none hover:bg-gray-50 transition-colors"
+        (click)="toggleGroup(group.id)"
+      >
+        <!-- Chevron -->
+        <svg
+          class="w-5 h-5 text-gray-500 transition-transform duration-200 flex-shrink-0"
+          [class.rotate-90]="isExpanded(group.id)"
+          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+
+        <!-- Badge groupe -->
+        <span
+          class="px-4 py-1.5 rounded-full text-sm font-bold text-white flex-shrink-0"
+          [class]="isExpanded(group.id) ? 'bg-green-500' : 'bg-indigo-500'"
+        >
+          {{ group.id }}
+        </span>
+
+        <!-- Totaux (visibles seulement quand replié) -->
+        @if (!isExpanded(group.id)) {
+        <div class="ml-auto flex gap-8 items-center">
+          <div class="flex flex-col items-center w-24">
+            <span class="text-xs font-semibold text-teal-600 uppercase tracking-wide">TD</span>
+            <span class="text-lg font-bold text-teal-600">{{ group.totalTdHours }}h</span>
+          </div>
+          <div class="flex flex-col items-center w-24">
+            <span class="text-xs font-semibold text-purple-600 uppercase tracking-wide">TP</span>
+            <span class="text-lg font-bold text-purple-600">{{ group.totalTpHours }}h</span>
+          </div>
+          <div class="flex flex-col items-center w-24">
+            <span class="text-xs font-semibold text-red-500 uppercase tracking-wide">CM</span>
+            <span class="text-lg font-bold text-red-500">{{ group.totalCmHours }}h</span>
+          </div>
+        </div>
+        }
+      </div>
+
+      <!-- Contenu dépliable -->
+      @if (isExpanded(group.id)) {
+      <div class="px-6 pb-5 bg-white">
+
+        <!-- Table des ressources -->
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-gray-500 font-medium border-b border-gray-200">
+              <th class="text-left py-3 pl-2 w-1/3">Ressource</th>
+              <th class="text-center py-3 w-1/5">Heures globales</th>
+              <th class="text-center py-3 w-1/5 text-teal-600">Heures TD</th>
+              <th class="text-center py-3 w-1/5 text-purple-600">Heures TP</th>
+              <th class="text-center py-3 w-1/5 text-red-500">Heures CM</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of getPage(group); track row.name) {
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+              <td class="py-3 pl-2 text-gray-800">{{ row.name }}</td>
+              <td class="py-3 text-center"
+                [class]="row.globalHours.actual < row.globalHours.planned ? 'text-orange-500 font-medium' : 'text-gray-700'">
+                {{ formatHours(row.globalHours) }}
+              </td>
+              <td class="py-3 text-center"
+                [class]="row.tdHours.actual < row.tdHours.planned ? 'text-orange-500 font-medium' : 'text-gray-700'">
+                {{ formatHours(row.tdHours) }}
+              </td>
+              <td class="py-3 text-center"
+                [class]="row.tpHours.actual < row.tpHours.planned ? 'text-orange-500 font-medium' : 'text-gray-700'">
+                {{ formatHours(row.tpHours) }}
+              </td>
+              <td class="py-3 text-center"
+                [class]="row.cmHours.actual < row.cmHours.planned ? 'text-orange-500 font-medium' : 'text-gray-700'">
+                {{ formatHours(row.cmHours) }}
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        @if (getTotalPages(group) > 1) {
+        <div class="flex justify-center gap-1 mt-4">
+          @for (page of getPageNumbers(group); track page) {
+          <button
+            (click)="goToPage(group.id, page); $event.stopPropagation()"
+            class="w-8 h-8 rounded-full text-sm font-medium transition-colors"
+            [class]="getCurrentPage(group.id) === page
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+          >
+            {{ page }}
+          </button>
+          }
+        </div>
+        }
+      </div>
+      }
+
+      }
+    </div>
+
+    <!-- Légende en-tête des totaux (ligne fantôme pour alignement quand tout replié) -->
+    @if (allGroupsCollapsed()) {
+    <div class="flex justify-end gap-16 px-6 py-2 text-xs text-gray-400 border-t border-gray-100">
+      <span class="w-24 text-center text-teal-600 font-medium">TD</span>
+      <span class="w-24 text-center text-purple-600 font-medium">TP</span>
+      <span class="w-24 text-center text-red-500 font-medium">CM</span>
+    </div>
+    }
+
+    }
+  </div>
+</div>

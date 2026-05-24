@@ -1,0 +1,312 @@
+<div class="p-6 space-y-6">
+
+  <div class="flex items-center justify-between gap-3 sticky top-0 z-50 bg-white py-3 border-b border-gray-200 shadow-sm -mx-6 px-6">
+    <div>
+      @if (isEditing) {
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm font-medium">
+        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        Mode edition actif
+      </span>
+      }
+    </div>
+    <div class="flex gap-3">
+      <span class="tooltip-wrap">
+        <button
+          (click)="editingEnabled.emit()"
+          [disabled]="isEditing"
+          class="inline-flex items-center gap-2 px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 transition-colors duration-200 font-medium"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          </svg>
+          Modifier
+        </button>
+        <span class="tooltip-text">Active le mode édition : vous pouvez alors saisir les heures par semaine pour chaque ressource.</span>
+      </span>
+      <button
+        (click)="editingValidated.emit()"
+        [disabled]="!isEditing"
+        class="inline-flex items-center gap-2 px-5 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 transition-colors duration-200 font-medium"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        Valider
+      </button>
+      <button
+        (click)="editingCancelled.emit()"
+        [disabled]="!isEditing"
+        class="inline-flex items-center gap-2 px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors duration-200 font-medium"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        Annuler
+      </button>
+    </div>
+  </div>
+
+  @if (successMessage) {
+  <div class="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg">
+    <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <p class="text-sm font-medium text-green-800">{{ successMessage }}</p>
+  </div>
+  }
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 border-l-4" style="border-left-color: #667eea">
+      <div class="text-sm text-gray-600">Total heures</div>
+      <div class="text-2xl font-bold text-gray-800">{{ calculateGrandTotalWithProject() }}h</div>
+    </div>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 border-l-4" style="border-left-color: #ff6b6b">
+      <div class="text-sm text-gray-600">Heures CM</div>
+      <div class="text-2xl font-bold" style="color: #ff6b6b">{{ maquetteTotalCM }}h</div>
+    </div>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 border-l-4" style="border-left-color: #4ecdc4">
+      <div class="text-sm text-gray-600">Heures TD</div>
+      <div class="text-2xl font-bold" style="color: #4ecdc4">{{ maquetteTotalTD }}h</div>
+    </div>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 border-l-4" style="border-left-color: #a864a8">
+      <div class="text-sm text-gray-600">Heures TP</div>
+      <div class="text-2xl font-bold" style="color: #a864a8">{{ maquetteTotalTP }}h</div>
+    </div>
+  </div>
+
+  <div class="bg-gray-50 rounded-lg px-4 py-3 flex flex-wrap items-center gap-4">
+    <span class="text-sm font-medium text-gray-700">Legende :</span>
+    <span class="flex items-center gap-1.5 tooltip-wrap">
+      <span class="w-3 h-3 rounded-full inline-block" style="background-color: #ff6b6b"></span>
+      <span class="text-sm text-gray-600">CM</span>
+      <span class="tooltip-text">Cours Magistral — enseignement en grand groupe, présentiel.</span>
+    </span>
+    <span class="flex items-center gap-1.5 tooltip-wrap">
+      <span class="w-3 h-3 rounded-full inline-block" style="background-color: #4ecdc4"></span>
+      <span class="text-sm text-gray-600">TD</span>
+      <span class="tooltip-text">Travaux Dirigés — enseignement en demi-groupe avec exercices encadrés.</span>
+    </span>
+    <span class="flex items-center gap-1.5 tooltip-wrap">
+      <span class="w-3 h-3 rounded-full inline-block" style="background-color: #a864a8"></span>
+      <span class="text-sm text-gray-600">TP</span>
+      <span class="tooltip-text">Travaux Pratiques — séances en petit groupe sur machine ou en atelier.</span>
+    </span>
+    <span class="flex items-center gap-1.5 tooltip-wrap">
+      <span class="w-3 h-3 rounded-full inline-block bg-amber-400"></span>
+      <span class="text-sm text-gray-600">Entreprise</span>
+      <span class="tooltip-text">Semaine en entreprise (alternance). Aucune heure d'enseignement n'est prévue.</span>
+    </span>
+  </div>
+
+  @for (row of scheduleData; track row.id) {
+  <div class="space-y-3">
+    <div class="bg-gray-50 rounded-lg shadow-sm border border-gray-200 border-l-4 p-4 hover:shadow-lg transition-shadow duration-200" style="border-left-color: #667eea">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h3 class="text-base font-semibold text-gray-800">{{ row.courseName }}</h3>
+          @if (row.category) {
+          <span class="text-xs text-gray-500 mt-0.5 inline-block">{{ row.category }}</span>
+          }
+        </div>
+        <div class="flex items-center gap-6">
+          <div class="text-center">
+            <div class="text-xs text-gray-500 uppercase">CM</div>
+            <div class="text-lg font-bold" style="color: #ff6b6b">{{ calculateTotalCM(row) }}h</div>
+          </div>
+          <div class="text-center">
+            <div class="text-xs text-gray-500 uppercase">TD</div>
+            <div class="text-lg font-bold" style="color: #4ecdc4">{{ calculateTotalTD(row) }}h</div>
+          </div>
+          <div class="text-center">
+            <div class="text-xs text-gray-500 uppercase">TP</div>
+            <div class="text-lg font-bold" style="color: #a864a8">{{ calculateTotalTP(row) }}h</div>
+          </div>
+          <div class="text-center">
+            <div class="text-xs text-gray-500 uppercase">Total</div>
+            <div class="text-lg font-bold text-gray-800">{{ calculateTotalHours(row) }}h</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-nowrap gap-4 pl-4 overflow-x-auto">
+      @for (week of getAllWeeks(); track $index) {
+      @if (week.type === 'S') {
+      <div class="flex-none w-44 bg-amber-50 border border-amber-300 rounded-lg p-4 text-center hover:shadow-lg transition-shadow duration-200">
+        <div class="font-bold text-amber-700 mb-3 pb-2 border-b border-amber-200 text-sm">S{{ week.num }}
+          <span class="text-xs text-amber-500 font-normal ml-1">{{ week.date }}</span>
+        </div>
+        <div class="text-xs text-amber-600 font-medium">Entreprise</div>
+      </div>
+      } @else {
+      <div class="flex-none w-44 bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
+        <div class="font-bold text-gray-800 mb-3 pb-2 border-b border-gray-200 text-sm">S{{ week.num }}
+          <span class="text-xs text-gray-500 font-normal ml-1">{{ week.date }}</span>
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-sm">
+            <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #ffe8e8; color: #ff6b6b">CM</span>
+            <input type="number" min="0"
+              [value]="row.hoursPerWeek[week.num.toString()]?.cm || 0"
+              (input)="onScheduleHoursInput(row.id, week.num, 'cm', $event)"
+              [readonly]="!isEditing"
+              class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-red-500 focus:outline-none text-sm">
+          </div>
+          <div class="flex justify-between items-center text-sm">
+            <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #e0f7f6; color: #4ecdc4">TD</span>
+            <input type="number" min="0"
+              [value]="row.hoursPerWeek[week.num.toString()]?.td || 0"
+              (input)="onScheduleHoursInput(row.id, week.num, 'td', $event)"
+              [readonly]="!isEditing"
+              class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:outline-none text-sm">
+          </div>
+          <div class="flex justify-between items-center text-sm">
+            <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #f3e5f3; color: #a864a8">TP</span>
+            <input type="number" min="0"
+              [value]="row.hoursPerWeek[week.num.toString()]?.tp || 0"
+              (input)="onScheduleHoursInput(row.id, week.num, 'tp', $event)"
+              [readonly]="!isEditing"
+              class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+          </div>
+          <div class="flex justify-between items-center text-sm pt-2 border-t border-gray-200">
+            <span class="text-gray-600 font-semibold">Total</span>
+            <span class="font-bold text-gray-800">{{ getWeekTotal(row.hoursPerWeek, week.num) }}h</span>
+          </div>
+        </div>
+      </div>
+      }
+      }
+    </div>
+  </div>
+  }
+
+  <div class="space-y-3">
+    <div class="bg-green-50 rounded-lg shadow-sm border border-gray-200 border-l-4 border-green-500 p-4 hover:shadow-lg transition-shadow duration-200">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h3 class="text-base font-semibold text-green-800">Projet SAE</h3>
+          <span class="text-xs text-green-600 mt-0.5 inline-block">{{ projectData.name }}</span>
+        </div>
+        <div class="flex items-center gap-6">
+          <div class="text-center">
+            <div class="text-xs text-gray-500">Total</div>
+            <div class="text-lg font-bold text-green-700">{{ calculateProjectTotal() }}h</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-nowrap gap-4 pl-4 overflow-x-auto">
+      @for (week of getAllWeeks(); track $index) {
+      @if (week.type === 'S') {
+      <div class="flex-none w-44 bg-amber-50 border border-amber-300 rounded-lg p-4 text-center hover:shadow-lg transition-shadow duration-200">
+        <div class="font-bold text-amber-700 mb-3 pb-2 border-b border-amber-200 text-sm">S{{ week.num }}
+          <span class="text-xs text-amber-500 font-normal ml-1">{{ week.date }}</span>
+        </div>
+        <div class="text-xs text-amber-600 font-medium">Entreprise</div>
+      </div>
+      } @else {
+      <div class="flex-none w-44 bg-green-50 border border-green-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
+        <div class="font-bold text-green-800 mb-3 pb-2 border-b border-green-200 text-sm">S{{ week.num }}
+          <span class="text-xs text-green-500 font-normal ml-1">{{ week.date }}</span>
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-sm">
+            <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #ffe8e8; color: #ff6b6b">CM</span>
+            <input type="number" min="0"
+              [value]="projectData.hoursPerWeek[week.num.toString()]?.cm || 0"
+              (input)="onProjectHoursInput(week.num, 'cm', $event)"
+              [readonly]="!isEditing"
+              class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-red-500 focus:outline-none text-sm">
+          </div>
+          <div class="flex justify-between items-center text-sm">
+            <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #e0f7f6; color: #4ecdc4">TD</span>
+            <input type="number" min="0"
+              [value]="projectData.hoursPerWeek[week.num.toString()]?.td || 0"
+              (input)="onProjectHoursInput(week.num, 'td', $event)"
+              [readonly]="!isEditing"
+              class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:outline-none text-sm">
+          </div>
+          <div class="flex justify-between items-center text-sm">
+            <span class="px-2 py-0.5 text-xs font-bold rounded" style="background: #f3e5f3; color: #a864a8">TP</span>
+            <input type="number" min="0"
+              [value]="projectData.hoursPerWeek[week.num.toString()]?.tp || 0"
+              (input)="onProjectHoursInput(week.num, 'tp', $event)"
+              [readonly]="!isEditing"
+              class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+          </div>
+          <div class="flex justify-between items-center text-sm pt-2 border-t border-green-200">
+            <span class="text-green-700 font-semibold">Total</span>
+            <span class="font-bold text-green-800">{{ getWeekTotal(projectData.hoursPerWeek, week.num) }}h</span>
+          </div>
+        </div>
+      </div>
+      }
+      }
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold text-gray-700">Total hors projet</h3>
+        <span class="text-xl font-bold text-blue-600">{{ calculateMaquetteGrandTotal() }}h</span>
+      </div>
+      <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
+        @for (week of getAllWeeks(); track $index) {
+        @if (week.type === 'E') {
+        <div class="bg-blue-50 rounded p-2 text-center">
+          <div class="text-xs text-gray-500">S{{ week.num }}</div>
+          <div class="text-sm font-semibold text-blue-700">{{ calculateWeekTotal(week.num) }}</div>
+        </div>
+        } @else {
+        <div class="bg-gray-100 rounded p-2 text-center">
+          <div class="text-xs text-gray-400">S{{ week.num }}</div>
+          <div class="text-xs text-gray-400">-</div>
+        </div>
+        }
+        }
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold text-gray-700">Total avec projet</h3>
+        <span class="text-xl font-bold text-green-600">{{ calculateGrandTotalWithProject() }}h</span>
+      </div>
+      <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
+        @for (week of getAllWeeks(); track $index) {
+        @if (week.type === 'E') {
+        <div class="bg-green-50 rounded p-2 text-center">
+          <div class="text-xs text-gray-500">S{{ week.num }}</div>
+          <div class="text-sm font-semibold text-green-700">{{ calculateWeekTotalWithProject(week.num) }}</div>
+        </div>
+        } @else {
+        <div class="bg-gray-100 rounded p-2 text-center">
+          <div class="text-xs text-gray-400">S{{ week.num }}</div>
+          <div class="text-xs text-gray-400">-</div>
+        </div>
+        }
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-blue-50 rounded-lg p-4">
+    <div class="grid grid-cols-3 gap-4">
+      <div>
+        <div class="text-sm text-gray-600">Total ressources</div>
+        <div class="text-2xl font-bold text-gray-800">{{ calculateMaquetteGrandTotal() }}h</div>
+      </div>
+      <div>
+        <div class="text-sm text-gray-600">Total avec projet</div>
+        <div class="text-2xl font-bold text-green-600">{{ calculateGrandTotalWithProject() }}h</div>
+      </div>
+      <div>
+        <div class="text-sm text-gray-600">Semaines entreprise</div>
+        <div class="text-2xl font-bold text-orange-600">{{ getCompanyWeeksCount() }}</div>
+      </div>
+    </div>
+  </div>
+
+</div>

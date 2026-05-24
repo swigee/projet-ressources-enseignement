@@ -3,6 +3,8 @@ package sae.project.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import sae.project.dtos.user.BulkImportResultDTO;
 import sae.project.dtos.user.UserDTO;
 import sae.project.model.Role;
 import sae.project.model.User;
@@ -29,15 +31,12 @@ public class UserController {
                     "is_active", role.getIsActive(),
                     "name", role.getName()
             )).toList() : List.of();
-            // formations : liste de noms ou d'ids sous forme de String
             List<String> formationJsons = user.getFormationList() != null ? user.getFormationList().stream()
                     .map(f -> f.getName() != null ? f.getName() : String.valueOf(f.getId()))
                     .toList() : List.of();
-            // tickets : titre ou id sous forme de String
             List<String> ticketJsons = user.getTicketsList() != null ? user.getTicketsList().stream()
                     .map(t -> t.getTitle() != null ? t.getTitle() : String.valueOf(t.getId()))
                     .toList() : List.of();
-            // assignments : id sous forme de String
             List<String> assignmentJsons = user.getAssignmentList() != null ? user.getAssignmentList().stream()
                     .map(a -> String.valueOf(a.getId()))
                     .toList() : List.of();
@@ -49,6 +48,7 @@ public class UserController {
                     user.getAddress(),
                     user.getEmail(),
                     user.getValidationStatus(),
+                    user.getValidationComment(),
                     roleJsons,
                     formationJsons,
                     ticketJsons,
@@ -66,17 +66,6 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // @PostMapping(path="/add", produces={"application/json"})
-    // public User createUser(@RequestBody User user) {
-    // return userService.saveUser(user);
-    // }
-
-    @DeleteMapping(path = "/{id}", produces = { "application/json" })
-    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
-    }
-
     @PutMapping(path = "/{id}/roles", consumes = "application/json")
     public ResponseEntity<Void> updateUserRoles(@PathVariable int id, @RequestBody Map<String, List<Integer>> body) {
         List<Integer> roles = body.get("roles");
@@ -92,8 +81,9 @@ public class UserController {
     }
 
     @PostMapping(path = "/{id}/validate", produces = { "application/json" })
-    public ResponseEntity<Void> validateUser(@PathVariable int id) {
-        userService.validateUser(id);
+    public ResponseEntity<Void> validateUser(@PathVariable int id, @RequestBody(required = false) Map<String, String> body) {
+        String comment = body != null ? body.get("comment") : null;
+        userService.validateUser(id, comment);
         return ResponseEntity.ok().build();
     }
 
@@ -101,5 +91,14 @@ public class UserController {
     public ResponseEntity<Void> removeAllUserRole(@PathVariable int id) {
         userService.removeAllUserRole(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(path = "/import", consumes = "multipart/form-data", produces = "application/json")
+    public ResponseEntity<BulkImportResultDTO> importUsers(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        BulkImportResultDTO result = userService.importUsersFromCsv(file);
+        return ResponseEntity.ok(result);
     }
 }

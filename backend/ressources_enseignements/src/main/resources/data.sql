@@ -22,21 +22,21 @@ INSERT INTO position (id, name, is_active) VALUES
 -- USERS
 -- =========================
 INSERT INTO user (id, address, email, first_name, last_name, password, phone_number, validation_status, username) VALUES
-(1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', 'admin123', '0101010101', 'NONE', 'admin'),
-(2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', 'prof123', '0202020202', 'VALIDATED', 'prof'),
-(3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', 'student123', '0303030303', 'NONE', 'student'),
-(4, '10 rue des Lilas', 'martin.dupont@univ.fr', 'Martin', 'Dupont', 'pass123', '0604010101', 'NONE', 'mdupont'),
-(5, '12 avenue Pasteur', 'sophie.bernard@univ.fr', 'Sophie', 'Bernard', 'pass123', '0604020202', 'NONE', 'sbernard'),
-(6, '5 boulevard Victor Hugo', 'jean.moreau@univ.fr', 'Jean', 'Moreau', 'pass123', '0604030303', 'NONE', 'jmoreau'),
-(7, '8 rue de la Paix', 'claire.petit@univ.fr', 'Claire', 'Petit', 'pass123', '0604040404', 'NONE', 'cpetit'),
-(8, '3 place de la Gare', 'pierre.leroy@univ.fr', 'Pierre', 'Leroy', 'pass123', '0604050505', 'NONE', 'pleroy'),
-(9, '15 rue Voltaire', 'nathalie.roux@univ.fr', 'Nathalie', 'Roux', 'pass123', '0604060606', 'NONE', 'nroux'),
-(10, '22 avenue de la Republique', 'francois.garcia@univ.fr', 'Francois', 'Garcia', 'pass123', '0604070707', 'NONE', 'fgarcia'),
-(11, '7 rue Descartes', 'isabelle.martinez@univ.fr', 'Isabelle', 'Martinez', 'pass123', '0604080808', 'NONE', 'imartinez'),
-(12, '9 rue Pascal', 'david.thomas@univ.fr', 'David', 'Thomas', 'pass123', '0604090909', 'NONE', 'dthomas'),
-(13, '18 avenue Foch', 'emilie.robert@univ.fr', 'Emilie', 'Robert', 'pass123', '0604101010', 'NONE', 'erobert'),
-(14, '4 rue Moliere', 'philippe.richard@univ.fr', 'Philippe', 'Richard', 'pass123', '0604111111', 'NONE', 'prichard'),
-(15, '11 boulevard Gambetta', 'anne.dubois@univ.fr', 'Anne', 'Dubois', 'pass123', '0604121212', 'NONE', 'adubois');
+(1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', '$2a$10$G9CG3yuKGV9l6mDuxZy/ZuHgKgp62NAm/1ZXhcqXoZM4Om021JV3K', '0101010101', 'NONE', 'P2600001'),
+(2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', '$2a$10$1hrZWYwDa5MopVXf1LeGmusoN2lrzH06tFHBGLTIsk92dHE6p3p8G', '0202020202', 'VALIDATED', 'P2600002'),
+(3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', '$2a$10$x9fz8aI5xHPa4L5N1tBtaOtXE0dLjzFvyjPVRoWRXwyK9FYgCS8AO', '0303030303', 'NONE', 'P2600003'),
+(4, '10 rue des Lilas', 'martin.dupont@univ.fr', 'Martin', 'Dupont', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604010101', 'NONE', 'P2600004'),
+(5, '12 avenue Pasteur', 'sophie.bernard@univ.fr', 'Sophie', 'Bernard', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604020202', 'NONE', 'P2600005'),
+(6, '5 boulevard Victor Hugo', 'jean.moreau@univ.fr', 'Jean', 'Moreau', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604030303', 'NONE', 'P2600006'),
+(7, '8 rue de la Paix', 'claire.petit@univ.fr', 'Claire', 'Petit', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604040404', 'NONE', 'P2600007'),
+(8, '3 place de la Gare', 'pierre.leroy@univ.fr', 'Pierre', 'Leroy', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604050505', 'NONE', 'P2600008'),
+(9, '15 rue Voltaire', 'nathalie.roux@univ.fr', 'Nathalie', 'Roux', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604060606', 'NONE', 'P2600009'),
+(10, '22 avenue de la Republique', 'francois.garcia@univ.fr', 'Francois', 'Garcia', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604070707', 'NONE', 'P2600010'),
+(11, '7 rue Descartes', 'isabelle.martinez@univ.fr', 'Isabelle', 'Martinez', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604080808', 'NONE', 'P2600011'),
+(12, '9 rue Pascal', 'david.thomas@univ.fr', 'David', 'Thomas', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604090909', 'NONE', 'P2600012'),
+(13, '18 avenue Foch', 'emilie.robert@univ.fr', 'Emilie', 'Robert', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604101010', 'NONE', 'P2600013'),
+(14, '4 rue Moliere', 'philippe.richard@univ.fr', 'Philippe', 'Richard', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604111111', 'NONE', 'P2600014'),
+(15, '11 boulevard Gambetta', 'anne.dubois@univ.fr', 'Anne', 'Dubois', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604121212', 'NONE', 'P2600015');
 
 -- =========================
 -- USER ROLE
@@ -62,16 +62,26 @@ INSERT INTO user_role (role_id, user_id) VALUES
 -- FORMATIONS (BUT Informatique)
 -- =========================
 INSERT INTO formation (id, name, year, class_name, description) VALUES
-(1, 'Informatique', '1', 'Classe A', 'Formation BUT Informatique annee 1 - groupe A'),
-(2, 'Informatique', '1', 'Classe B', 'Formation BUT Informatique annee 1 - groupe B'),
-(3, 'Informatique', '2', 'Classe A', 'Formation BUT Informatique annee 2 - groupe A'),
-(4, 'Informatique', '2', 'Classe B', 'Formation BUT Informatique annee 2 - groupe B'),
-(5, 'Informatique', '3', 'Classe A', 'Formation BUT Informatique annee 3 - groupe A'),
-(6, 'Informatique', '3', 'Classe B', 'Formation BUT Informatique annee 3 - groupe B'),
-(7, 'Reseaux et Telecommunications', '1', 'Classe A', 'Formation BUT R&T annee 1 - fondamentaux reseaux'),
-(8, 'Reseaux et Telecommunications', '2', 'Classe A', 'Formation BUT R&T annee 2 - administration et securite'),
-(9, 'Science des Donnees', '1', 'Classe A', 'Formation BUT SD annee 1 - statistiques et programmation'),
-(10, 'Science des Donnees', '2', 'Classe A', 'Formation BUT SD annee 2 - machine learning et BI');
+(1, 'Informatique', '1', 'G1', 'Formation BUT Informatique annee 1 - groupe A'),
+(2, 'Informatique', '1', 'G2', 'Formation BUT Informatique annee 1 - groupe B'),
+(3, 'Informatique', '2', 'G1', 'Formation BUT Informatique annee 2 - groupe A'),
+(4, 'Informatique', '2', 'G2', 'Formation BUT Informatique annee 2 - groupe B'),
+(5, 'Informatique', '3', 'G1', 'Formation BUT Informatique annee 3 - groupe A'),
+(6, 'Informatique', '3', 'G2', 'Formation BUT Informatique annee 3 - groupe B'),
+(7, 'Reseaux et Telecommunications', '1', 'G1', 'Formation BUT R&T annee 1 - fondamentaux reseaux'),
+(8, 'Reseaux et Telecommunications', '2', 'G1', 'Formation BUT R&T annee 2 - administration et securite'),
+(9, 'Science des Donnees', '1', 'G1', 'Formation BUT SD annee 1 - statistiques et programmation'),
+(10, 'Science des Donnees', '2', 'G1', 'Formation BUT SD annee 2 - machine learning et BI'),
+(11, 'Reseaux et Telecommunications', '1', 'G2', 'Formation BUT R&T annee 1 - groupe B'),
+(12, 'Reseaux et Telecommunications', '2', 'G2', 'Formation BUT R&T annee 2 - groupe B'),
+(13, 'Science des Donnees', '1', 'G2', 'Formation BUT SD annee 1 - groupe B'),
+(14, 'Science des Donnees', '2', 'G2', 'Formation BUT SD annee 2 - groupe B'),
+(15, 'Informatique', '1', 'G3', 'Formation BUT Informatique annee 1 - groupe C'),
+(16, 'Informatique', '1', 'G4', 'Formation BUT Informatique annee 1 - groupe D'),
+(17, 'Informatique', '2', 'G3', 'Formation BUT Informatique annee 2 - groupe C'),
+(18, 'Informatique', '2', 'G4', 'Formation BUT Informatique annee 2 - groupe D'),
+(19, 'Informatique', '3', 'G3', 'Formation BUT Informatique annee 3 - groupe C'),
+(20, 'Informatique', '3', 'G4', 'Formation BUT Informatique annee 3 - groupe D');
 
 -- =========================
 -- USER FORMATION
@@ -294,6 +304,119 @@ INSERT INTO resource (
  '{"21":{"cm":0,"td":2,"tp":0,"total":2},"22":{"cm":0,"td":2,"tp":0,"total":2},"23":{"cm":0,"td":2,"tp":0,"total":2},"24":{"cm":0,"td":2,"tp":0,"total":2},"25":{"cm":0,"td":2,"tp":0,"total":2},"26":{"cm":0,"td":2,"tp":0,"total":2},"27":{"cm":0,"td":2,"tp":0,"total":2},"28":{"cm":0,"td":2,"tp":0,"total":2},"29":{"cm":0,"td":2,"tp":0,"total":2},"30":{"cm":0,"td":2,"tp":0,"total":2},"31":{"cm":0,"td":1,"tp":0,"total":1},"32":{"cm":0,"td":1,"tp":0,"total":1},"33":{"cm":0,"td":1,"tp":0,"total":1},"34":{"cm":0,"td":1,"tp":0,"total":1},"35":{"cm":0,"td":1,"tp":0,"total":1},"36":{"cm":0,"td":1,"tp":0,"total":1},"37":{"cm":0,"td":1,"tp":0,"total":1},"38":{"cm":0,"td":1,"tp":0,"total":1},"39":{"cm":0,"td":1,"tp":0,"total":1},"40":{"cm":0,"td":1,"tp":0,"total":1}}',
  0, 2);
 
+
+-- =========================
+-- RESSOURCES R&T et SD
+-- =========================
+INSERT INTO resource (
+    id, title, description, category,
+    cm_state_hours, cm_iut_hours, td_state_hours, td_iut_hours, tp_state_hours, tp_iut_hours,
+    hours_per_week, hours_per_half_group, semester
+) VALUES
+
+(38, 'Reseaux locaux', 'Introduction aux reseaux locaux et Ethernet', 'Reseaux',
+ 20, 0, 20, 0, 20, 0, '{}', 0, 1),
+
+(39, 'Protocoles TCP/IP', 'Modele OSI et protocoles TCP/IP', 'Reseaux',
+ 15, 0, 25, 0, 20, 0, '{}', 0, 1),
+
+(40, 'Systemes Linux', 'Administration Linux et ligne de commande', 'Systemes',
+ 10, 0, 15, 0, 25, 0, '{}', 0, 1),
+
+(41, 'Bases des telecommunications', 'Fondamentaux des telecoms et signaux', 'Telecom',
+ 25, 0, 20, 0, 10, 0, '{}', 0, 1),
+
+-- ========== R&T ANNEE 1 - SEMESTRE 2 ==========
+(42, 'Routage et commutation', 'Protocoles de routage IP et commutation', 'Reseaux',
+ 20, 0, 20, 0, 30, 0, '{}', 0, 2),
+
+(43, 'Securite reseau fondamentaux', 'Introduction a la securite des reseaux', 'Securite',
+ 15, 0, 15, 0, 20, 0, '{}', 0, 2),
+
+(44, 'Telephonie IP', 'VoIP et protocoles SIP', 'Telecom',
+ 20, 0, 20, 0, 20, 0, '{}', 0, 2),
+
+(45, 'Virtualisation', 'Virtualisation de serveurs et VM', 'Systemes',
+ 10, 0, 10, 0, 30, 0, '{}', 0, 2),
+
+-- ========== R&T ANNEE 2 - SEMESTRE 1 ==========
+(46, 'Administration systemes', 'Administration avancee Linux/Windows', 'Systemes',
+ 15, 0, 20, 0, 35, 0, '{}', 0, 1),
+
+(47, 'Reseaux sans fil', 'WiFi, 4G/5G et protocoles mobiles', 'Reseaux',
+ 20, 0, 20, 0, 25, 0, '{}', 0, 1),
+
+(48, 'Securite avancee reseaux', 'Firewall, VPN et audit de securite', 'Securite',
+ 20, 0, 15, 0, 25, 0, '{}', 0, 1),
+
+(49, 'Services cloud', 'AWS, Azure et architectures cloud', 'Cloud',
+ 15, 0, 20, 0, 30, 0, '{}', 0, 1),
+
+-- ========== R&T ANNEE 2 - SEMESTRE 2 ==========
+(50, 'Supervision et monitoring', 'Outils de supervision reseau Nagios/Zabbix', 'Reseaux',
+ 15, 0, 15, 0, 30, 0, '{}', 0, 2),
+
+(51, 'Cryptographie et PKI', 'Cryptographie appliquee et PKI', 'Securite',
+ 25, 0, 20, 0, 15, 0, '{}', 0, 2),
+
+(52, 'Projet reseau S4', 'Projet integre infrastructure reseau', 'Projet',
+ 0, 0, 15, 0, 35, 0, '{}', 0, 2),
+
+(53, 'Telecoms mobiles', 'Architecture des reseaux mobiles 5G', 'Telecom',
+ 20, 0, 20, 0, 20, 0, '{}', 0, 2),
+
+-- ========== SD ANNEE 1 - SEMESTRE 1 ==========
+(54, 'Statistiques descriptives', 'Statistiques et distributions univariees', 'Statistiques',
+ 25, 0, 30, 0, 20, 0, '{}', 0, 1),
+
+(55, 'Programmation Python', 'Python pour la science des donnees', 'Programmation',
+ 15, 0, 20, 0, 35, 0, '{}', 0, 1),
+
+(56, 'Bases de donnees pour SD', 'SQL et modelisation des donnees', 'Data',
+ 20, 0, 20, 0, 20, 0, '{}', 0, 1),
+
+(57, 'Algebre lineaire pour SD', 'Vecteurs, matrices et transformations', 'Mathematiques',
+ 30, 0, 30, 0, 10, 0, '{}', 0, 1),
+
+-- ========== SD ANNEE 1 - SEMESTRE 2 ==========
+(58, 'Probabilites et inference', 'Probabilites et tests statistiques', 'Statistiques',
+ 25, 0, 30, 0, 15, 0, '{}', 0, 2),
+
+(59, 'Analyse de donnees', 'ACP et analyse factorielle', 'Data',
+ 20, 0, 20, 0, 25, 0, '{}', 0, 2),
+
+(60, 'Visualisation de donnees', 'Matplotlib, Seaborn et dashboards', 'Data',
+ 15, 0, 15, 0, 30, 0, '{}', 0, 2),
+
+(61, 'SQL avance', 'SQL avance, vues et optimisation', 'Data',
+ 15, 0, 20, 0, 25, 0, '{}', 0, 2),
+
+-- ========== SD ANNEE 2 - SEMESTRE 1 ==========
+(62, 'Machine Learning', 'Algorithmes ML supervises et non-supervises', 'IA',
+ 25, 0, 20, 0, 25, 0, '{}', 0, 1),
+
+(63, 'Business Intelligence', 'Entrepots de donnees et reporting', 'Data',
+ 20, 0, 20, 0, 25, 0, '{}', 0, 1),
+
+(64, 'Traitement du langage naturel', 'NLP et analyse textuelle', 'IA',
+ 20, 0, 15, 0, 25, 0, '{}', 0, 1),
+
+(65, 'Statistiques avancees', 'Regression, ANOVA et series temporelles', 'Statistiques',
+ 25, 0, 25, 0, 15, 0, '{}', 0, 1),
+
+-- ========== SD ANNEE 2 - SEMESTRE 2 ==========
+(66, 'Deep Learning', 'Reseaux de neurones et frameworks TensorFlow', 'IA',
+ 20, 0, 15, 0, 35, 0, '{}', 0, 2),
+
+(67, 'Big Data et NoSQL', 'Hadoop, Spark et bases NoSQL', 'Data',
+ 20, 0, 20, 0, 30, 0, '{}', 0, 2),
+
+(68, 'Projet data science S4', 'Projet integre analyse et modelisation', 'Projet',
+ 0, 0, 15, 0, 40, 0, '{}', 0, 2),
+
+(69, 'Ethique et IA', "Enjeux sociaux et ethiques de l'IA", 'Transversal',
+ 30, 0, 20, 0, 10, 0, '{}', 0, 2);
+
 -- =========================
 -- FORMATION RESSOURCES
 -- =========================
@@ -337,7 +460,32 @@ INSERT INTO formation_resource (formation_id, resource_id) VALUES
 (5, 34), (6, 34),
 (5, 35), (6, 35),
 (5, 36), (6, 36),
-(5, 37), (6, 37);
+(5, 37), (6, 37),
+-- Informatique G3/G4 Annee 1 (IDs 1-12) -> formations 15 (G3), 16 (G4)
+(15, 1), (16, 1), (15, 2), (16, 2), (15, 3), (16, 3), (15, 4), (16, 4),
+(15, 5), (16, 5), (15, 6), (16, 6), (15, 7), (16, 7), (15, 8), (16, 8),
+(15, 9), (16, 9), (15, 10), (16, 10), (15, 11), (16, 11), (15, 12), (16, 12),
+-- Informatique G3/G4 Annee 2 (IDs 13-25) -> formations 17 (G3), 18 (G4)
+(17, 13), (18, 13), (17, 14), (18, 14), (17, 15), (18, 15), (17, 16), (18, 16),
+(17, 17), (18, 17), (17, 18), (18, 18), (17, 19), (18, 19), (17, 20), (18, 20),
+(17, 21), (18, 21), (17, 22), (18, 22), (17, 23), (18, 23), (17, 24), (18, 24),
+(17, 25), (18, 25),
+-- Informatique G3/G4 Annee 3 (IDs 26-37) -> formations 19 (G3), 20 (G4)
+(19, 26), (20, 26), (19, 27), (20, 27), (19, 28), (20, 28), (19, 29), (20, 29),
+(19, 30), (20, 30), (19, 31), (20, 31), (19, 32), (20, 32), (19, 33), (20, 33),
+(19, 34), (20, 34), (19, 35), (20, 35), (19, 36), (20, 36), (19, 37), (20, 37),
+-- R&T Annee 1 (IDs 38-45) -> formations 7 (G1), 11 (G2)
+(7, 38), (11, 38), (7, 39), (11, 39), (7, 40), (11, 40), (7, 41), (11, 41),
+(7, 42), (11, 42), (7, 43), (11, 43), (7, 44), (11, 44), (7, 45), (11, 45),
+-- R&T Annee 2 (IDs 46-53) -> formations 8 (G1), 12 (G2)
+(8, 46), (12, 46), (8, 47), (12, 47), (8, 48), (12, 48), (8, 49), (12, 49),
+(8, 50), (12, 50), (8, 51), (12, 51), (8, 52), (12, 52), (8, 53), (12, 53),
+-- SD Annee 1 (IDs 54-61) -> formations 9 (G1), 13 (G2)
+(9, 54), (13, 54), (9, 55), (13, 55), (9, 56), (13, 56), (9, 57), (13, 57),
+(9, 58), (13, 58), (9, 59), (13, 59), (9, 60), (13, 60), (9, 61), (13, 61),
+-- SD Annee 2 (IDs 62-69) -> formations 10 (G1), 14 (G2)
+(10, 62), (14, 62), (10, 63), (14, 63), (10, 64), (14, 64), (10, 65), (14, 65),
+(10, 66), (14, 66), (10, 67), (14, 67), (10, 68), (14, 68), (10, 69), (14, 69);
 
 -- =========================
 -- SYLLABUS
@@ -373,11 +521,79 @@ INSERT INTO assignment (id, assigned_times, lesson_type, resource_id, user_id) V
 -- =========================
 -- TICKETS
 -- =========================
-INSERT INTO ticket (id, date, description, status, title, user_id) VALUES
-(1, '2025-12-17', 'Erreur sur mes heures de TD en Java, il manque 2h.', 'OPEN', 'Heures manquantes', 2),
-(2, '2025-12-17', 'J''ai trop d''heures de CM affectées en BDD.', 'RESOLVED', 'Trop d''heures CM', 2),
-(3, '2025-12-18', 'Impossible de modifier mes heures prévisionnelles.', 'OPEN', 'Problème modification heures', 4),
-(4, '2025-12-19', 'Mes heures de TP en réseau ne sont pas comptabilisées.', 'IN_PROGRESS', 'Heures TP manquantes', 5),
-(5, '2025-12-20', 'Serait-il possible de décaler mes heures de projet tutoré ?', 'OPEN', 'Décalage heures projet', 6),
-(6, '2025-12-21', 'Le système n''enregistre pas mes nouvelles heures vacataires.', 'RESOLVED', 'Enregistrement heures', 7),
-(7, '2025-12-22', 'Problème de validation des mes services par le responsable.', 'IN_PROGRESS', 'Validation des services', 4);
+INSERT INTO ticket (id, date, resolution_date, description, status, title, user_id) VALUES
+(1, '2025-12-17', NULL, 'Erreur sur mes heures de TD en Java, il manque 2h.', 'OPEN', 'Heures manquantes', 2),
+(2, '2025-12-17', '2025-12-18', 'J''ai trop d''heures de CM affectées en BDD.', 'RESOLVED', 'Trop d''heures CM', 2),
+(3, '2025-12-18', NULL, 'Impossible de modifier mes heures prévisionnelles.', 'OPEN', 'Problème modification heures', 4),
+(4, '2025-12-19', NULL, 'Mes heures de TP en réseau ne sont pas comptabilisées.', 'IN_PROGRESS', 'Heures TP manquantes', 5),
+(5, '2025-12-20', NULL, 'Serait-il possible de décaler mes heures de projet tutoré ?', 'OPEN', 'Décalage heures projet', 6),
+(6, '2025-12-21', '2025-12-23', 'Le système n''enregistre pas mes nouvelles heures vacataires.', 'RESOLVED', 'Enregistrement heures', 7),
+(7, '2025-12-22', NULL, 'Problème de validation des mes services par le responsable.', 'IN_PROGRESS', 'Validation des services', 4);
+
+
+INSERT INTO semester (semester_id, year, semester_number, parcours) VALUES
+-- Informatique
+(1, 1, 1, ''),
+(2, 1, 2, ''),
+(3, 2, 1, 'DACS'),
+(4, 2, 2, 'DACS'),
+(5, 3, 1, 'DACS'),
+(6, 3, 2, 'DACS'),
+
+-- R&T
+(7, 1, 1, ''),
+(8, 1, 2, ''),
+(9, 2, 1, ''),
+(10, 2, 2, 'RA'),
+(11, 3, 1, 'RA'),
+(12, 3, 2, 'RA');
+
+INSERT INTO semester_resource (semester_id, resource_id) VALUES
+
+-- =========================
+-- SEMESTRE 1
+-- =========================
+(1, 38),
+(1, 39),
+(1, 40),
+(1, 41),
+
+(1, 46),
+(1, 47),
+(1, 48),
+(1, 49),
+
+(1, 54),
+(1, 55),
+(1, 56),
+(1, 57),
+
+(1, 62),
+(1, 63),
+(1, 64),
+(1, 65),
+
+-- =========================
+-- SEMESTRE 2
+-- =========================
+(2, 42),
+(2, 43),
+(2, 44),
+(2, 45),
+
+(2, 50),
+(2, 51),
+(2, 52),
+(2, 53),
+
+(2, 58),
+(2, 59),
+(2, 60),
+(2, 61),
+
+(2, 66),
+(2, 67),
+(2, 68),
+(2, 69);
+
+

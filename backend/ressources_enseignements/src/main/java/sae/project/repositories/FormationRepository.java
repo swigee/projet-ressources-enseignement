@@ -38,4 +38,5 @@ public interface FormationRepository extends JpaRepository<Formation, Integer> {
     @Transactional
     @Query(value = "DELETE FROM user_formation uf WHERE uf.user_id = :userId", nativeQuery = true)
     void deleteByUserId(@Param("userId") int userId);
+    
 }

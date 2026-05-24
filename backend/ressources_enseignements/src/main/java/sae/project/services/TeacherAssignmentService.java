@@ -60,8 +60,8 @@ public class TeacherAssignmentService {
                 }
 
                 List<TeacherDTO> teachers = getAllTeachers();
-                List<AffectationRowDTO> affectationGrid = getAffectationRows(year, className, semesterInt);
-                AssignmentStatisticsDTO statistics = calculateStatistics(year, className, semesterInt);
+                List<AffectationRowDTO> affectationGrid = getAffectationRows(formation, year, className, semesterInt);
+                AssignmentStatisticsDTO statistics = calculateStatistics(formation, year, className, semesterInt);
 
                 return AssignmentGridDTO.builder()
                                 .selectedFormation(formation)
@@ -238,9 +238,13 @@ public class TeacherAssignmentService {
         /**
          * Récupérer les lignes d'affectation pour une formation
          */
-        private List<AffectationRowDTO> getAffectationRows(String year, String className, Integer semester) {
+        private List<AffectationRowDTO> getAffectationRows(String formation, String year, String className, Integer semester) {
                 List<Resource> ressources;
-                if (semester != null) {
+                if (formation != null && !formation.isBlank()) {
+                        ressources = semester != null
+                                ? ressourcesRepository.findByYearAndClassAndSemesterAndFormation(year, className, semester, formation)
+                                : ressourcesRepository.findByYearAndClassAndFormation(year, className, formation);
+                } else if (semester != null) {
                         ressources = ressourcesRepository.findByYearAndClassAndSemester(year, className, semester);
                 } else {
                         ressources = ressourcesRepository.findByYearAndClass(year, className);
@@ -271,9 +275,9 @@ public class TeacherAssignmentService {
                                         return AffectationRowDTO.builder()
                                                         .resourceId(ressource.getId())
                                                         .module(ressource.getTitle())
-                                                        .tdHours(ressource.getTdIutHours())
-                                                        .tpHours(ressource.getTpIutHours())
-                                                        .cmHours(ressource.getCmIutHours())
+                                                        .tdHours(ressource.getTdStateHours() != null ? ressource.getTdStateHours() : 0)
+                                                        .tpHours(ressource.getTpStateHours() != null ? ressource.getTpStateHours() : 0)
+                                                        .cmHours(ressource.getCmStateHours() != null ? ressource.getCmStateHours() : 0)
                                                         .tdTeachers(tdTeachers)
                                                         .tpTeachers(tpTeachers)
                                                         .cmTeachers(cmTeachers)
@@ -300,7 +304,7 @@ public class TeacherAssignmentService {
         /**
          * Calculer les statistiques
          */
-        private AssignmentStatisticsDTO calculateStatistics(String year, String className, Integer semester) {
+        private AssignmentStatisticsDTO calculateStatistics(String formation, String year, String className, Integer semester) {
                 List<Assignment> assignments = assignmentRepository.findByFormation(year, className);
 
                 Integer totalHours = assignments.stream()
@@ -322,7 +326,11 @@ public class TeacherAssignmentService {
                                                                                 : 0)));
 
                 List<Resource> ressources;
-                if (semester != null) {
+                if (formation != null && !formation.isBlank()) {
+                        ressources = semester != null
+                                ? ressourcesRepository.findByYearAndClassAndSemesterAndFormation(year, className, semester, formation)
+                                : ressourcesRepository.findByYearAndClassAndFormation(year, className, formation);
+                } else if (semester != null) {
                         ressources = ressourcesRepository.findByYearAndClassAndSemester(year, className, semester);
                 } else {
                         ressources = ressourcesRepository.findByYearAndClass(year, className);

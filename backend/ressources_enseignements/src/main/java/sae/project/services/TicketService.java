@@ -19,8 +19,6 @@ public class TicketService {
     private TicketRepository ticketsRepository;
     @Autowired
     private UserRepository usersRepository;
-    @Autowired
-    private NotificationService notificationService;
 
     public void createTicket(TicketDto dto) {
         User user = usersRepository.findById(dto.userId).orElseThrow();
@@ -33,14 +31,6 @@ public class TicketService {
         ticket.setUser(user);
 
         ticketsRepository.save(ticket);
-
-        User admin = usersRepository.findById(1).orElse(null);
-        if (admin != null) {
-            notificationService.createNotification(
-                admin, 
-                "Nouveau ticket de " + user.getFirstName() + " : " + ticket.getTitle()
-            );
-        }
     }
 
     public List<TicketResponseDto> getAllTickets() {
@@ -69,13 +59,5 @@ public class TicketService {
             ticket.setResolutionDate(null);
         }
         ticketsRepository.save(ticket);
-
-        if (ticket.getUser() != null) {
-            String statusFR = status.equals("RESOLVED") ? "RÉSOLU" : (status.equals("IN_PROGRESS") ? "EN COURS" : "OUVERT");
-            notificationService.createNotification(
-                ticket.getUser(), 
-                "Le statut de votre ticket '" + ticket.getTitle() + "' est passé à : " + statusFR
-            );
-        }
     }
 }

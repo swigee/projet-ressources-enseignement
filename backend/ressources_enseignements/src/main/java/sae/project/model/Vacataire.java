@@ -1,10 +1,12 @@
 package sae.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -21,6 +23,16 @@ public class Vacataire implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    /**
+     * Link to the user account of this contractor.
+     * Null until the candidate has been converted to an active account.
+     */
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
+    @JsonIgnore
+    @ToString.Exclude
+    private User user;
 
     // Étape 1 – Fiche de recrutement
     @Column(name = "responsable_recrutement")
@@ -73,7 +85,10 @@ public class Vacataire implements Serializable {
     @Column(name = "source_connaissance_autre")
     private String sourceConnaissanceAutre;
 
-    // Statut global
+    /**
+     * Recruitment status. Allowed values: A_CONTACTER, EN_COURS, VALIDE.
+     * Automatically set to VALIDE when a user account is created.
+     */
     @Column(name = "statut")
     @Builder.Default
     private String statut = "A_CONTACTER";

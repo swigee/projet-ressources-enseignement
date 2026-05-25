@@ -32,4 +32,22 @@ export class VacataireService {
   search(keyword: string): Observable<VacataireModel[]> {
     return this.http.get<VacataireModel[]>(`${this.apiUrl}/search`, { params: { keyword } });
   }
+
+  /** Returns only contractors that already have an active user account. */
+  getActive(): Observable<VacataireModel[]> {
+    return this.http.get<VacataireModel[]>(`${this.apiUrl}/active`);
+  }
+
+  /** Returns only contractors still in the recruitment pipeline (no account). */
+  getPending(): Observable<VacataireModel[]> {
+    return this.http.get<VacataireModel[]>(`${this.apiUrl}/pending`);
+  }
+
+  /**
+   * Manually converts a contractor profile to a user account with custom credentials.
+   * For most cases the account is created automatically when statut → VALIDE.
+   */
+  convertToUser(id: number, username: string, password: string): Observable<VacataireModel> {
+    return this.http.post<VacataireModel>(`${this.apiUrl}/${id}/convert`, { username, password });
+  }
 }

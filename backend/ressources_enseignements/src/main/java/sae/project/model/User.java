@@ -70,6 +70,9 @@ public class User implements Serializable {
     @Column(name = "validation_comment", columnDefinition = "TEXT")
     private String validationComment;
 
+    @Column(name = "type")
+    private String type;
+
     @ManyToMany(mappedBy = "usersList", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Formation> formationList;
 

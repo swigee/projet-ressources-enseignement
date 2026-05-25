@@ -71,10 +71,10 @@ public interface TeacherAssignmentRepository extends JpaRepository<Assignment, I
     List<Object[]> getStatisticsByLessonType();
 
 
-    @Query("SELECT u.id, u.firstName, u.lastName, COALESCE(SUM(a.assignedTimes), 0) " +
+    @Query("SELECT u.id, u.firstName, u.lastName, COALESCE(SUM(a.assignedTimes), 0), u.type " +
             "FROM User u LEFT JOIN Assignment a ON u.id = a.user.id " +
             "WHERE u.id NOT IN (SELECT ur.id FROM User ur JOIN ur.roleList r WHERE r.id = 3) " +
-            "GROUP BY u.id, u.firstName, u.lastName")
+            "GROUP BY u.id, u.firstName, u.lastName, u.type")
     List<Object[]> getTeachersWithHours();
 
     @Modifying

@@ -531,6 +531,33 @@ INSERT INTO ticket (id, date, resolution_date, description, status, title, user_
 ON CONFLICT (id) DO NOTHING;
 
 -- =========================
+-- VACATAIRES
+-- Profiles 1-5: already converted → user_id is populated (statut = VALIDE)
+-- Profiles 6-8: still in the recruitment pipeline → user_id is NULL
+-- =========================
+INSERT INTO vacataire (
+    id,
+    nom, prenom, date_naissance,
+    departement, fonction, experience, profil, competences,
+    responsable_recrutement, etablissement, site,
+    vue_en_amont, transmis_responsable, signature_responsable,
+    source_connaissance, source_connaissance_autre,
+    statut,
+    user_id
+) VALUES
+-- Converted contractors (linked to existing users)
+(1, 'Dupont',   'Martin',   '1985-03-12', 'Informatique',                'Développeur',         '5 ans en entreprise',    'Expert backend Java',      'Java, Spring, Docker',          'Alice Admin', 'IUT Lyon',       'Lyon',      true,  true,  'A. Admin',  'ANCIEN_ETUDIANT',     NULL, 'VALIDE',      4),
+(2, 'Moreau',   'Jean',     '1990-07-24', 'Réseaux',                     'Ingénieur réseau',    '3 ans en ESN',           'Spécialiste réseaux',      'Cisco, Linux, Wireshark',       'Alice Admin', 'IUT Lyon',       'Lyon',      true,  true,  'A. Admin',  'RECOMMANDATION',      NULL, 'VALIDE',      6),
+(3, 'Petit',    'Claire',   '1988-11-05', 'Développement web',           'Développeuse full-stack','4 ans startup',        'React, Node.js expert',    'React, Node.js, PostgreSQL',    'Alice Admin', 'IUT Grenoble',   'Grenoble',  true,  true,  'A. Admin',  'ANNONCE',             NULL, 'VALIDE',      7),
+(4, 'Roux',     'Nathalie', '1992-02-18', 'Data',                        'Data Analyst',        '2 ans en banque',        'Python, BI spécialisée',   'Python, SQL, Power BI',         'Alice Admin', 'IUT Lyon',       'Lyon',      true,  false, NULL,        'ANCIEN_ETUDIANT',     NULL, 'VALIDE',      9),
+(5, 'Garcia',   'Francois', '1983-09-30', 'Sécurité informatique',       'Expert cybersécurité','8 ans indépendant',      'OSCP certifié',            'Pentesting, SIEM, ISO 27001',   'Alice Admin', 'IUT Saint-Etienne','Saint-Etienne',true,true,'A. Admin', 'RECOMMANDATION',      NULL, 'VALIDE',      10),
+-- Pending contractors (no user account yet)
+(6, 'Lambert',  'Thomas',   '1995-06-14', 'Intelligence Artificielle',   'Ingénieur ML',        '1 an post-doc',          'Spécialiste NLP',          'Python, TensorFlow, PyTorch',   'Bob Teacher', 'Université Lyon 1','Lyon',    false, false, NULL,        'SALON',               NULL, 'A_CONTACTER', NULL),
+(7, 'Lefevre',  'Julie',    '1991-04-22', 'Développement mobile',        'Développeuse iOS/Android','3 ans agence',       'Swift, Kotlin',            'Swift, Kotlin, Flutter',        'Bob Teacher', 'IUT Valence',    'Valence',   true,  false, NULL,        'RECOMMANDATION',      NULL, 'EN_COURS',    NULL),
+(8, 'Simon',    'Alexandre','1987-12-01', 'Base de données',             'DBA Oracle',          '6 ans en entreprise',    'Expert Oracle/PostgreSQL', 'Oracle, PostgreSQL, MongoDB',   'Bob Teacher', 'IUT Lyon',       'Lyon',      true,  false, NULL,        'ANCIEN_ETUDIANT',     NULL, 'EN_COURS',    NULL)
+ON CONFLICT (id) DO NOTHING;
+
+-- =========================
 -- RESET SEQUENCES
 -- =========================
 SELECT setval('position_id_seq',  (SELECT MAX(id) FROM position));
@@ -540,3 +567,4 @@ SELECT setval('resource_id_seq',  (SELECT MAX(id) FROM resource));
 SELECT setval('syllabus_id_seq',  (SELECT MAX(id) FROM syllabus));
 SELECT setval('assignment_id_seq',(SELECT MAX(id) FROM assignment));
 SELECT setval('ticket_id_seq',    (SELECT MAX(id) FROM ticket));
+SELECT setval('vacataire_id_seq', (SELECT MAX(id) FROM vacataire));

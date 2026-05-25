@@ -23,4 +23,8 @@ export interface VacataireModel {
   sourceConnaissanceAutre?: string;
   // Admin
   statut?: string;
+  /** ID of the linked user account — populated once statut becomes VALIDE. */
+  userId?: number;
+  /** True when a user account has been created for this contractor. */
+  accountActive?: boolean;
 }

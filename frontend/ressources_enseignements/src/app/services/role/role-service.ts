@@ -1,4 +1,5 @@
 import {inject, Injectable, signal} from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import {catchError, Observable, of, tap} from 'rxjs';
 import { RoleModel } from '../../models/role/role.model';
@@ -7,7 +8,7 @@ import { RoleModel } from '../../models/role/role.model';
   providedIn: 'root',
 })
 export class RoleService {
-  private apiUrl = 'http://localhost:8080/api/roles';
+  private apiUrl = `${environment.apiUrl}/api/roles`;
   private readonly http = inject(HttpClient);
 
   constructor() {}

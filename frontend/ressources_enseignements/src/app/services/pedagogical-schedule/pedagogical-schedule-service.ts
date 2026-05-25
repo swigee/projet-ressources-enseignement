@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { PedagogicalScheduleDTO,RessourceScheduleDTO,ValidationRequestDTO,ValidationResponseDTO,ProjectScheduleDTO,ScheduleStatisticsDTO,WeekDTO,WeekHoursDTO,UpdateHoursDTO,MonthDTO } from '../../models/schedule/schedule.model';
 
@@ -7,7 +8,7 @@ import { PedagogicalScheduleDTO,RessourceScheduleDTO,ValidationRequestDTO,Valida
   providedIn: 'root'
 })
 export class PedagogicalScheduleService {
-  private apiUrl = 'http://localhost:8080/api/pedagogical-schedule';
+  private apiUrl = `${environment.apiUrl}/api/pedagogical-schedule`;
 
   constructor(private http: HttpClient) {}
 

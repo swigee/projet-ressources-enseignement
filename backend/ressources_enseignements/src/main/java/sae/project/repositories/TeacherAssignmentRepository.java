@@ -43,6 +43,17 @@ public interface TeacherAssignmentRepository extends JpaRepository<Assignment, I
             @Param("year") String year,
             @Param("className") String className);
 
+    @Query("SELECT DISTINCT a FROM Assignment a " +
+            "JOIN a.resource r " +
+            "JOIN r.formationList f " +
+            "WHERE (:year IS NULL OR f.year = :year) " +
+            "AND (:className IS NULL OR f.className = :className) " +
+            "AND (:formation IS NULL OR f.name = :formation)")
+    List<Assignment> findByFormationFlexible(
+            @Param("year") String year,
+            @Param("className") String className,
+            @Param("formation") String formation);
+
     @Query("SELECT COALESCE(SUM(a.assignedTimes), 0) FROM Assignment a WHERE a.user.id = :userId")
     Integer getTotalHoursByUserId(@Param("userId") Integer userId);
 
@@ -70,4 +81,5 @@ public interface TeacherAssignmentRepository extends JpaRepository<Assignment, I
     @Transactional
     @Query("DELETE FROM Assignment a WHERE a.user.id = :userId")
     void deleteByUserId(@Param("userId") int userId);
+
 }

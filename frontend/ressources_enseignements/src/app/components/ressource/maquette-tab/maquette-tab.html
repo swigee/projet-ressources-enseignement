@@ -1,4 +1,4 @@
-<div class="p-6 space-y-6">
+<div class="p-6 space-y-6 max-w-7xl mx-auto">
 
   <div class="flex items-center justify-between gap-3 sticky top-0 z-50 bg-white py-3 border-b border-gray-200 shadow-sm -mx-6 px-6">
     <div>
@@ -129,7 +129,7 @@
       </div>
     </div>
 
-    <div class="flex flex-nowrap gap-4 pl-4 overflow-x-auto">
+    <div class="flex flex-nowrap gap-4 pl-4 overflow-x-hidden" #weeksRow>
       @for (week of getAllWeeks(); track $index) {
       @if (week.type === 'S') {
       <div class="flex-none w-44 bg-amber-50 border border-amber-300 rounded-lg p-4 text-center hover:shadow-lg transition-shadow duration-200">
@@ -196,7 +196,7 @@
       </div>
     </div>
 
-    <div class="flex flex-nowrap gap-4 pl-4 overflow-x-auto">
+    <div #weeksRow class="flex flex-nowrap gap-4 pl-4 overflow-x-hidden">
       @for (week of getAllWeeks(); track $index) {
       @if (week.type === 'S') {
       <div class="flex-none w-44 bg-amber-50 border border-amber-300 rounded-lg p-4 text-center hover:shadow-lg transition-shadow duration-200">
@@ -244,6 +244,11 @@
       }
       }
     </div>
+  </div>
+
+  <div class="sticky bottom-0 z-30 bg-white border-t-2 border-gray-300 -mx-6 px-6 overflow-x-auto shadow-[0_-2px_6px_rgba(0,0,0,0.08)]"
+       (scroll)="syncFromScrollbar($event)">
+    <div [style.width.px]="scrollTrackWidth" style="height: 1px;"></div>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

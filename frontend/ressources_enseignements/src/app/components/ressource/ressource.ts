@@ -4,6 +4,7 @@ import { RessourcesService } from '../../services/ressources/ressources-service'
 import { RessourceRow, RessourcesTotals, ScheduleConflict, TeacherBadge } from '../../models/ressources/ressources.model';
 import { MonthDTO, RessourceScheduleDTO, ProjectScheduleDTO, UpdateHoursDTO, ValidationRequestDTO, WeekHoursDTO } from '../../models/schedule/schedule.model';
 import { PedagogicalScheduleService } from '../../services/pedagogical-schedule/pedagogical-schedule-service';
+import { EducationalManagerService } from '../../services/educational-manager/educational-manager';
 import { FilterControls } from './filter-controls/filter-controls';
 import { ResourcesTab } from './resources-tab/resources-tab';
 import { MaquetteTab, ScheduleHoursDelta, ProjectHoursDelta } from './maquette-tab/maquette-tab';
@@ -20,17 +21,15 @@ import {PageTitle} from '../../services/page-title/page-title-service';
 export class Ressource implements OnInit {
   private readonly ressourcesTableService = inject(RessourcesService);
   private readonly pedagogicalScheduleService = inject(PedagogicalScheduleService);
+  private readonly educationManagerService = inject(EducationalManagerService);
 
   activeTab = signal<string>('ressources');
-  selectedFormation = signal<string>('Informatique');
-  readonly formations = [
-    { id: 'Informatique', name: 'BUT Informatique' },
-    { id: 'Reseaux et Telecommunications', name: 'BUT R&T' },
-    { id: 'Science des Donnees', name: 'BUT Science des Donn�es' },
-  ];
-  selectedYear = signal<string>('1');
-  selectedClass = signal<string>('G1');
-  selectedSemester = signal<string>('1');
+  selectedFormation = signal<string>('');
+  formations = signal<{ id: string; name: string }[]>([]);
+  selectedYear = signal<string>('');
+  selectedClass = signal<string>('');
+  availableClasses = signal<string[]>([]);
+  selectedSemester = signal<string>('');
 
   ressources = signal<RessourceRow[]>([]);
   availableTeachers = signal<TeacherBadge[]>([]);
@@ -51,10 +50,10 @@ export class Ressource implements OnInit {
 
   showModal = signal<boolean>(false);
 
-  classData: Record<string, { name: string; classes: string[] }> = {
-    '1': { name: 'Annee 1', classes: ['G1', 'G2'] },
-    '2': { name: 'Annee 2', classes: ['G1', 'G2'] },
-    '3': { name: 'Annee 3 (Alternance)', classes: ['G1', 'G2'] }
+  classData: Record<string, { name: string }> = {
+    '1': { name: 'Année 1' },
+    '2': { name: 'Année 2' },
+    '3': { name: 'Année 3' }
   };
 
   filteredRessources = computed<RessourceRow[]>(() => {
@@ -92,10 +91,39 @@ export class Ressource implements OnInit {
 
   ngOnInit(): void {
     this.pageTitle.title.set("Gestion pédagogique - Ressources et plannings");
-    this.loadData();
+    this.loadFormations();
   }
 
   constructor(private pageTitle: PageTitle) {
+  }
+
+  loadFormations(): void {
+    this.educationManagerService.loadDistinctFormationNames().subscribe({
+      next: (names) => {
+        this.formations.set(names.map(n => ({ id: n, name: n })));
+        if (!this.selectedFormation() && names.length > 0) {
+          this.selectedFormation.set(names[0]);
+        }
+        this.loadClasses();
+        this.loadData();
+      },
+      error: () => {}
+    });
+  }
+
+  loadClasses(): void {
+    this.educationManagerService.getDistinctClasses(
+      this.selectedYear(),
+      this.selectedFormation()
+    ).subscribe({
+      next: (classes) => {
+        this.availableClasses.set(classes);
+        if (this.selectedClass() && !classes.includes(this.selectedClass())) {
+          this.selectedClass.set(classes[0] || '');
+        }
+      },
+      error: () => this.availableClasses.set([])
+    });
   }
 
   loadData(): void {
@@ -106,6 +134,7 @@ export class Ressource implements OnInit {
       scheduleData: this.pedagogicalScheduleService.getCompleteSchedule(this.selectedYear(), this.selectedClass(), this.selectedSemester(), this.selectedFormation())
     }).subscribe({
       next: (data) => {
+        console.log(data);
         this.ressources.set(data.ressourcesData.ressources);
         this.availableTeachers.set(data.ressourcesData.availableTeachers);
         this.conflicts.set(data.ressourcesData.conflicts);
@@ -139,13 +168,14 @@ export class Ressource implements OnInit {
 
   onFormationChange(formation: string): void {
     this.selectedFormation.set(formation);
+    this.loadClasses();
     this.loadData();
   }
 
   onYearChange(year: string): void {
     this.selectedYear.set(year);
-    this.selectedClass.set(this.classData[year].classes[0]);
-    this.selectedSemester.set('1');
+    this.selectedSemester.set('');
+    this.loadClasses();
     this.loadData();
   }
 

@@ -6,7 +6,7 @@
   <a routerLink="/dashboard" routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
     class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Tableau de bord </a>
 
-  <a *ngIf="auth.hasRole(['STUDENT', 'TEACHER'])" routerLink="/syllabus"
+  <a *ngIf="auth.hasRole(['STUDENT', 'TEACHER', 'ADMIN'])" routerLink="/syllabus"
     routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
     class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Syllabus </a>
   <a *ngIf="auth.hasRole(['TEACHER', 'ADMIN'])" routerLink="/educational-model"
@@ -32,4 +32,13 @@
   <a *ngIf="auth.hasRole(['ADMIN'])" routerLink="/ticket-manager"
     routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
     class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Gestionnaire des tickets </a>
+
+  <a *ngIf="auth.hasRole(['ADMIN'])" routerLink="/vacataire-manager"
+    routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
+    class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Gestionnaire des vacataires </a>
+
+  <a *ngIf="auth.hasRole(['TEACHER', 'ADMIN'])" routerLink="/liste-logiciels"
+     routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
+     class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Liste Logiciels </a>
+
 </div>

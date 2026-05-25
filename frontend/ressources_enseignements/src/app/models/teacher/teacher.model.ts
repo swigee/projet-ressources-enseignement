@@ -22,6 +22,7 @@ export interface TeacherAssignment {
 export interface AffectationRow {
   resourceId: number;
   module: string;
+  groupes?: string[];
   td: string;
   tp: string;
   cm: string;

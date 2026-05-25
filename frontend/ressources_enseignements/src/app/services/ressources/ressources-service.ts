@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { Observable, catchError, throwError } from 'rxjs';
 import {
   RessourceRow,
@@ -12,12 +13,15 @@ import {
   providedIn: 'root'
 })
 export class RessourcesService {
-  private apiUrl = 'http://localhost:8080/api/ressources-table';
+  private apiUrl = `${environment.apiUrl}/api/ressources-table`;
 
   constructor(private http: HttpClient) {}
 
-  getRessourcesTable(year: string, className: string, semester: string, formation?: string): Observable<RessourcesTableResponse> {
-    let params = new HttpParams().set('year', year).set('className', className).set('semester', semester);
+  getRessourcesTable(year?: string, className?: string, semester?: string, formation?: string): Observable<RessourcesTableResponse> {
+    let params = new HttpParams();
+    if (year) params = params.set('year', year);
+    if (className) params = params.set('className', className);
+    if (semester) params = params.set('semester', semester);
     if (formation) params = params.set('formation', formation);
 
     return this.http.get<RessourcesTableResponse>(`${this.apiUrl}/data`, { params })

@@ -1,8 +1,8 @@
 package sae.project.controllers;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RequestParam;
 import sae.project.dtos.education.EducationDTO;
 import sae.project.model.Formation;
 import sae.project.model.Resource;
@@ -54,5 +54,23 @@ public class EducationManagerController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         emrep.delete(id);
+    }
+
+    @PostMapping("/{id}/duplicate")
+    public Formation duplicate(@PathVariable Integer id, @RequestBody Map<String, String> body) {
+        String newName = body.getOrDefault("newName", "Copie");
+        return emrep.duplicate(id, newName);
+    }
+    
+    @GetMapping("/{id}/users")
+    public Iterable<User> getUsers(@PathVariable Integer id) {
+        return emrep.getUsersByFormation(id);
+    }
+
+    @GetMapping("/classes")
+    public List<String> getDistinctClasses(
+            @RequestParam(required = false) String year,
+            @RequestParam(required = false) String formation) {
+        return emrep.getDistinctClasses(year, formation);
     }
 }

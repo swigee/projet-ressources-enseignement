@@ -28,7 +28,7 @@ interface DragData {
 export class TeacherAssignmentComponent implements OnInit {
   selectedFormation: string = 'Informatique';
   selectedYear: string = '1';
-  selectedClass: string = 'G1';
+  selectedClass: string = '';
   selectedSemester: string = '';
   searchQuery: string = '';
   draggedTeacher: Teacher | null = null;
@@ -37,32 +37,34 @@ export class TeacherAssignmentComponent implements OnInit {
   teachers: Teacher[] = [];
   affectationGrid: AffectationRow[] = [];
   statistics: any = null;
+  availableGroups: string[] = [];
 
   constructor(private teacherService: TeacherAssignmentService, private pageTitle: PageTitle) {}
 
   ngOnInit() {
     this.pageTitle.title.set("Affectation des enseignants");
-    console.log('Initialisation avec:', {
-      formation: this.selectedFormation,
-      year: this.selectedYear,
-      class: this.selectedClass
-    });
+    this.loadGroups();
     this.loadData();
   }
 
-  loadData(): void {
-    if (!this.selectedYear || !this.selectedClass) {
-      console.warn('Année ou classe non sélectionnée');
-      this.affectationGrid = [];
-      return;
-    }
+  get allClassesMode(): boolean {
+    return !this.selectedClass;
+  }
 
-    console.log('Chargement des données pour:', {
-      formation: this.selectedFormation,
-      year: this.selectedYear,
-      class: this.selectedClass
+  loadGroups(): void {
+    this.teacherService.getAvailableClasses(this.selectedYear, this.selectedFormation).subscribe({
+      next: (groups) => {
+        this.availableGroups = groups;
+        // Reset selectedClass if it no longer exists in available groups
+        if (this.selectedClass && !groups.includes(this.selectedClass)) {
+          this.selectedClass = '';
+        }
+      },
+      error: () => { this.availableGroups = []; }
     });
+  }
 
+  loadData(): void {
     this.isLoading = true;
     this.teacherService.getAssignmentGrid(
       this.selectedFormation,
@@ -93,12 +95,7 @@ export class TeacherAssignmentComponent implements OnInit {
    * Reload data when filters change
    */
   onFilterChange(): void {
-    console.log('Changement de filtre détecté:', {
-      formation: this.selectedFormation,
-      year: this.selectedYear,
-      class: this.selectedClass,
-      semester: this.selectedSemester
-    });
+    this.loadGroups();
     this.loadData();
   }
 

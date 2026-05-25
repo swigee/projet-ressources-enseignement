@@ -23,9 +23,9 @@ public class RessourcesController {
 
     @GetMapping("/data")
     public ResponseEntity<RessourcesResponseDTO> getData(
-            @RequestParam String year,
-            @RequestParam String className,
-            @RequestParam Integer semester,
+            @RequestParam(required = false) String year,
+            @RequestParam(required = false) String className,
+            @RequestParam(required = false) Integer semester,
             @RequestParam(required = false) String formation) {
         log.info("GET /api/ressources-table/data?year={}&className={}&semester={}&formation={}", year, className, semester, formation);
 

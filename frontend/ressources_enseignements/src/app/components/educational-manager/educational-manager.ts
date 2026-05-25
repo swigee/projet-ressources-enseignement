@@ -224,7 +224,7 @@ export class EducationalManager {
   }
 
   clickDelete(id: number) {
-    this.edManager.deleteEducation(id)
+    this.edManager.deleteEducation(id);
   }
 
   openDetails(){

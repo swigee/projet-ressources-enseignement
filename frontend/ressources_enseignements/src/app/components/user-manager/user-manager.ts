@@ -44,14 +44,12 @@ export class UserManager {
       next: (users) => {
         this.tabUsers.set(users);
         this.isLoading = false;
-        console.log(this.isLoading);
         console.log(users);
       },
       error: (err) => {
         console.error('Erreur lors du chargement des utilisateurs', err);
         this.errorMessage = 'Impossible de charger les utilisateurs.';
         this.isLoading = false;
-        console.log(this.isLoading);
       }
     });
   }

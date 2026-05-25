@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MonthDTO, WeekDTO, WeekHoursDTO, RessourceScheduleDTO, ProjectScheduleDTO } from '../../../models/schedule/schedule.model';
 
@@ -22,6 +22,7 @@ export interface ProjectHoursDelta {
   templateUrl: './maquette-tab.html'
 })
 export class MaquetteTab {
+  @ViewChildren('weeksRow') weekRowContainers!: QueryList<ElementRef>;
   @Input() scheduleData: RessourceScheduleDTO[] = [];
   @Input() projectData: ProjectScheduleDTO = {
     id: 'project-sae', name: 'Projet SAE', hoursPerWeek: {}, hoursPerHalfGroup: 0, totalHours: 0
@@ -117,5 +118,16 @@ export class MaquetteTab {
   onProjectHoursInput(weekNum: number, type: 'cm' | 'td' | 'tp', event: Event): void {
     const value = Number((event.target as HTMLInputElement).value) || 0;
     this.projectHoursChanged.emit({ weekNum, type, value });
+  }
+
+  get scrollTrackWidth(): number {
+    return this.getAllWeeks().length * 192; // w-44 (176px) + gap-4 (16px)
+  }
+
+  syncFromScrollbar(event: Event): void {
+    const scrollLeft = (event.target as HTMLElement).scrollLeft;
+    this.weekRowContainers.forEach(ref => {
+      ref.nativeElement.scrollLeft = scrollLeft;
+    });
   }
 }

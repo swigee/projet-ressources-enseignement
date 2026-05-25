@@ -1,27 +1,16 @@
 -- =========================
--- NETTOYAGE DES ANCIENNES TABLES (Legacy)
--- =========================
-DROP TABLE IF EXISTS ressourcessyllabus;
-DROP TABLE IF EXISTS formationressources;
-DROP TABLE IF EXISTS userformation;
-DROP TABLE IF EXISTS tickets;
-DROP TABLE IF EXISTS ressources;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS role;
-DROP TABLE IF EXISTS app_role;
-
--- =========================
 -- ROLES
 -- =========================
 INSERT INTO position (id, name, is_active) VALUES
-(1, 'ADMIN', b'1'),
-(2, 'TEACHER', b'0'),
-(3, 'STUDENT', b'0');
+(1, 'ADMIN', true),
+(2, 'TEACHER', false),
+(3, 'STUDENT', false)
+ON CONFLICT (id) DO NOTHING;
 
 -- =========================
 -- USERS
 -- =========================
-INSERT INTO user (id, address, email, first_name, last_name, password, phone_number, validation_status, username) VALUES
+INSERT INTO users (id, address, email, first_name, last_name, password, phone_number, validation_status, username) VALUES
 (1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', '$2a$10$G9CG3yuKGV9l6mDuxZy/ZuHgKgp62NAm/1ZXhcqXoZM4Om021JV3K', '0101010101', 'NONE', 'P2600001'),
 (2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', '$2a$10$1hrZWYwDa5MopVXf1LeGmusoN2lrzH06tFHBGLTIsk92dHE6p3p8G', '0202020202', 'VALIDATED', 'P2600002'),
 (3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', '$2a$10$x9fz8aI5xHPa4L5N1tBtaOtXE0dLjzFvyjPVRoWRXwyK9FYgCS8AO', '0303030303', 'NONE', 'P2600003'),
@@ -36,7 +25,8 @@ INSERT INTO user (id, address, email, first_name, last_name, password, phone_num
 (12, '9 rue Pascal', 'david.thomas@univ.fr', 'David', 'Thomas', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604090909', 'NONE', 'P2600012'),
 (13, '18 avenue Foch', 'emilie.robert@univ.fr', 'Emilie', 'Robert', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604101010', 'NONE', 'P2600013'),
 (14, '4 rue Moliere', 'philippe.richard@univ.fr', 'Philippe', 'Richard', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604111111', 'NONE', 'P2600014'),
-(15, '11 boulevard Gambetta', 'anne.dubois@univ.fr', 'Anne', 'Dubois', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604121212', 'NONE', 'P2600015');
+(15, '11 boulevard Gambetta', 'anne.dubois@univ.fr', 'Anne', 'Dubois', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604121212', 'NONE', 'P2600015')
+ON CONFLICT (id) DO NOTHING;
 
 -- =========================
 -- USER ROLE
@@ -56,7 +46,8 @@ INSERT INTO user_role (role_id, user_id) VALUES
 (2, 12),
 (2, 13),
 (2, 14),
-(2, 15);
+(2, 15)
+ON CONFLICT DO NOTHING;
 
 -- =========================
 -- FORMATIONS (BUT Informatique)
@@ -81,7 +72,8 @@ INSERT INTO formation (id, name, year, class_name, description) VALUES
 (17, 'Informatique', '2', 'G3', 'Formation BUT Informatique annee 2 - groupe C'),
 (18, 'Informatique', '2', 'G4', 'Formation BUT Informatique annee 2 - groupe D'),
 (19, 'Informatique', '3', 'G3', 'Formation BUT Informatique annee 3 - groupe C'),
-(20, 'Informatique', '3', 'G4', 'Formation BUT Informatique annee 3 - groupe D');
+(20, 'Informatique', '3', 'G4', 'Formation BUT Informatique annee 3 - groupe D')
+ON CONFLICT (id) DO NOTHING;
 
 -- =========================
 -- USER FORMATION
@@ -101,7 +93,8 @@ INSERT INTO user_formation (formation_id, user_id) VALUES
 (3, 12), (4, 12),
 (5, 13), (6, 13),
 (1, 14), (2, 14),
-(3, 15), (5, 15);
+(3, 15), (5, 15)
+ON CONFLICT DO NOTHING;
 
 
 -- =========================
@@ -302,7 +295,8 @@ INSERT INTO resource (
 (37, 'Memoire professionnel', 'Redaction du memoire professionnel', 'Transversal',
  0, 0, 30, 0, 0, 0,
  '{"21":{"cm":0,"td":2,"tp":0,"total":2},"22":{"cm":0,"td":2,"tp":0,"total":2},"23":{"cm":0,"td":2,"tp":0,"total":2},"24":{"cm":0,"td":2,"tp":0,"total":2},"25":{"cm":0,"td":2,"tp":0,"total":2},"26":{"cm":0,"td":2,"tp":0,"total":2},"27":{"cm":0,"td":2,"tp":0,"total":2},"28":{"cm":0,"td":2,"tp":0,"total":2},"29":{"cm":0,"td":2,"tp":0,"total":2},"30":{"cm":0,"td":2,"tp":0,"total":2},"31":{"cm":0,"td":1,"tp":0,"total":1},"32":{"cm":0,"td":1,"tp":0,"total":1},"33":{"cm":0,"td":1,"tp":0,"total":1},"34":{"cm":0,"td":1,"tp":0,"total":1},"35":{"cm":0,"td":1,"tp":0,"total":1},"36":{"cm":0,"td":1,"tp":0,"total":1},"37":{"cm":0,"td":1,"tp":0,"total":1},"38":{"cm":0,"td":1,"tp":0,"total":1},"39":{"cm":0,"td":1,"tp":0,"total":1},"40":{"cm":0,"td":1,"tp":0,"total":1}}',
- 0, 2);
+ 0, 2)
+ON CONFLICT (id) DO NOTHING;
 
 
 -- =========================
@@ -414,8 +408,9 @@ INSERT INTO resource (
 (68, 'Projet data science S4', 'Projet integre analyse et modelisation', 'Projet',
  0, 0, 15, 0, 40, 0, '{}', 0, 2),
 
-(69, 'Ethique et IA', "Enjeux sociaux et ethiques de l'IA", 'Transversal',
- 30, 0, 20, 0, 10, 0, '{}', 0, 2);
+(69, 'Ethique et IA', 'Enjeux sociaux et ethiques de l''IA', 'Transversal',
+ 30, 0, 20, 0, 10, 0, '{}', 0, 2)
+ON CONFLICT (id) DO NOTHING;
 
 -- =========================
 -- FORMATION RESSOURCES
@@ -485,7 +480,8 @@ INSERT INTO formation_resource (formation_id, resource_id) VALUES
 (9, 58), (13, 58), (9, 59), (13, 59), (9, 60), (13, 60), (9, 61), (13, 61),
 -- SD Annee 2 (IDs 62-69) -> formations 10 (G1), 14 (G2)
 (10, 62), (14, 62), (10, 63), (14, 63), (10, 64), (14, 64), (10, 65), (14, 65),
-(10, 66), (14, 66), (10, 67), (14, 67), (10, 68), (14, 68), (10, 69), (14, 69);
+(10, 66), (14, 66), (10, 67), (14, 67), (10, 68), (14, 68), (10, 69), (14, 69)
+ON CONFLICT DO NOTHING;
 
 -- =========================
 -- SYLLABUS
@@ -494,7 +490,8 @@ INSERT INTO syllabus (id, description) VALUES
 (1, 'Syllabus Programmation'),
 (2, 'Syllabus Data'),
 (3, 'Syllabus Web'),
-(4, 'Syllabus Systemes');
+(4, 'Syllabus Systemes')
+ON CONFLICT (id) DO NOTHING;
 
 -- =========================
 -- RESSOURCES SYLLABUS
@@ -506,7 +503,8 @@ INSERT INTO resource_syllabus (resource_id, syllabus_id) VALUES
 (7, 1),
 (8, 3),
 (13, 1),
-(14, 2);
+(14, 2)
+ON CONFLICT DO NOTHING;
 
 -- =========================
 -- ASSIGNMENT
@@ -516,7 +514,8 @@ INSERT INTO assignment (id, assigned_times, lesson_type, resource_id, user_id) V
 (2, 25, 'TD', 2, 1),
 (3, 20, 'CM', 7, 1),
 (4, 30, 'CM', 13, 1), -- Dev App Year 2
-(5, 25, 'TD', 26, 1); -- Arch Log Year 3
+(5, 25, 'TD', 26, 1) -- Arch Log Year 3
+ON CONFLICT (id) DO NOTHING;
 
 -- =========================
 -- TICKETS
@@ -528,6 +527,7 @@ INSERT INTO ticket (id, date, resolution_date, description, status, title, user_
 (4, '2025-12-19', NULL, 'Mes heures de TP en réseau ne sont pas comptabilisées.', 'IN_PROGRESS', 'Heures TP manquantes', 5),
 (5, '2025-12-20', NULL, 'Serait-il possible de décaler mes heures de projet tutoré ?', 'OPEN', 'Décalage heures projet', 6),
 (6, '2025-12-21', '2025-12-23', 'Le système n''enregistre pas mes nouvelles heures vacataires.', 'RESOLVED', 'Enregistrement heures', 7),
+<<<<<<< HEAD
 (7, '2025-12-22', NULL, 'Problème de validation des mes services par le responsable.', 'IN_PROGRESS', 'Validation des services', 4);
 
 
@@ -595,5 +595,4 @@ INSERT INTO semester_resource (semester_id, resource_id) VALUES
 (2, 67),
 (2, 68),
 (2, 69);
-
 

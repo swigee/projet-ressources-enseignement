@@ -61,11 +61,14 @@ public class PedagogicalScheduleService {
     /**
      * Récupérer les ressources par année, classe et semestre
      */
+    private String nullIfBlank(String s) {
+        return (s == null || s.isBlank()) ? null : s;
+    }
+
     public List<ResourceScheduleDTO> getByYearAndClass(String year, String className, Integer semester, String formation) {
         log.info("Récupération des ressources pour l'année {} la classe {} et le semestre {}", year, className, semester);
-        List<Resource> resources = (formation != null && !formation.isBlank())
-                ? pedagogicalScheduleRepository.findByYearAndClassAndSemesterAndFormation(year, className, semester, formation)
-                : pedagogicalScheduleRepository.findByYearAndClassAndSemester(year, className, semester);
+        List<Resource> resources = pedagogicalScheduleRepository.findWithFilters(
+                nullIfBlank(year), nullIfBlank(className), nullIfBlank(formation), semester);
         return resources.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
@@ -85,7 +88,7 @@ public class PedagogicalScheduleService {
         return PedagogicalScheduleDTO.builder()
                 .selectedYear(year)
                 .selectedClass(className)
-                .selectedSemester(String.valueOf(semester))
+                .selectedSemester(semester != null ? String.valueOf(semester) : null)
                 .scheduleData(ressources)
                 .projectData(project)
                 .weeks(weeks)
@@ -337,7 +340,7 @@ public class PedagogicalScheduleService {
         List<MonthDTO> months = new ArrayList<>();
         boolean isAlternance = "3".equals(year);
 
-        if (semester == 1) {
+        if (semester == null || semester == 1) {
             // Semestre 1 : Septembre - Janvier (semaines 1-20)
             months.add(createMonth("Septembre",
                     createWeeks(1, 4, isAlternance)));
@@ -349,7 +352,9 @@ public class PedagogicalScheduleService {
                     createWeeks(13, 16, isAlternance)));
             months.add(createMonth("Janvier",
                     createWeeks(17, 20, isAlternance)));
-        } else {
+        }
+
+        if (semester == null || semester == 2) {
             // Semestre 2 : Février - Juin (semaines 21-40)
             months.add(createMonth("Fevrier",
                     createWeeks(21, 24, isAlternance)));

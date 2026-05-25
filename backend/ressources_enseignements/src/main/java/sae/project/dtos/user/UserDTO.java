@@ -22,6 +22,5 @@ public class UserDTO {
     private String validationComment;
     private List<Object> roles;
     private List<String> formations;
-    private List<String> tickets;
     private List<String> assignments;
 }

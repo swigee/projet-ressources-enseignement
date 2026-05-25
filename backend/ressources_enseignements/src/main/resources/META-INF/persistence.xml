@@ -3,8 +3,8 @@
   <persistence-unit name="sae_project_war_0.0.1-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>sae.project.model.Role</class>
-    <class>sae.project.model.Vacataire</class>
-
+    <class>sae.project.model.Tickets</class>
+    <class>sae.project.model.Ressources</class>
     <class>sae.project.model.Formation</class>
     <class>sae.project.model.Users</class>
     <class>sae.project.model.Assignment</class>

@@ -1,6 +1,6 @@
 # Ressources Enseignements SAE
 
-Ce projet est une application web de gestion des ressources d'enseignements. Il permet la gestion des utilisateurs, des rôles, des formations et des affectations enseignants.
+Ce projet est une application web de gestion des ressources d'enseignements. Il permet la gestion des utilisateurs, des rôles, des formations, des tickets et des affectations enseignants.
 
 ## Prérequis
 

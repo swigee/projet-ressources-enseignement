@@ -84,9 +84,6 @@ public class User implements Serializable {
     private List<Role> roleList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Ticket> ticketsList;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Assignment> assignmentList;
 
     /**

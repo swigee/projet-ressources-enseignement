@@ -517,17 +517,6 @@ INSERT INTO assignment (id, assigned_times, lesson_type, resource_id, user_id) V
 (5, 25, 'TD', 26, 1) -- Arch Log Year 3
 ON CONFLICT (id) DO NOTHING;
 
--- =========================
--- TICKETS
--- =========================
-INSERT INTO ticket (id, date, resolution_date, description, status, title, user_id) VALUES
-(1, '2025-12-17', NULL, 'Erreur sur mes heures de TD en Java, il manque 2h.', 'OPEN', 'Heures manquantes', 2),
-(2, '2025-12-17', '2025-12-18', 'J''ai trop d''heures de CM affectées en BDD.', 'RESOLVED', 'Trop d''heures CM', 2),
-(3, '2025-12-18', NULL, 'Impossible de modifier mes heures prévisionnelles.', 'OPEN', 'Problème modification heures', 4),
-(4, '2025-12-19', NULL, 'Mes heures de TP en réseau ne sont pas comptabilisées.', 'IN_PROGRESS', 'Heures TP manquantes', 5),
-(5, '2025-12-20', NULL, 'Serait-il possible de décaler mes heures de projet tutoré ?', 'OPEN', 'Décalage heures projet', 6),
-(6, '2025-12-21', '2025-12-23', 'Le système n''enregistre pas mes nouvelles heures vacataires.', 'RESOLVED', 'Enregistrement heures', 7),
-(7, '2025-12-22', NULL, 'Problème de validation des mes services par le responsable.', 'IN_PROGRESS', 'Validation des services', 4);
 
 
 INSERT INTO semester (semester_id, year, semester_number, parcours) VALUES

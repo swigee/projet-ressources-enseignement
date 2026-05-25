@@ -5,7 +5,6 @@ import { Login } from './components/login/login'
 import { TeacherAssignmentComponent } from './components/teacher-assignment/teacher-assignment';
 import { UserManager } from './components/user-manager/user-manager';
 import { Ressource } from './components/ressource/ressource';
-import { GroupTracking } from './components/group-tracking/group-tracking';
 import { VacataireManager } from './components/vacataire-manager/vacataire-manager';
 import { authGuard } from './services/auth/auth.guard';
 import { roleGuard } from './services/auth/role.guard';
@@ -70,18 +69,6 @@ export const routes: Routes = [
     component: Ressource,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['TEACHER'] }
-  },
-  {
-    path: 'ticket-manager',
-    loadComponent: () => import('./components/ticket-manager/ticket-manager').then(m => m.TicketManager),
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['ADMIN'] }
-  },
-  {
-    path: 'group-tracking',
-    component: GroupTracking,
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['ADMIN'] }
   },
   {
     path: 'vacataire-manager',

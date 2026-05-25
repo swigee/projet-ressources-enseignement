@@ -10,6 +10,5 @@ export interface UserModel {
   validationStatus?: string;
   roles?: RoleModel[];
   formations?: any[];
-  tickets?: any[];
   assignments?: any[];
 }

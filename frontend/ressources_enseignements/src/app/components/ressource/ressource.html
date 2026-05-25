@@ -2,12 +2,6 @@
 
   <div class="border-b border-gray-200 p-6 flex justify-between items-center">
     <h1 class="text-3xl font-bold">Tableau des ressources</h1>
-    <button
-      class="px-5 py-2.5 bg-red-100 text-red-700 font-semibold rounded-lg hover:bg-red-200 transition duration-200 shadow-sm flex items-center gap-2"
-      (click)="showModal.set(true)">
-      <i class="fa-regular fa-circle-exclamation"></i>
-      Signaler un problème
-    </button>
   </div>
 
   <div class="flex border-b border-gray-300">
@@ -50,6 +44,5 @@
     (scheduleHoursChanged)="onScheduleHoursChanged($event)" (projectHoursChanged)="onProjectHoursChanged($event)" />
   }
 
-  <app-ticket-modal [isOpen]="showModal()" (closed)="showModal.set(false)" />
 
 </div>

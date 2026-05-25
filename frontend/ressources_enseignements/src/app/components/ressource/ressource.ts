@@ -8,13 +8,12 @@ import { EducationalManagerService } from '../../services/educational-manager/ed
 import { FilterControls } from './filter-controls/filter-controls';
 import { ResourcesTab } from './resources-tab/resources-tab';
 import { MaquetteTab, ScheduleHoursDelta, ProjectHoursDelta } from './maquette-tab/maquette-tab';
-import { TicketModal } from './ticket-modal/ticket-modal';
 import {PageTitle} from '../../services/page-title/page-title-service';
 
 @Component({
   selector: 'app-ressource',
   standalone: true,
-  imports: [FilterControls, ResourcesTab, MaquetteTab, TicketModal],
+  imports: [FilterControls, ResourcesTab, MaquetteTab],
   templateUrl: './ressource.html'
 })
 export class Ressource implements OnInit {
@@ -46,8 +45,6 @@ export class Ressource implements OnInit {
 
   searchQuery = signal<string>('');
   selectedTeacherIds = signal<number[]>([]);
-
-  showModal = signal<boolean>(false);
 
   classData: Record<string, { name: string }> = {
     '1': { name: 'Année 1' },

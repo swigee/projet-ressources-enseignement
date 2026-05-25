@@ -34,9 +34,6 @@ public class UserController {
             List<String> formationJsons = user.getFormationList() != null ? user.getFormationList().stream()
                     .map(f -> f.getName() != null ? f.getName() : String.valueOf(f.getId()))
                     .toList() : List.of();
-            List<String> ticketJsons = user.getTicketsList() != null ? user.getTicketsList().stream()
-                    .map(t -> t.getTitle() != null ? t.getTitle() : String.valueOf(t.getId()))
-                    .toList() : List.of();
             List<String> assignmentJsons = user.getAssignmentList() != null ? user.getAssignmentList().stream()
                     .map(a -> String.valueOf(a.getId()))
                     .toList() : List.of();
@@ -51,7 +48,6 @@ public class UserController {
                     user.getValidationComment(),
                     roleJsons,
                     formationJsons,
-                    ticketJsons,
                     assignmentJsons
             );
         }).toList();

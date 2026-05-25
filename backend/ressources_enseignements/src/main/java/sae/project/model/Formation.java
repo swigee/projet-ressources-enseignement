@@ -68,6 +68,7 @@ public class Formation implements Serializable {
     @JsonIgnoreProperties("formationList")
     private List<Resource> resourceList;
 
+    @Builder.Default
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "formation", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("formation")
     private List<Semester> semesters = new ArrayList<>();

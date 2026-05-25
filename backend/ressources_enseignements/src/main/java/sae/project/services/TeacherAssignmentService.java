@@ -12,6 +12,7 @@ import sae.project.dtos.assignment.CreateAssignmentDTO;
 import sae.project.dtos.teacher.TeacherAssignmentDTO;
 import sae.project.dtos.teacher.TeacherDTO;
 import sae.project.model.Assignment;
+import sae.project.model.Formation;
 import sae.project.model.Resource;
 import sae.project.model.User;
 import sae.project.repositories.PedagogicalScheduleRepository;
@@ -60,8 +61,8 @@ public class TeacherAssignmentService {
                 }
 
                 List<TeacherDTO> teachers = getAllTeachers();
-                List<AffectationRowDTO> affectationGrid = getAffectationRows(year, className, semesterInt);
-                AssignmentStatisticsDTO statistics = calculateStatistics(year, className, semesterInt);
+                List<AffectationRowDTO> affectationGrid = getAffectationRows(formation, year, className, semesterInt);
+                AssignmentStatisticsDTO statistics = calculateStatistics(formation, year, className, semesterInt);
 
                 return AssignmentGridDTO.builder()
                                 .selectedFormation(formation)
@@ -238,42 +239,60 @@ public class TeacherAssignmentService {
         /**
          * Récupérer les lignes d'affectation pour une formation
          */
-        private List<AffectationRowDTO> getAffectationRows(String year, String className, Integer semester) {
-                List<Resource> ressources;
-                if (semester != null) {
-                        ressources = ressourcesRepository.findByYearAndClassAndSemester(year, className, semester);
-                } else {
-                        ressources = ressourcesRepository.findByYearAndClass(year, className);
-                }
+        private String nullIfBlank(String s) {
+                return (s == null || s.isBlank()) ? null : s;
+        }
+
+        private List<AffectationRowDTO> getAffectationRows(String formation, String year, String className, Integer semester) {
+                String yearParam       = nullIfBlank(year);
+                String classParam      = nullIfBlank(className);
+                String formationParam  = nullIfBlank(formation);
+                boolean allClasses     = (classParam == null);
+
+                List<Resource> ressources = ressourcesRepository.findWithFilters(yearParam, classParam, formationParam, semester);
 
                 return ressources.stream()
                                 .map(ressource -> {
-                                        // Récupérer toutes les affectations pour cette ressource
-                                        List<Assignment> assignments = assignmentRepository
-                                                        .findByResourceId(ressource.getId());
+                                        List<Assignment> assignments = assignmentRepository.findByResourceId(ressource.getId());
 
-                                        // Filtrer par type de cours
+                                        // Nombre total de groupes partageant cette ressource (même formation/année)
+                                        List<String> allGroupsForResource = ressource.getFormationList().stream()
+                                                        .filter(f -> yearParam == null || yearParam.equals(f.getYear()))
+                                                        .filter(f -> formationParam == null || formationParam.equals(f.getName()))
+                                                        .map(Formation::getClassName)
+                                                        .filter(cn -> cn != null)
+                                                        .distinct()
+                                                        .sorted()
+                                                        .collect(Collectors.toList());
+                                        int totalGroupCount = Math.max(1, allGroupsForResource.size());
+
+                                        // En vue groupe spécifique, on divise les heures affectées par le nombre total de groupes
+                                        int hoursDivisor = allClasses ? 1 : totalGroupCount;
+                                        int displayGroupCount = allClasses ? totalGroupCount : 1;
+                                        List<String> groupes = allClasses ? allGroupsForResource : null;
+
                                         List<TeacherAssignmentDTO> tdTeachers = assignments.stream()
                                                         .filter(a -> "TD".equals(a.getLessonType()))
-                                                        .map(this::mapToTeacherAssignmentDTO)
+                                                        .map(a -> mapToTeacherAssignmentDTO(a, hoursDivisor))
                                                         .collect(Collectors.toList());
 
                                         List<TeacherAssignmentDTO> tpTeachers = assignments.stream()
                                                         .filter(a -> "TP".equals(a.getLessonType()))
-                                                        .map(this::mapToTeacherAssignmentDTO)
+                                                        .map(a -> mapToTeacherAssignmentDTO(a, hoursDivisor))
                                                         .collect(Collectors.toList());
 
                                         List<TeacherAssignmentDTO> cmTeachers = assignments.stream()
                                                         .filter(a -> "CM".equals(a.getLessonType()))
-                                                        .map(this::mapToTeacherAssignmentDTO)
+                                                        .map(a -> mapToTeacherAssignmentDTO(a, hoursDivisor))
                                                         .collect(Collectors.toList());
 
                                         return AffectationRowDTO.builder()
                                                         .resourceId(ressource.getId())
                                                         .module(ressource.getTitle())
-                                                        .tdHours(ressource.getTdIutHours())
-                                                        .tpHours(ressource.getTpIutHours())
-                                                        .cmHours(ressource.getCmIutHours())
+                                                        .groupes(groupes)
+                                                        .tdHours((ressource.getTdStateHours() != null ? ressource.getTdStateHours() : 0) * displayGroupCount)
+                                                        .tpHours((ressource.getTpStateHours() != null ? ressource.getTpStateHours() : 0) * displayGroupCount)
+                                                        .cmHours((ressource.getCmStateHours() != null ? ressource.getCmStateHours() : 0) * displayGroupCount)
                                                         .tdTeachers(tdTeachers)
                                                         .tpTeachers(tpTeachers)
                                                         .cmTeachers(cmTeachers)
@@ -284,24 +303,31 @@ public class TeacherAssignmentService {
 
         /**
          * Mapper une affectation en TeacherAssignmentDTO
+         * @param divisor nombre de groupes : divise les heures affectées quand on filtre par groupe spécifique
          */
-        private TeacherAssignmentDTO mapToTeacherAssignmentDTO(Assignment assignment) {
+        private TeacherAssignmentDTO mapToTeacherAssignmentDTO(Assignment assignment, int divisor) {
                 User teacher = assignment.getUser();
+                int hours = assignment.getAssignedTimes() != null ? assignment.getAssignedTimes() : 0;
 
                 return TeacherAssignmentDTO.builder()
                                 .assignmentId(assignment.getId())
                                 .teacherId(teacher.getId())
                                 .teacherName(teacher.getFirstName() + " " + teacher.getLastName())
                                 .lessonType(assignment.getLessonType())
-                                .assignedHours(assignment.getAssignedTimes())
+                                .assignedHours(hours / divisor)
                                 .build();
         }
 
         /**
          * Calculer les statistiques
          */
-        private AssignmentStatisticsDTO calculateStatistics(String year, String className, Integer semester) {
-                List<Assignment> assignments = assignmentRepository.findByFormation(year, className);
+        private AssignmentStatisticsDTO calculateStatistics(String formation, String year, String className, Integer semester) {
+                String yearParam      = nullIfBlank(year);
+                String classParam     = nullIfBlank(className);
+                String formationParam = nullIfBlank(formation);
+
+                List<Assignment> assignments = assignmentRepository.findByFormationFlexible(yearParam, classParam, formationParam);
+                List<Resource> ressources    = ressourcesRepository.findWithFilters(yearParam, classParam, formationParam, semester);
 
                 Integer totalHours = assignments.stream()
                                 .mapToInt(a -> a.getAssignedTimes() != null ? a.getAssignedTimes() : 0)
@@ -310,23 +336,13 @@ public class TeacherAssignmentService {
                 Map<String, Integer> hoursByLessonType = assignments.stream()
                                 .collect(Collectors.groupingBy(
                                                 Assignment::getLessonType,
-                                                Collectors.summingInt(
-                                                                a -> a.getAssignedTimes() != null ? a.getAssignedTimes()
-                                                                                : 0)));
+                                                Collectors.summingInt(a -> a.getAssignedTimes() != null ? a.getAssignedTimes() : 0)));
 
                 Map<String, Integer> hoursByTeacher = assignments.stream()
                                 .collect(Collectors.groupingBy(
                                                 a -> a.getUser().getFirstName() + " " + a.getUser().getLastName(),
-                                                Collectors.summingInt(
-                                                                a -> a.getAssignedTimes() != null ? a.getAssignedTimes()
-                                                                                : 0)));
+                                                Collectors.summingInt(a -> a.getAssignedTimes() != null ? a.getAssignedTimes() : 0)));
 
-                List<Resource> ressources;
-                if (semester != null) {
-                        ressources = ressourcesRepository.findByYearAndClassAndSemester(year, className, semester);
-                } else {
-                        ressources = ressourcesRepository.findByYearAndClass(year, className);
-                }
                 long unassignedModules = ressources.stream()
                                 .filter(r -> assignmentRepository.findByResourceId(r.getId()).isEmpty())
                                 .count();

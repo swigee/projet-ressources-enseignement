@@ -6,14 +6,19 @@ import { EducationManagerCreation } from './components/education-manager-creatio
 import { TeacherAssignmentComponent } from './components/teacher-assignment/teacher-assignment';
 import { UserManager } from './components/user-manager/user-manager';
 import { Ressource } from './components/ressource/ressource';
-
+import { GroupTracking } from './components/group-tracking/group-tracking';
+import { VacataireManager } from './components/vacataire-manager/vacataire-manager';
+import { authGuard } from './services/auth/auth.guard';
+import { roleGuard } from './services/auth/role.guard';
+import { SyllabusComponent } from './components/syllabus/syllabus';
+import { SyllabusDetailComponent } from './components/syllabus-detail/syllabus-detail';
+import { SoftwareList } from './components/software-list/software-list';
 
 export const routes: Routes = [
   {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
-
+    path:'',
+    redirectTo:'login',
+    pathMatch:'full'
   },
   {
     path: 'login',
@@ -21,35 +26,86 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: Dashboard
+    component: Dashboard,
+    canActivate: [authGuard]
   },
   {
     path: 'syllabus',
-    component: Dashboard
+    component: SyllabusComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['STUDENT', 'TEACHER', 'ADMIN'] }
+  },
+  {
+    path: 'syllabus/:id',
+    component: SyllabusDetailComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['STUDENT', 'TEACHER', 'ADMIN'] }
   },
   {
     path: 'educational-model',
-    component: Ressource
+    component: Ressource,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['TEACHER', 'ADMIN'] }
   },
   {
     path: 'teacher-assignment',
-    component: TeacherAssignmentComponent
+    component: TeacherAssignmentComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
   },
   {
-    path: 'education-manager',
-    component: EducationalManager
+    path:'education-manager',
+    component: EducationalManager,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN', 'TEACHER'] }
   },
   {
-    path: 'education-manager/create',
-    component: EducationManagerCreation
+    path:'education-manager/create',
+    component: EducationManagerCreation,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN', 'TEACHER'] }
+  },
+  {
+    path:'education-manager/edit/:id',
+    component: EducationManagerCreation,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN', 'TEACHER'] }
   },
   {
     path: 'user-manager',
-    component: UserManager
+    component: UserManager,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
   },
   {
     path: 'ressource',
-    component: Ressource
+    component: Ressource,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['TEACHER'] }
+  },
+  {
+    path: 'ticket-manager',
+    loadComponent: () => import('./components/ticket-manager/ticket-manager').then(m => m.TicketManager),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
+  },
+  {
+    path: 'group-tracking',
+    component: GroupTracking,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
+  },
+  {
+    path: 'vacataire-manager',
+    component: VacataireManager,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
+  },
+  {
+    path: 'liste-logiciels',
+    component: SoftwareList,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['TEACHER', 'ADMIN'] }
   }
 
 ];

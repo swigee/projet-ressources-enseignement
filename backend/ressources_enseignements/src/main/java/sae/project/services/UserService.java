@@ -2,12 +2,17 @@ package sae.project.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import sae.project.dtos.user.BulkImportResultDTO;
 import sae.project.model.Role;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import sae.project.model.User;
-import sae.project.repositories.RoleRepository;
-import sae.project.repositories.UserRepository;
+import sae.project.repositories.*;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,45 +26,21 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private PasswordEncoder  passwordEncoder;
+
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder  passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     public List<User> userList() {
         return userRepository.findAll();
     }
 
     public Optional<User> getUserById(int id) {
         return userRepository.findById(id);
-    }
-
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
-
-    @Transactional
-    public void deleteUser(int id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        // Supprimer les assignments liés
-        if (user.getAssignmentList() != null) {
-            user.getAssignmentList().clear();
-        }
-        // Supprimer les tickets liés
-        if (user.getTicketsList() != null) {
-            user.getTicketsList().clear();
-        }
-        // Supprimer les formations liées
-        if (user.getFormationList() != null) {
-            user.getFormationList().clear();
-        }
-        // Supprimer les rôles liés
-        if (user.getRoleList() != null) {
-            user.getRoleList().clear();
-        }
-        userRepository.save(user);
-        userRepository.deleteById(id);
-    }
-
-    public List<Role> getUserRoles(int id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.map(User::getRoleList).orElse(null);
     }
 
     public void updateUserRoles(int id, List<Integer> roles) {
@@ -110,10 +91,66 @@ public class UserService {
     }
 
     @Transactional
-    public void validateUser(int id) {
+    public BulkImportResultDTO importUsersFromCsv(MultipartFile file) {
+        List<String> errors = new ArrayList<>();
+        int successCount = 0;
+
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+
+            String line;
+            int lineNumber = 0;
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                if (lineNumber == 1 && line.toLowerCase().startsWith("username")) continue; // skip header
+
+                String[] parts = line.split(";");
+                if (parts.length < 3) {
+                    errors.add("Ligne " + lineNumber + " : format invalide (minimum : username;prenom;nom)");
+                    continue;
+                }
+
+                String username = parts[0].trim();
+                String firstName = parts[1].trim();
+                String lastName = parts[2].trim();
+                String email = parts.length > 3 ? parts[3].trim() : null;
+                String rawPassword = parts.length > 4 ? parts[4].trim() : "ChangeMe123";
+
+                if (username.isBlank() || firstName.isBlank() || lastName.isBlank()) {
+                    errors.add("Ligne " + lineNumber + " : username, prénom et nom sont obligatoires");
+                    continue;
+                }
+
+                if (userRepository.findByUsernameIgnoreCase(username).isPresent()) {
+                    errors.add("Ligne " + lineNumber + " : l'utilisateur '" + username + "' existe déjà");
+                    continue;
+                }
+
+                User user = User.builder()
+                        .username(username)
+                        .firstName(firstName)
+                        .lastName(lastName)
+                        .email(email)
+                        .password(passwordEncoder.encode(rawPassword))
+                        .validationStatus("NONE")
+                        .build();
+
+                userRepository.save(user);
+                successCount++;
+            }
+        } catch (Exception e) {
+            errors.add("Erreur de lecture du fichier : " + e.getMessage());
+        }
+
+        return new BulkImportResultDTO(successCount, errors.size(), errors);
+    }
+
+    @Transactional
+    public void validateUser(int id, String comment) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setValidationStatus("SUBMITTED");
+        user.setValidationComment(comment);
         userRepository.save(user);
     }
 }

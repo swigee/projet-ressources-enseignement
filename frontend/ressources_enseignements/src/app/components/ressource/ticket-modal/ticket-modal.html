@@ -1,0 +1,49 @@
+@if (isOpen) {
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+  <div class="bg-white rounded-xl shadow-2xl overflow-hidden w-full max-w-lg mx-4 transform transition-all">
+
+    <div class="px-8 py-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+      <div>
+        <h2 class="text-xl font-bold text-gray-800">Créer un ticket</h2>
+        <p class="mt-1 text-sm text-gray-500">Décrivez le problème que vous rencontrez (heures, validation,
+          ressources...)</p>
+      </div>
+      <button (click)="closeTicketModal()" class="text-gray-400 hover:text-gray-600">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+    </div>
+
+    <div class="px-8 py-6 space-y-6">
+      <div class="relative">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Sujet du problème <span class="text-red-500">*</span>
+        </label>
+        <input type="text" [(ngModel)]="ticketData.title"
+          class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+          placeholder="Ex: Erreur d'heures, Problème de validation, etc.">
+      </div>
+
+      <div class="relative">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Description détaillée <span class="text-red-500">*</span>
+        </label>
+        <textarea rows="4" [(ngModel)]="ticketData.description"
+          class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+          placeholder="Décrivez précisément le problème..."></textarea>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-4">
+        <button (click)="closeTicketModal()"
+          class="px-6 py-2.5 text-gray-700 font-medium hover:bg-gray-100 rounded-lg transition">
+          Annuler
+        </button>
+        <button (click)="submitTicket()"
+          class="px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-md font-medium flex items-center gap-2">
+          Signaler <i class="fa-regular fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+}

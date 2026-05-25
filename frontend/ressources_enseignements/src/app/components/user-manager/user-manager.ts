@@ -6,40 +6,31 @@ import { RoleService } from '../../services/role/role-service';
 import { PageTitle } from '../../services/page-title/page-title-service';
 
 @Component({
-  selector: 'app-user-manager',
-  templateUrl: './user-manager.html'
+    selector: 'app-user-manager',
+    imports: [],
+    templateUrl: './user-manager.html'
 })
 export class UserManager {
   private readonly pageTitle = inject(PageTitle);
   private readonly userService = inject(UserService);
   private readonly roleService = inject(RoleService);
+  errorMessage = '';
+  isLoading = true;
 
   readonly tabRoles = signal<RoleModel[]>([]);
   readonly tabUsers = signal<UserModel[]>([]);
   readonly showFilter = signal(false);
   readonly searchName = signal('');
-  readonly selectedRoles = signal<string[]>([]);
-  readonly editingUserId = signal<number | null>(null);
 
   readonly showAddRolePopup = signal<number | null>(null);
   readonly searchRoleText = signal('');
   readonly selectedRolesToAdd = signal<number[]>([]);
 
+  readonly showImportModal = signal(false);
+  importResult = signal<{ successCount: number; errorCount: number; errors: string[] } | null>(null);
+  importLoading = signal(false);
+
   readonly selectedRoleFilter = signal<number[]>([]);
-
-  // Suppression des signaux temporaires et méthodes associées à la validation différée des filtres
-
-  readonly filteredUsers = computed(() => {
-    return this.tabUsers().filter(user => {
-      const fullName = `${user.firstname} ${user.lastname}`.toLowerCase();
-      const matchName = fullName.includes(this.searchName().toLowerCase());
-      let matchRole = true;
-      if (this.selectedRoleFilter().length > 0) {
-        matchRole = user.roles?.some(role => this.selectedRoleFilter().includes(role.id)) ?? false;
-      }
-      return matchName && matchRole;
-    });
-  });
 
   ngOnInit() {
     this.pageTitle.title.set('Gestion des utilisateurs');
@@ -48,17 +39,44 @@ export class UserManager {
   }
 
   loadUsers() {
-    this.userService.getAllUsers().subscribe(users => {
-      this.tabUsers.set(users);
-      console.log(users)
+    this.isLoading = true;
+    this.userService.getAllUsers().subscribe({
+      next: (users) => {
+        this.tabUsers.set(users);
+        this.isLoading = false;
+        console.log(users);
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des utilisateurs', err);
+        this.errorMessage = 'Impossible de charger les utilisateurs.';
+        this.isLoading = false;
+      }
     });
   }
 
   loadRoles(){
-    this.roleService.getAllRoles().subscribe(roles => {
+    this.roleService.getAllRoles().subscribe({
+      next: (roles) => {
       this.tabRoles.set(roles);
-      console.log(roles)});
+      console.log(roles)},
+    error: (err) => {
+        console.error('Erreur lors du chargement des rôles', err);
+        this.errorMessage = 'Impossible de charger les rôles.';
+      }
+    });
   }
+
+  readonly filteredUsers = computed(() => {
+    return this.tabUsers().filter(user => {
+      const fullName = `${user.firstname} ${user.lastname} ${user.username}`.toLowerCase();
+      const matchName = fullName.includes(this.searchName().toLowerCase());
+      let matchRole = true;
+      if (this.selectedRoleFilter().length > 0) {
+        matchRole = user.roles?.some(role => this.selectedRoleFilter().includes(role.id)) ?? false;
+      }
+      return matchName && matchRole;
+    });
+  });
 
   resetFilters() {
     this.searchName.set('');
@@ -71,16 +89,16 @@ export class UserManager {
     this.selectedRoleFilter.set(selected);
   }
 
-  removeUser(id: number) {
-    this.userService.deleteUser(id).subscribe(() => {
-      this.loadUsers();
-    });
-  }
-
   removeUserRole(iduser: number, id: number) {
-    if (typeof iduser !== 'number' || typeof id !== 'number'){return;};
-    this.userService.deleteUserRole(iduser, id).subscribe(() => {
-      this.loadUsers();
+    if (typeof iduser !== 'number' || typeof id !== 'number'){return};
+    this.userService.deleteUserRole(iduser, id).subscribe({
+      next: () => {
+        this.loadUsers();
+      },
+      error: (err) => {
+        console.error('Erreur lors de la suppression du rôle de l\'utilisateur', err);
+        this.errorMessage = 'Impossible de supprimer le rôle de l\'utilisateur.';
+      }
     });
   }
 
@@ -131,4 +149,35 @@ export class UserManager {
     return user.roles?.some(r => r.id === roleId) ?? false;
   }
 
+  openImportModal() {
+    this.showImportModal.set(true);
+    this.importResult.set(null);
+  }
+
+  closeImportModal() {
+    this.showImportModal.set(false);
+    this.importResult.set(null);
+  }
+
+  onCsvFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.importLoading.set(true);
+    this.importResult.set(null);
+    this.userService.importUsersFromCsv(file).subscribe({
+      next: (result) => {
+        this.importResult.set(result);
+        this.importLoading.set(false);
+        if (result.successCount > 0) this.loadUsers();
+      },
+      error: (err) => {
+        console.error('Erreur import CSV:', err);
+        this.importResult.set({ successCount: 0, errorCount: 1, errors: ['Erreur lors de l\'import.'] });
+        this.importLoading.set(false);
+      }
+    });
+    input.value = '';
+  }
 }

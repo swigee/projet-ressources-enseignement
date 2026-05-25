@@ -1,110 +1,48 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-
-export interface TeacherDTO {
-  id: number;
-  name: string;
-  firstName: string;
-  lastName: string;
-  subject: string;
-  status: string;
-  totalHours: number;
-  remainingHours: number;
-  statusColor: string;
-  roles?: string[];
-}
-
-export interface TeacherAssignmentDTO {
-  assignmentId: number;
-  teacherId: number;
-  teacherName: string;
-  lessonType: string;
-  assignedHours: number;
-}
-
-export interface AffectationRowDTO {
-  resourceId: number;
-  module: string;
-  td: string;
-  tp: string;
-  cm: string;
-  tdHours?: number;
-  tpHours?: number;
-  cmHours?: number;
-  tdTeachers: TeacherAssignmentDTO[];
-  tpTeachers: TeacherAssignmentDTO[];
-  cmTeachers: TeacherAssignmentDTO[];
-}
-
-
-export interface AssignmentStatisticsDTO {
-  totalTeachers: number;
-  totalAssignments: number;
-  totalHoursAssigned: number;
-  unassignedModules: number;
-  hoursByLessonType: { [key: string]: number };
-  hoursByTeacher: { [key: string]: number };
-}
-
-export interface AssignmentGridDTO {
-  selectedFormation: string;
-  selectedYear: string;
-  selectedSemester?: string;
-  availableTeachers: TeacherDTO[];
-  affectationGrid: AffectationRowDTO[];
-  statistics: AssignmentStatisticsDTO;
-}
-
-export interface CreateAssignmentDTO {
-  userId: number;
-  resourceId: number;
-  lessonType: string;
-  assignedTimes: number;
-}
-
-export interface AssignmentValidationResponseDTO {
-  success: boolean;
-  message: string;
-  errors?: string[];
-  warnings?: string[];
-}
-
+import {AssignmentGrid,TeacherAssignment,Teacher,AssignmentStatistics,CreateAssignment,AssignmentValidationResponse,AffectationRow} from '../../models/teacher/teacher.model';
 @Injectable({
   providedIn: 'root'
 })
 export class TeacherAssignmentService {
-  private apiUrl = 'http://localhost:8080/api/teacher-assignment';
+  private apiUrl = `${environment.apiUrl}/api/teacher-assignment`;
+  private educationApiUrl = `${environment.apiUrl}/api/education-manager`;
 
   constructor(private http: HttpClient) {}
 
-  getAllTeachers(): Observable<TeacherDTO[]> {
-    return this.http.get<TeacherDTO[]>(`${this.apiUrl}/teachers`);
+  getAllTeachers(): Observable<Teacher[]> {
+    return this.http.get<Teacher[]>(`${this.apiUrl}/teachers`);
   }
 
-  searchTeachers(keyword: string): Observable<TeacherDTO[]> {
+  searchTeachers(keyword: string): Observable<Teacher[]> {
     const params = new HttpParams().set('keyword', keyword);
-    return this.http.get<TeacherDTO[]>(`${this.apiUrl}/teachers/search`, { params });
+    return this.http.get<Teacher[]>(`${this.apiUrl}/teachers/search`, { params });
   }
 
-  getAssignmentGrid(formation: string, year: string, className: string, semester?: string): Observable<AssignmentGridDTO> {
-    let params = new HttpParams()
-      .set('formation', formation)
-      .set('year', year)
-      .set('className', className);
-
-    if (semester) {
-      params = params.set('semester', semester);
-    }
-
-    return this.http.get<AssignmentGridDTO>(`${this.apiUrl}/grid`, { params });
+  getAvailableClasses(year?: string, formation?: string): Observable<string[]> {
+    let params = new HttpParams();
+    if (year) params = params.set('year', year);
+    if (formation) params = params.set('formation', formation);
+    return this.http.get<string[]>(`${this.educationApiUrl}/classes`, { params });
   }
 
-  createAssignment(dto: CreateAssignmentDTO): Observable<any> {
+  getAssignmentGrid(formation: string, year: string, className: string, semester?: string): Observable<AssignmentGrid> {
+    let params = new HttpParams();
+    if (formation) params = params.set('formation', formation);
+    if (year) params = params.set('year', year);
+    if (className) params = params.set('className', className);
+    if (semester) params = params.set('semester', semester);
+
+    return this.http.get<AssignmentGrid>(`${this.apiUrl}/grid`, { params });
+  }
+
+  createAssignment(dto: CreateAssignment): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/assignments`, dto);
   }
 
-  updateAssignment(id: number, dto: CreateAssignmentDTO): Observable<any> {
+  updateAssignment(id: number, dto: CreateAssignment): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/assignments/${id}`, dto);
   }
 
@@ -116,12 +54,12 @@ export class TeacherAssignmentService {
     return this.http.delete<void>(`${this.apiUrl}/assignments/teacher/${userId}/ressource/${ressourceId}`);
   }
 
-  validateAssignments(year: string, className: string): Observable<AssignmentValidationResponseDTO> {
+  validateAssignments(year: string, className: string): Observable<AssignmentValidationResponse> {
     const params = new HttpParams()
       .set('year', year)
       .set('className', className);
 
-    return this.http.post<AssignmentValidationResponseDTO>(`${this.apiUrl}/validate`, null, { params });
+    return this.http.post<AssignmentValidationResponse>(`${this.apiUrl}/validate`, null, { params });
   }
 
   healthCheck(): Observable<string> {

@@ -1,23 +1,44 @@
+<p class="font-display font-bold italic text-[25px] pl-9 pt-3"> NEXUS Portail </p>
+<p class="pl-11 text-[12px]"> Ressources Enseignement </p>
+<div class="flex flex-col gap-2 pt-16 italic">
 
-    <p class="font-display font-bold italic text-[25px] pl-9 pt-3" > NEXUS Portail </p>
-    <p class="pl-11 text-[12px]"> Ressources Enseignement </p>
-    <div class="flex flex-col gap-2 pt-16 italic">
 
-      <a routerLink="/dashboard" routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
-      class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Tableau de bord </a>
+  <a routerLink="/dashboard" routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
+    class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Tableau de bord </a>
 
-      <a routerLink="/syllabus" routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
-      class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Syllabus </a>
+  <a *ngIf="auth.hasRole(['STUDENT', 'TEACHER', 'ADMIN'])" routerLink="/syllabus"
+    routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
+    class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Syllabus </a>
+  <a *ngIf="auth.hasRole(['TEACHER', 'ADMIN'])" routerLink="/educational-model"
+    routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
+    class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Gestion pédagogique </a>
 
-      <a routerLink="/educational-model" routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
-      class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Maquette pédagogique </a>
+  <a *ngIf="auth.hasRole(['ADMIN'])" routerLink="/teacher-assignment"
+    routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
+    class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Affectation des enseignants </a>
 
-      <a routerLink="/teacher-assignment" routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
-      class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Affectation des enseignants </a>
+  <a *ngIf="auth.hasRole(['ADMIN'])" routerLink="/group-tracking"
+    routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
+    class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Suivis étudiants </a>
 
-      <a routerLink="/education-manager" routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
-      class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Gestionnaire des formations</a>
+  <a *ngIf="auth.hasRole(['ADMIN'])" routerLink="/education-manager"
+    routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
+    class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Gestionnaire des formations</a>
 
-      <a routerLink="/user-manager" routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
-         class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Gestionnaire des utilisateurs </a>
-    </div>
+  <a *ngIf="auth.hasRole(['ADMIN'])" routerLink="/user-manager"
+    routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
+    class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Gestionnaire des utilisateurs </a>
+
+  <a *ngIf="auth.hasRole(['ADMIN'])" routerLink="/ticket-manager"
+    routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
+    class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Gestionnaire des tickets </a>
+
+  <a *ngIf="auth.hasRole(['ADMIN'])" routerLink="/vacataire-manager"
+    routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
+    class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Gestionnaire des vacataires </a>
+
+  <a *ngIf="auth.hasRole(['TEACHER', 'ADMIN'])" routerLink="/liste-logiciels"
+     routerLinkActive="text-[#60A5FA] border-r-3 border-[#60A5FA] bg-[#141F3B]"
+     class="pl-10 pt-3 pb-3 hover:bg-[#141F3B] cursor-pointer"> Liste Logiciels </a>
+
+</div>

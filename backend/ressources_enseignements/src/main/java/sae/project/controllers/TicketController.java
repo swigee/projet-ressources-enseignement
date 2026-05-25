@@ -2,7 +2,8 @@ package sae.project.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import sae.project.dtos.TicketDto;
+
+import sae.project.dtos.ticket.TicketDto;
 import sae.project.services.TicketService;
 
 @RestController
@@ -15,5 +16,16 @@ public class TicketController {
     @PostMapping
     public void createTicket(@RequestBody TicketDto ticketDto) {
         ticketService.createTicket(ticketDto);
+    }
+
+    @GetMapping
+    public java.util.List<sae.project.dtos.ticket.TicketResponseDto> getAllTickets() {
+        return ticketService.getAllTickets();
+    }
+
+    @PutMapping("/{id}/status")
+    public void updateTicketStatus(@PathVariable Integer id, @RequestBody java.util.Map<String, String> body) {
+        String status = body.get("status");
+        ticketService.updateStatus(id, status);
     }
 }

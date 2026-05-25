@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package sae.project.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -18,10 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- * @author andry
- */
 @Entity
 @Table(name = "resource")
 @NamedQueries({
@@ -52,51 +44,60 @@ public class Resource implements Serializable {
     @Column(name = "title")
     private String title;
 
-    @Lob
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "category", length = 100)
     private String category;
 
-    @Column(name = "is_highlighted")
-    @Builder.Default
-    private Boolean isHighlighted = false;
+    @Column(name = "savoirs", columnDefinition = "TEXT")
+    private String savoirs;
 
-    // Heures TD (Travaux Dirigés)
+    @Column(name = "apprentissages_critiques", columnDefinition = "TEXT")
+    private String apprentissagesCritiques;
+
+    @Column(name = "volume_officiel", columnDefinition = "TEXT")
+    private String volumeOfficiel;
+
+    @Column(name = "personal_description", columnDefinition = "TEXT")
+    private String personalDescription;
+
+    @Column(name = "personal_savoirs", columnDefinition = "TEXT")
+    private String personalSavoirs;
+
+    @Column(name = "personal_apprentissages", columnDefinition = "TEXT")
+    private String personalApprentissages;
+
+    @Column(name = "personal_volume", columnDefinition = "TEXT")
+    private String personalVolume;
+
     @Column(name = "td_state_hours")
     private Integer tdStateHours;
 
     @Column(name = "td_iut_hours")
     private Integer tdIutHours;
 
-    // Heures TP (Travaux Pratiques)
     @Column(name = "tp_state_hours")
     private Integer tpStateHours;
 
     @Column(name = "tp_iut_hours")
     private Integer tpIutHours;
 
-    // Heures CM (Cours Magistral)
     @Column(name = "cm_state_hours")
     private Integer cmStateHours;
 
     @Column(name = "cm_iut_hours")
     private Integer cmIutHours;
 
-    // Stockage des heures par semaine (JSON)
     @Column(name = "hours_per_week", columnDefinition = "TEXT")
     private String hoursPerWeekJson;
 
-    // Heures par demi-groupe
     @Column(name = "hours_per_half_group")
     private Integer hoursPerHalfGroup;
 
-    // Semestre (1 ou 2 dans l'année)
     @Column(name = "semester")
     private Integer semester;
 
-    // Relations
     @ManyToMany(mappedBy = "resourceList", fetch = FetchType.LAZY)
     @JsonIgnoreProperties("resourceList")
     private List<Formation> formationList;
@@ -110,20 +111,17 @@ public class Resource implements Serializable {
     @JsonIgnoreProperties("resource")
     private List<Assignment> assignmentList;
 
-    // Méthodes utilitaires pour gérer hoursPerWeek comme Map
     @Transient
     public Map<String, WeekHoursDTO> getHoursPerWeek() {
         if (hoursPerWeekJson == null || hoursPerWeekJson.isEmpty()) {
             return new HashMap<>();
         }
         com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-        // Try new format first: Map<String, WeekHoursDTO>
         try {
             return mapper.readValue(hoursPerWeekJson,
                     new com.fasterxml.jackson.core.type.TypeReference<Map<String, WeekHoursDTO>>() {
                     });
         } catch (Exception e) {
-            // Fallback: old format Map<String, Integer> — convert to WeekHoursDTO
             try {
                 Map<String, Integer> oldFormat = mapper.readValue(hoursPerWeekJson,
                         new com.fasterxml.jackson.core.type.TypeReference<Map<String, Integer>>() {
@@ -153,7 +151,6 @@ public class Resource implements Serializable {
         }
     }
 
-    // Calcul du total des heures
     @Transient
     public Integer getTotalHours() {
         return getHoursPerWeek().values().stream()

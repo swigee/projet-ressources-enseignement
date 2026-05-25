@@ -10,49 +10,77 @@
   </div>
 
   <h2 class="text-5xl italic font-medium text-black mb-12">
-    Connection
+    {{ isForgotPasswordMode() ? 'Mot de passe oublié' : 'Connection' }}
   </h2>
 
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="w-full max-w-lg px-8">
+  <!-- Login Form -->
+  <form *ngIf="!isForgotPasswordMode()" [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="w-full max-w-lg px-8">
 
     <div class="mb-6">
       <label for="username" class="block text-black text-sm font-semibold italic mb-2">
         identifiant
       </label>
-      <input
-        type="text"
-        id="username"
-        formControlName="username"
-        class="w-full border border-gray-400 p-3 text-lg focus:outline-none focus:border-black bg-white"
-      >
+      <input type="text" id="username" formControlName="username"
+        class="w-full border border-gray-400 p-3 text-lg focus:outline-none focus:border-black bg-white">
     </div>
 
     <div class="mb-2">
       <label for="password" class="block text-black text-sm font-semibold italic mb-2">
         mot de passe
       </label>
-      <input
-        type="password"
-        id="password"
-        formControlName="password"
-        class="w-full border border-gray-400 p-3 text-lg focus:outline-none focus:border-black bg-white"
-      >
+      <div class="relative">
+        <input [type]="showPassword() ? 'text' : 'password'" id="password" formControlName="password"
+          class="w-full border border-gray-400 p-3 text-lg focus:outline-none focus:border-black bg-white pr-10">
+        <button type="button" (click)="togglePassword()"
+          class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-black">
+          <i class="fa-regular" [class.fa-eye]="!showPassword()" [class.fa-eye-slash]="showPassword()"></i>
+        </button>
+      </div>
     </div>
 
     <div class="mb-12">
-      <a href="#" class="text-xs text-black underline italic hover:text-gray-700">
-        mot de passe oublier
+      <a (click)="toggleForgotPasswordMode()"
+        class="text-xs text-black underline italic hover:text-gray-700 cursor-pointer">
+        mot de passe oublié
       </a>
     </div>
 
     <div class="flex justify-center">
-      <button
-        type="submit"
-        [disabled]="loginForm.invalid"
-        class="bg-black text-white rounded-full py-3 px-16 text-lg hover:bg-gray-800 transition duration-300 disabled:opacity-50"
-      >
+      <button type="submit" [disabled]="loginForm.invalid"
+        class="bg-black text-white rounded-full py-3 px-16 text-lg hover:bg-gray-800 transition duration-300 disabled:opacity-50">
         Continuer
       </button>
+    </div>
+
+  </form>
+
+  <!-- Forgot Password Form -->
+  <form *ngIf="isForgotPasswordMode()" [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordSubmit()"
+    class="w-full max-w-lg px-8">
+
+    <p class="text-center text-gray-600 italic mb-8">
+      Entrez votre adresse email pour recevoir un lien de réinitialisation.
+    </p>
+
+    <div class="mb-8">
+      <label for="email" class="block text-black text-sm font-semibold italic mb-2">
+        email
+      </label>
+      <input type="email" id="email" formControlName="email"
+        class="w-full border border-gray-400 p-3 text-lg focus:outline-none focus:border-black bg-white"
+        placeholder="exemple@univ.fr">
+    </div>
+
+    <div class="flex flex-col items-center gap-4">
+      <button type="submit" [disabled]="forgotPasswordForm.invalid"
+        class="bg-black text-white rounded-full py-3 px-8 text-lg hover:bg-gray-800 transition duration-300 disabled:opacity-50 w-full">
+        Envoyer le lien
+      </button>
+
+      <a (click)="toggleForgotPasswordMode()"
+        class="text-sm text-black underline italic hover:text-gray-700 cursor-pointer">
+        Retour à la connexion
+      </a>
     </div>
 
   </form>

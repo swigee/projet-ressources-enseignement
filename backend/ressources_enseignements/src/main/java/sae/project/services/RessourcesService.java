@@ -13,7 +13,7 @@ import sae.project.model.Resource;
 import sae.project.model.User;
 import sae.project.repositories.PedagogicalScheduleRepository;
 import sae.project.repositories.TeacherAssignmentRepository;
-import sae.project.repositories.UserRepository;
+import sae.project.repositories.ResourceRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,16 +29,16 @@ public class RessourcesService {
     @Autowired
     private TeacherAssignmentRepository assignmentRepository;
 
-    @Autowired
-    private UserRepository userRepository;
 
-    /**
-     * Récupérer les données du tableau de ressources pour une année, classe et semestre
-     */
-    public RessourcesResponseDTO getRessourcesTableData(String year, String className, Integer semester) {
-        log.info("Récupération des données du tableau pour year={} className={} semester={}", year, className, semester);
+    private String nullIfBlank(String s) {
+        return (s == null || s.isBlank()) ? null : s;
+    }
 
-        List<Resource> resources = ressourcesRepository.findByYearAndClassAndSemester(year, className, semester);
+    public RessourcesResponseDTO getRessourcesTableData(String year, String className, Integer semester, String formation) {
+        log.info("Retrieving table data for year={} className={} semester={} formation={}", year, className, semester, formation);
+
+        List<Resource> resources = ressourcesRepository.findWithFilters(
+                nullIfBlank(year), nullIfBlank(className), nullIfBlank(formation), semester);
         List<RessourceRowDTO> ressourceRows = resources.stream()
                 .map(this::mapResourceToRowDTO)
                 .collect(Collectors.toList());
@@ -53,11 +53,8 @@ public class RessourcesService {
                 .build();
     }
 
-    /**
-     * Récupérer tous les enseignants disponibles avec leurs heures
-     */
     public List<TeacherBadgeDTO> getAvailableTeachers() {
-        log.info("Récupération de tous les enseignants disponibles");
+        log.info("Retrieving all available teachers");
 
         List<Object[]> teachersWithHours = assignmentRepository.getTeachersWithHours();
 
@@ -80,11 +77,8 @@ public class RessourcesService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Détecter les conflits d'emploi du temps pour un enseignant
-     */
     public List<ScheduleConflictDTO> detectConflicts(Integer teacherId) {
-        log.info("Détection des conflits pour l'enseignant {}", teacherId);
+        log.info("Detecting conflicts for teacher {}", teacherId);
 
         List<Assignment> assignments = assignmentRepository.findByUserId(teacherId);
 
@@ -92,7 +86,6 @@ public class RessourcesService {
             return new ArrayList<>();
         }
 
-        // Grouper les affectations par semaine
         Map<Integer, List<Assignment>> assignmentsByWeek = new HashMap<>();
 
         for (Assignment assignment : assignments) {
@@ -104,13 +97,12 @@ public class RessourcesService {
                         Integer week = Integer.parseInt(weekStr);
                         assignmentsByWeek.computeIfAbsent(week, k -> new ArrayList<>()).add(assignment);
                     } catch (NumberFormatException e) {
-                        // Ignorer les clés non numériques
+                        // ignore non-numeric keys
                     }
                 }
             }
         }
 
-        // Détecter les conflits (2+ ressources dans la même semaine)
         List<ScheduleConflictDTO> conflicts = new ArrayList<>();
         User teacher = assignments.get(0).getUser();
         String teacherName = (teacher.getLastName() != null ? teacher.getLastName().toUpperCase() : "") + " " +
@@ -136,11 +128,8 @@ public class RessourcesService {
         return conflicts;
     }
 
-    /**
-     * Rechercher des ressources par mot-clé
-     */
     public List<RessourceRowDTO> searchRessources(String keyword) {
-        log.info("Recherche de ressources avec le mot-clé: {}", keyword);
+        log.info("Searching resources with keyword: {}", keyword);
 
         List<Resource> resources = ressourcesRepository.searchByTitleContaining(keyword);
 
@@ -149,49 +138,53 @@ public class RessourcesService {
                 .collect(Collectors.toList());
     }
 
-    // ============ Méthodes privées ============
-
-    /**
-     * Mapper une Resource vers RessourceRowDTO
-     */
     private RessourceRowDTO mapResourceToRowDTO(Resource resource) {
-        // Calculer les heures prévisionnelles (State = prévisionnel)
-        Integer heuresPrevisionnelles = safeSum(
+        Integer plannedHours = safeSum(
                 resource.getTdStateHours(),
                 resource.getTpStateHours(),
                 resource.getCmStateHours()
         );
 
-        // Calculer les heures réelles (IUT = réel)
-        Integer heuresReelles = safeSum(
+        Integer actualHours = safeSum(
                 resource.getTdIutHours(),
                 resource.getTpIutHours(),
                 resource.getCmIutHours()
         );
 
-        // Récupérer les enseignants affectés à cette ressource
         List<Assignment> assignments = assignmentRepository.findByResourceId(resource.getId());
         List<TeacherBadgeDTO> assignedTeachers = assignments.stream()
-                .map(this::mapAssignmentToTeacherBadge)
+                .collect(Collectors.groupingBy(
+                        a -> a.getUser().getId(),
+                        Collectors.summingInt(a -> a.getAssignedTimes() != null ? a.getAssignedTimes() : 0)
+                ))
+                .entrySet().stream()
+                .map(entry -> {
+                    User user = assignments.stream()
+                            .filter(a -> a.getUser().getId().equals(entry.getKey()))
+                            .findFirst().orElseThrow().getUser();
+                    String lastName = user.getLastName() != null ? user.getLastName().toUpperCase() : "";
+                    String firstName = user.getFirstName() != null ? user.getFirstName() : "";
+                    return TeacherBadgeDTO.builder()
+                            .teacherId(user.getId())
+                            .fullName((lastName + " " + firstName).trim())
+                            .assignedHours(entry.getValue())
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         return RessourceRowDTO.builder()
                 .id(resource.getId())
                 .moduleName(resource.getTitle())
                 .category(resource.getCategory())
-                .heuresPrevisionnelles(heuresPrevisionnelles)
-                .heuresReelles(heuresReelles)
-                .heuresTD(resource.getTdStateHours() != null ? resource.getTdStateHours() : 0)
-                .heuresTP(resource.getTpStateHours() != null ? resource.getTpStateHours() : 0)
-                .heuresCM(resource.getCmStateHours() != null ? resource.getCmStateHours() : 0)
-                .isHighlighted(resource.getIsHighlighted() != null ? resource.getIsHighlighted() : false)
+                .plannedHours(plannedHours)
+                .actualHours(actualHours)
+                .tdHours(resource.getTdStateHours() != null ? resource.getTdStateHours() : 0)
+                .tpHours(resource.getTpStateHours() != null ? resource.getTpStateHours() : 0)
+                .cmHours(resource.getCmStateHours() != null ? resource.getCmStateHours() : 0)
                 .assignedTeachers(assignedTeachers)
                 .build();
     }
 
-    /**
-     * Mapper une Assignment vers TeacherBadgeDTO
-     */
     private TeacherBadgeDTO mapAssignmentToTeacherBadge(Assignment assignment) {
         User user = assignment.getUser();
 
@@ -209,9 +202,6 @@ public class RessourcesService {
                 .build();
     }
 
-    /**
-     * Addition sécurisée de valeurs nullables
-     */
     private Integer safeSum(Integer... values) {
         int sum = 0;
         for (Integer value : values) {

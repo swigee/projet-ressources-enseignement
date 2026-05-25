@@ -12,6 +12,7 @@ import { SyllabusComponent } from './components/syllabus/syllabus';
 import { SyllabusDetailComponent } from './components/syllabus-detail/syllabus-detail';
 import { SoftwareList } from './components/software-list/software-list';
 import { ServiceValidation } from './components/service-validation/service-validation';
+import {PermissionManager} from './components/permission-manager/permission-manager';
 
 export const routes: Routes = [
   {
@@ -87,6 +88,12 @@ export const routes: Routes = [
     component: ServiceValidation,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['TEACHER', 'ADMIN'] }
+  },
+  {
+    path: 'role-manager',
+    component: PermissionManager,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
   }
 
 ];

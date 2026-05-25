@@ -1,8 +1,6 @@
 <div class="h-full flex flex-col p-6 space-y-6 overflow-y-auto">
   <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-800">Gestion des Utilisateurs</h1>
-    </div>
+
     <div class="flex justify-end pt-5 pb-5 relative gap-3">
       <button
         type="button"
@@ -90,7 +88,8 @@
               <i class="fa-regular fa-folder-open text-2xl text-gray-300 mb-2 block"></i>
               Aucun utilisateurs trouvés.
             </td>
-          </tr>}
+          </tr>
+        }
 
         <tbody>
           @for (user of filteredUsers(); track user.iduser) {

@@ -43,6 +43,17 @@ public interface TeacherAssignmentRepository extends JpaRepository<Assignment, I
             @Param("year") String year,
             @Param("className") String className);
 
+    @Query("SELECT DISTINCT a FROM Assignment a " +
+            "JOIN a.resource r " +
+            "JOIN r.formationList f " +
+            "WHERE (:year IS NULL OR f.year = :year) " +
+            "AND (:className IS NULL OR f.className = :className) " +
+            "AND (:formation IS NULL OR f.name = :formation)")
+    List<Assignment> findByFormationFlexible(
+            @Param("year") String year,
+            @Param("className") String className,
+            @Param("formation") String formation);
+
     @Query("SELECT COALESCE(SUM(a.assignedTimes), 0) FROM Assignment a WHERE a.user.id = :userId")
     Integer getTotalHoursByUserId(@Param("userId") Integer userId);
 
@@ -60,14 +71,15 @@ public interface TeacherAssignmentRepository extends JpaRepository<Assignment, I
     List<Object[]> getStatisticsByLessonType();
 
 
-    @Query("SELECT u.id, u.firstName, u.lastName, COALESCE(SUM(a.assignedTimes), 0) " +
+    @Query("SELECT u.id, u.firstName, u.lastName, COALESCE(SUM(a.assignedTimes), 0), u.type " +
             "FROM User u LEFT JOIN Assignment a ON u.id = a.user.id " +
             "WHERE u.id NOT IN (SELECT ur.id FROM User ur JOIN ur.roleList r WHERE r.id = 3) " +
-            "GROUP BY u.id, u.firstName, u.lastName")
+            "GROUP BY u.id, u.firstName, u.lastName, u.type")
     List<Object[]> getTeachersWithHours();
 
     @Modifying
     @Transactional
     @Query("DELETE FROM Assignment a WHERE a.user.id = :userId")
     void deleteByUserId(@Param("userId") int userId);
+
 }

@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import sae.project.dtos.ticket.TicketDto;
+import sae.project.dtos.ticket.TicketResponseDto;
 import sae.project.model.Ticket;
 import sae.project.model.User;
 import sae.project.repositories.TicketRepository;
 import sae.project.repositories.UserRepository;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class TicketService {
@@ -24,16 +26,16 @@ public class TicketService {
         Ticket ticket = new Ticket();
         ticket.setTitle(dto.title);
         ticket.setDescription(dto.description);
-        ticket.setStatus("OPEN"); // Valeur par défaut
-        ticket.setDate(Date.valueOf(LocalDate.now())); // Date d'aujourd'hui
+        ticket.setStatus("OPEN");
+        ticket.setDate(Date.valueOf(LocalDate.now())); 
         ticket.setUser(user);
 
         ticketsRepository.save(ticket);
     }
 
-    public java.util.List<sae.project.dtos.ticket.TicketResponseDto> getAllTickets() {
+    public List<TicketResponseDto> getAllTickets() {
         return ticketsRepository.findAll().stream()
-                .map(t -> new sae.project.dtos.ticket.TicketResponseDto(
+                .map(t -> new TicketResponseDto(
                         t.getId(),
                         t.getTitle(),
                         t.getDescription(),
@@ -46,6 +48,7 @@ public class TicketService {
                 .collect(java.util.stream.Collectors.toList());
     }
 
+    @jakarta.transaction.Transactional
     public void updateStatus(Integer ticketId, String status) {
         Ticket ticket = ticketsRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket introuvable"));

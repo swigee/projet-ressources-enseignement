@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import {AssignmentGrid,TeacherAssignment,Teacher,AssignmentStatistics,CreateAssignment,AssignmentValidationResponse,AffectationRow} from '../../models/teacher/teacher.model';
 @Injectable({
   providedIn: 'root'
 })
 export class TeacherAssignmentService {
-  private apiUrl = 'http://localhost:8080/api/teacher-assignment';
+  private apiUrl = `${environment.apiUrl}/api/teacher-assignment`;
+  private educationApiUrl = `${environment.apiUrl}/api/education-manager`;
 
   constructor(private http: HttpClient) {}
 
@@ -19,15 +21,19 @@ export class TeacherAssignmentService {
     return this.http.get<Teacher[]>(`${this.apiUrl}/teachers/search`, { params });
   }
 
-  getAssignmentGrid(formation: string, year: string, className: string, semester?: string): Observable<AssignmentGrid> {
-    let params = new HttpParams()
-      .set('formation', formation)
-      .set('year', year)
-      .set('className', className);
+  getAvailableClasses(year?: string, formation?: string): Observable<string[]> {
+    let params = new HttpParams();
+    if (year) params = params.set('year', year);
+    if (formation) params = params.set('formation', formation);
+    return this.http.get<string[]>(`${this.educationApiUrl}/classes`, { params });
+  }
 
-    if (semester) {
-      params = params.set('semester', semester);
-    }
+  getAssignmentGrid(formation: string, year: string, className: string, semester?: string): Observable<AssignmentGrid> {
+    let params = new HttpParams();
+    if (formation) params = params.set('formation', formation);
+    if (year) params = params.set('year', year);
+    if (className) params = params.set('className', className);
+    if (semester) params = params.set('semester', semester);
 
     return this.http.get<AssignmentGrid>(`${this.apiUrl}/grid`, { params });
   }

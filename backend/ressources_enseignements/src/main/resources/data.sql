@@ -1,42 +1,32 @@
 -- =========================
--- NETTOYAGE DES ANCIENNES TABLES (Legacy)
--- =========================
-DROP TABLE IF EXISTS ressourcessyllabus;
-DROP TABLE IF EXISTS formationressources;
-DROP TABLE IF EXISTS userformation;
-DROP TABLE IF EXISTS tickets;
-DROP TABLE IF EXISTS ressources;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS role;
-DROP TABLE IF EXISTS app_role;
-
--- =========================
 -- ROLES
 -- =========================
 INSERT INTO position (id, name, is_active) VALUES
-(1, 'ADMIN', b'1'),
-(2, 'TEACHER', b'0'),
-(3, 'STUDENT', b'0');
+(1, 'ADMIN', true),
+(2, 'TEACHER', false),
+(3, 'STUDENT', false)
+ON CONFLICT (id) DO NOTHING;
 
 -- =========================
 -- USERS
 -- =========================
-INSERT INTO user (id, address, email, first_name, last_name, password, phone_number, validation_status, username) VALUES
-(1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', '$2a$10$G9CG3yuKGV9l6mDuxZy/ZuHgKgp62NAm/1ZXhcqXoZM4Om021JV3K', '0101010101', 'NONE', 'P2600001'),
-(2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', '$2a$10$1hrZWYwDa5MopVXf1LeGmusoN2lrzH06tFHBGLTIsk92dHE6p3p8G', '0202020202', 'VALIDATED', 'P2600002'),
-(3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', '$2a$10$x9fz8aI5xHPa4L5N1tBtaOtXE0dLjzFvyjPVRoWRXwyK9FYgCS8AO', '0303030303', 'NONE', 'P2600003'),
-(4, '10 rue des Lilas', 'martin.dupont@univ.fr', 'Martin', 'Dupont', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604010101', 'NONE', 'P2600004'),
-(5, '12 avenue Pasteur', 'sophie.bernard@univ.fr', 'Sophie', 'Bernard', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604020202', 'NONE', 'P2600005'),
-(6, '5 boulevard Victor Hugo', 'jean.moreau@univ.fr', 'Jean', 'Moreau', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604030303', 'NONE', 'P2600006'),
-(7, '8 rue de la Paix', 'claire.petit@univ.fr', 'Claire', 'Petit', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604040404', 'NONE', 'P2600007'),
-(8, '3 place de la Gare', 'pierre.leroy@univ.fr', 'Pierre', 'Leroy', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604050505', 'NONE', 'P2600008'),
-(9, '15 rue Voltaire', 'nathalie.roux@univ.fr', 'Nathalie', 'Roux', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604060606', 'NONE', 'P2600009'),
-(10, '22 avenue de la Republique', 'francois.garcia@univ.fr', 'Francois', 'Garcia', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604070707', 'NONE', 'P2600010'),
-(11, '7 rue Descartes', 'isabelle.martinez@univ.fr', 'Isabelle', 'Martinez', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604080808', 'NONE', 'P2600011'),
-(12, '9 rue Pascal', 'david.thomas@univ.fr', 'David', 'Thomas', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604090909', 'NONE', 'P2600012'),
-(13, '18 avenue Foch', 'emilie.robert@univ.fr', 'Emilie', 'Robert', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604101010', 'NONE', 'P2600013'),
-(14, '4 rue Moliere', 'philippe.richard@univ.fr', 'Philippe', 'Richard', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604111111', 'NONE', 'P2600014'),
-(15, '11 boulevard Gambetta', 'anne.dubois@univ.fr', 'Anne', 'Dubois', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604121212', 'NONE', 'P2600015');
+INSERT INTO users (id, address, email, first_name, last_name, password, phone_number, validation_status, username, type) VALUES
+(1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', '$2a$10$G9CG3yuKGV9l6mDuxZy/ZuHgKgp62NAm/1ZXhcqXoZM4Om021JV3K', '0101010101', 'NONE', 'P2600001', 'PERMANENT'),
+(2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', '$2a$10$1hrZWYwDa5MopVXf1LeGmusoN2lrzH06tFHBGLTIsk92dHE6p3p8G', '0202020202', 'VALIDATED', 'P2600002', 'PERMANENT'),
+(3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', '$2a$10$x9fz8aI5xHPa4L5N1tBtaOtXE0dLjzFvyjPVRoWRXwyK9FYgCS8AO', '0303030303', 'NONE', 'P2600003', NULL),
+(4, '10 rue des Lilas', 'martin.dupont@univ.fr', 'Martin', 'Dupont', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604010101', 'NONE', 'P2600004', 'VACATAIRE'),
+(5, '12 avenue Pasteur', 'sophie.bernard@univ.fr', 'Sophie', 'Bernard', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604020202', 'NONE', 'P2600005', 'PERMANENT'),
+(6, '5 boulevard Victor Hugo', 'jean.moreau@univ.fr', 'Jean', 'Moreau', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604030303', 'NONE', 'P2600006', 'VACATAIRE'),
+(7, '8 rue de la Paix', 'claire.petit@univ.fr', 'Claire', 'Petit', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604040404', 'NONE', 'P2600007', 'VACATAIRE'),
+(8, '3 place de la Gare', 'pierre.leroy@univ.fr', 'Pierre', 'Leroy', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604050505', 'NONE', 'P2600008', 'PERMANENT'),
+(9, '15 rue Voltaire', 'nathalie.roux@univ.fr', 'Nathalie', 'Roux', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604060606', 'NONE', 'P2600009', 'VACATAIRE'),
+(10, '22 avenue de la Republique', 'francois.garcia@univ.fr', 'Francois', 'Garcia', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604070707', 'NONE', 'P2600010', 'VACATAIRE'),
+(11, '7 rue Descartes', 'isabelle.martinez@univ.fr', 'Isabelle', 'Martinez', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604080808', 'NONE', 'P2600011', 'VACATAIRE'),
+(12, '9 rue Pascal', 'david.thomas@univ.fr', 'David', 'Thomas', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604090909', 'NONE', 'P2600012', 'PERMANENT'),
+(13, '18 avenue Foch', 'emilie.robert@univ.fr', 'Emilie', 'Robert', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604101010', 'NONE', 'P2600013', 'VACATAIRE'),
+(14, '4 rue Moliere', 'philippe.richard@univ.fr', 'Philippe', 'Richard', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604111111', 'NONE', 'P2600014', 'PERMANENT'),
+(15, '11 boulevard Gambetta', 'anne.dubois@univ.fr', 'Anne', 'Dubois', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604121212', 'NONE', 'P2600015', 'VACATAIRE')
+ON CONFLICT (id) DO NOTHING;
 
 -- =========================
 -- USER ROLE
@@ -56,7 +46,8 @@ INSERT INTO user_role (role_id, user_id) VALUES
 (2, 12),
 (2, 13),
 (2, 14),
-(2, 15);
+(2, 15)
+ON CONFLICT DO NOTHING;
 
 -- =========================
 -- FORMATIONS (BUT Informatique)
@@ -81,7 +72,8 @@ INSERT INTO formation (id, name, year, class_name, description) VALUES
 (17, 'Informatique', '2', 'G3', 'Formation BUT Informatique annee 2 - groupe C'),
 (18, 'Informatique', '2', 'G4', 'Formation BUT Informatique annee 2 - groupe D'),
 (19, 'Informatique', '3', 'G3', 'Formation BUT Informatique annee 3 - groupe C'),
-(20, 'Informatique', '3', 'G4', 'Formation BUT Informatique annee 3 - groupe D');
+(20, 'Informatique', '3', 'G4', 'Formation BUT Informatique annee 3 - groupe D')
+ON CONFLICT (id) DO NOTHING;
 
 -- =========================
 -- USER FORMATION
@@ -101,7 +93,8 @@ INSERT INTO user_formation (formation_id, user_id) VALUES
 (3, 12), (4, 12),
 (5, 13), (6, 13),
 (1, 14), (2, 14),
-(3, 15), (5, 15);
+(3, 15), (5, 15)
+ON CONFLICT DO NOTHING;
 
 
 -- =========================
@@ -302,7 +295,8 @@ INSERT INTO resource (
 (37, 'Memoire professionnel', 'Redaction du memoire professionnel', 'Transversal',
  0, 0, 30, 0, 0, 0,
  '{"21":{"cm":0,"td":2,"tp":0,"total":2},"22":{"cm":0,"td":2,"tp":0,"total":2},"23":{"cm":0,"td":2,"tp":0,"total":2},"24":{"cm":0,"td":2,"tp":0,"total":2},"25":{"cm":0,"td":2,"tp":0,"total":2},"26":{"cm":0,"td":2,"tp":0,"total":2},"27":{"cm":0,"td":2,"tp":0,"total":2},"28":{"cm":0,"td":2,"tp":0,"total":2},"29":{"cm":0,"td":2,"tp":0,"total":2},"30":{"cm":0,"td":2,"tp":0,"total":2},"31":{"cm":0,"td":1,"tp":0,"total":1},"32":{"cm":0,"td":1,"tp":0,"total":1},"33":{"cm":0,"td":1,"tp":0,"total":1},"34":{"cm":0,"td":1,"tp":0,"total":1},"35":{"cm":0,"td":1,"tp":0,"total":1},"36":{"cm":0,"td":1,"tp":0,"total":1},"37":{"cm":0,"td":1,"tp":0,"total":1},"38":{"cm":0,"td":1,"tp":0,"total":1},"39":{"cm":0,"td":1,"tp":0,"total":1},"40":{"cm":0,"td":1,"tp":0,"total":1}}',
- 0, 2);
+ 0, 2)
+ON CONFLICT (id) DO NOTHING;
 
 
 -- =========================
@@ -414,8 +408,9 @@ INSERT INTO resource (
 (68, 'Projet data science S4', 'Projet integre analyse et modelisation', 'Projet',
  0, 0, 15, 0, 40, 0, '{}', 0, 2),
 
-(69, 'Ethique et IA', "Enjeux sociaux et ethiques de l'IA", 'Transversal',
- 30, 0, 20, 0, 10, 0, '{}', 0, 2);
+(69, 'Ethique et IA', 'Enjeux sociaux et ethiques de l''IA', 'Transversal',
+ 30, 0, 20, 0, 10, 0, '{}', 0, 2)
+ON CONFLICT (id) DO NOTHING;
 
 -- =========================
 -- FORMATION RESSOURCES
@@ -485,7 +480,8 @@ INSERT INTO formation_resource (formation_id, resource_id) VALUES
 (9, 58), (13, 58), (9, 59), (13, 59), (9, 60), (13, 60), (9, 61), (13, 61),
 -- SD Annee 2 (IDs 62-69) -> formations 10 (G1), 14 (G2)
 (10, 62), (14, 62), (10, 63), (14, 63), (10, 64), (14, 64), (10, 65), (14, 65),
-(10, 66), (14, 66), (10, 67), (14, 67), (10, 68), (14, 68), (10, 69), (14, 69);
+(10, 66), (14, 66), (10, 67), (14, 67), (10, 68), (14, 68), (10, 69), (14, 69)
+ON CONFLICT DO NOTHING;
 
 -- =========================
 -- SYLLABUS
@@ -494,7 +490,8 @@ INSERT INTO syllabus (id, description) VALUES
 (1, 'Syllabus Programmation'),
 (2, 'Syllabus Data'),
 (3, 'Syllabus Web'),
-(4, 'Syllabus Systemes');
+(4, 'Syllabus Systemes')
+ON CONFLICT (id) DO NOTHING;
 
 -- =========================
 -- RESSOURCES SYLLABUS
@@ -506,7 +503,8 @@ INSERT INTO resource_syllabus (resource_id, syllabus_id) VALUES
 (7, 1),
 (8, 3),
 (13, 1),
-(14, 2);
+(14, 2)
+ON CONFLICT DO NOTHING;
 
 -- =========================
 -- ASSIGNMENT
@@ -516,7 +514,8 @@ INSERT INTO assignment (id, assigned_times, lesson_type, resource_id, user_id) V
 (2, 25, 'TD', 2, 1),
 (3, 20, 'CM', 7, 1),
 (4, 30, 'CM', 13, 1), -- Dev App Year 2
-(5, 25, 'TD', 26, 1); -- Arch Log Year 3
+(5, 25, 'TD', 26, 1) -- Arch Log Year 3
+ON CONFLICT (id) DO NOTHING;
 
 -- =========================
 -- TICKETS
@@ -528,4 +527,44 @@ INSERT INTO ticket (id, date, resolution_date, description, status, title, user_
 (4, '2025-12-19', NULL, 'Mes heures de TP en réseau ne sont pas comptabilisées.', 'IN_PROGRESS', 'Heures TP manquantes', 5),
 (5, '2025-12-20', NULL, 'Serait-il possible de décaler mes heures de projet tutoré ?', 'OPEN', 'Décalage heures projet', 6),
 (6, '2025-12-21', '2025-12-23', 'Le système n''enregistre pas mes nouvelles heures vacataires.', 'RESOLVED', 'Enregistrement heures', 7),
-(7, '2025-12-22', NULL, 'Problème de validation des mes services par le responsable.', 'IN_PROGRESS', 'Validation des services', 4);
+(7, '2025-12-22', NULL, 'Problème de validation des mes services par le responsable.', 'IN_PROGRESS', 'Validation des services', 4)
+ON CONFLICT (id) DO NOTHING;
+
+-- =========================
+-- VACATAIRES
+-- Profiles 1-5: already converted → user_id is populated (statut = VALIDE)
+-- Profiles 6-8: still in the recruitment pipeline → user_id is NULL
+-- =========================
+INSERT INTO vacataire (
+    id,
+    nom, prenom, date_naissance,
+    departement, fonction, experience, profil, competences,
+    responsable_recrutement, etablissement, site,
+    vue_en_amont, transmis_responsable, signature_responsable,
+    source_connaissance, source_connaissance_autre,
+    statut,
+    user_id
+) VALUES
+-- Converted contractors (linked to existing users)
+(1, 'Dupont',   'Martin',   '1985-03-12', 'Informatique',                'Développeur',         '5 ans en entreprise',    'Expert backend Java',      'Java, Spring, Docker',          'Alice Admin', 'IUT Lyon',       'Lyon',      true,  true,  'A. Admin',  'ANCIEN_ETUDIANT',     NULL, 'VALIDE',      4),
+(2, 'Moreau',   'Jean',     '1990-07-24', 'Réseaux',                     'Ingénieur réseau',    '3 ans en ESN',           'Spécialiste réseaux',      'Cisco, Linux, Wireshark',       'Alice Admin', 'IUT Lyon',       'Lyon',      true,  true,  'A. Admin',  'RECOMMANDATION',      NULL, 'VALIDE',      6),
+(3, 'Petit',    'Claire',   '1988-11-05', 'Développement web',           'Développeuse full-stack','4 ans startup',        'React, Node.js expert',    'React, Node.js, PostgreSQL',    'Alice Admin', 'IUT Grenoble',   'Grenoble',  true,  true,  'A. Admin',  'ANNONCE',             NULL, 'VALIDE',      7),
+(4, 'Roux',     'Nathalie', '1992-02-18', 'Data',                        'Data Analyst',        '2 ans en banque',        'Python, BI spécialisée',   'Python, SQL, Power BI',         'Alice Admin', 'IUT Lyon',       'Lyon',      true,  false, NULL,        'ANCIEN_ETUDIANT',     NULL, 'VALIDE',      9),
+(5, 'Garcia',   'Francois', '1983-09-30', 'Sécurité informatique',       'Expert cybersécurité','8 ans indépendant',      'OSCP certifié',            'Pentesting, SIEM, ISO 27001',   'Alice Admin', 'IUT Saint-Etienne','Saint-Etienne',true,true,'A. Admin', 'RECOMMANDATION',      NULL, 'VALIDE',      10),
+-- Pending contractors (no user account yet)
+(6, 'Lambert',  'Thomas',   '1995-06-14', 'Intelligence Artificielle',   'Ingénieur ML',        '1 an post-doc',          'Spécialiste NLP',          'Python, TensorFlow, PyTorch',   'Bob Teacher', 'Université Lyon 1','Lyon',    false, false, NULL,        'SALON',               NULL, 'A_CONTACTER', NULL),
+(7, 'Lefevre',  'Julie',    '1991-04-22', 'Développement mobile',        'Développeuse iOS/Android','3 ans agence',       'Swift, Kotlin',            'Swift, Kotlin, Flutter',        'Bob Teacher', 'IUT Valence',    'Valence',   true,  false, NULL,        'RECOMMANDATION',      NULL, 'EN_COURS',    NULL),
+(8, 'Simon',    'Alexandre','1987-12-01', 'Base de données',             'DBA Oracle',          '6 ans en entreprise',    'Expert Oracle/PostgreSQL', 'Oracle, PostgreSQL, MongoDB',   'Bob Teacher', 'IUT Lyon',       'Lyon',      true,  false, NULL,        'ANCIEN_ETUDIANT',     NULL, 'EN_COURS',    NULL)
+ON CONFLICT (id) DO NOTHING;
+
+-- =========================
+-- RESET SEQUENCES
+-- =========================
+SELECT setval('position_id_seq',  (SELECT MAX(id) FROM position));
+SELECT setval('users_id_seq',     (SELECT MAX(id) FROM users));
+SELECT setval('formation_id_seq', (SELECT MAX(id) FROM formation));
+SELECT setval('resource_id_seq',  (SELECT MAX(id) FROM resource));
+SELECT setval('syllabus_id_seq',  (SELECT MAX(id) FROM syllabus));
+SELECT setval('assignment_id_seq',(SELECT MAX(id) FROM assignment));
+SELECT setval('ticket_id_seq',    (SELECT MAX(id) FROM ticket));
+SELECT setval('vacataire_id_seq', (SELECT MAX(id) FROM vacataire));

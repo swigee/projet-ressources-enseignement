@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -28,41 +28,57 @@ interface DragData {
 export class TeacherAssignmentComponent implements OnInit {
   selectedFormation: string = 'Informatique';
   selectedYear: string = '1';
-  selectedClass: string = 'G1';
+  selectedClass: string = '';
   selectedSemester: string = '';
   searchQuery: string = '';
   draggedTeacher: Teacher | null = null;
   isLoading: boolean = false;
 
+  activeTab: 'TD' | 'TP' | 'CM' = 'TD';
+  readonly tabs: ('TD' | 'TP' | 'CM')[] = ['TD', 'TP', 'CM'];
+  isMobileView = false;
+  showAssignModal = false;
+  modalResourceId: number | null = null;
+  modalLessonType: 'TD' | 'TP' | 'CM' | null = null;
+  modalSearchQuery = '';
+
+  @HostListener('window:resize')
+  onResize() {
+    this.isMobileView = window.innerWidth < 1024;
+  }
+
   teachers: Teacher[] = [];
   affectationGrid: AffectationRow[] = [];
   statistics: any = null;
+  availableGroups: string[] = [];
 
   constructor(private teacherService: TeacherAssignmentService, private pageTitle: PageTitle) {}
 
   ngOnInit() {
     this.pageTitle.title.set("Affectation des enseignants");
-    console.log('Initialisation avec:', {
-      formation: this.selectedFormation,
-      year: this.selectedYear,
-      class: this.selectedClass
-    });
+    this.isMobileView = window.innerWidth < 1024;
+    this.loadGroups();
     this.loadData();
   }
 
-  loadData(): void {
-    if (!this.selectedYear || !this.selectedClass) {
-      console.warn('Année ou classe non sélectionnée');
-      this.affectationGrid = [];
-      return;
-    }
+  get allClassesMode(): boolean {
+    return !this.selectedClass;
+  }
 
-    console.log('Chargement des données pour:', {
-      formation: this.selectedFormation,
-      year: this.selectedYear,
-      class: this.selectedClass
+  loadGroups(): void {
+    this.teacherService.getAvailableClasses(this.selectedYear, this.selectedFormation).subscribe({
+      next: (groups) => {
+        this.availableGroups = groups;
+        // Reset selectedClass if it no longer exists in available groups
+        if (this.selectedClass && !groups.includes(this.selectedClass)) {
+          this.selectedClass = '';
+        }
+      },
+      error: () => { this.availableGroups = []; }
     });
+  }
 
+  loadData(): void {
     this.isLoading = true;
     this.teacherService.getAssignmentGrid(
       this.selectedFormation,
@@ -93,12 +109,7 @@ export class TeacherAssignmentComponent implements OnInit {
    * Reload data when filters change
    */
   onFilterChange(): void {
-    console.log('Changement de filtre détecté:', {
-      formation: this.selectedFormation,
-      year: this.selectedYear,
-      class: this.selectedClass,
-      semester: this.selectedSemester
-    });
+    this.loadGroups();
     this.loadData();
   }
 
@@ -170,23 +181,26 @@ export class TeacherAssignmentComponent implements OnInit {
       const usedHours = teacherList.reduce((sum, t) => sum + t.assignedHours, 0);
       const remainingHours = moduleHours - usedHours;
 
-      if (remainingHours <= 0) {
-        alert('Toutes les heures de ce type sont déjà affectées');
-        this.draggedTeacher = null;
-        return;
-      }
-
-      let hoursStr = prompt(`Combien d'heures pour le ${lessonType} ? (max ${remainingHours})`, `${remainingHours}`);
+      const defaultHours = remainingHours > 0 ? remainingHours : moduleHours;
+      let hoursStr = prompt(`Combien d'heures pour le ${lessonType} ? (quota : ${moduleHours}h, utilisées : ${usedHours}h)`, `${defaultHours}`);
       if (!hoursStr) {
         this.draggedTeacher = null;
         return;
       }
 
       let hours = parseInt(hoursStr);
-      if (isNaN(hours) || hours <= 0 || hours > remainingHours) {
-        alert(`Nombre d'heures invalide. Vous pouvez assigner entre 1 et ${remainingHours}h`);
+      if (isNaN(hours) || hours <= 0) {
+        alert(`Nombre d'heures invalide.`);
         this.draggedTeacher = null;
         return;
+      }
+
+      if (usedHours + hours > moduleHours) {
+        const over = usedHours + hours - moduleHours;
+        if (!confirm(`Attention : cette affectation dépasse le quota de ${moduleHours}h de ${over}h. Confirmer quand même ?`)) {
+          this.draggedTeacher = null;
+          return;
+        }
       }
 
       const existingAssignment = teacherList.find(t => t.teacherId === dragData.teacherId);
@@ -221,6 +235,32 @@ export class TeacherAssignmentComponent implements OnInit {
 
   onDragEnd(): void {
     this.draggedTeacher = null;
+  }
+
+  editTeacherHours(teacher: TeacherAssignment, resourceId: number, lessonType: 'TD' | 'TP' | 'CM'): void {
+    const hoursStr = prompt(`Modifier les heures de ${teacher.teacherName} (${lessonType}) :`, `${teacher.assignedHours}`);
+    if (!hoursStr) return;
+
+    const hours = parseInt(hoursStr);
+    if (isNaN(hours) || hours <= 0) {
+      alert('Nombre d\'heures invalide.');
+      return;
+    }
+
+    const dto: CreateAssignment = {
+      userId: teacher.teacherId,
+      resourceId,
+      lessonType,
+      assignedTimes: hours
+    };
+
+    this.teacherService.updateAssignment(teacher.assignmentId, dto).subscribe({
+      next: () => this.loadData(),
+      error: (error) => {
+        console.error('Erreur mise à jour:', error);
+        alert('Erreur lors de la modification des heures.');
+      }
+    });
   }
 
   removeTeacher(assignmentId: number): void {
@@ -294,5 +334,81 @@ export class TeacherAssignmentComponent implements OnInit {
   saveAssignments(): void {
     alert('Les affectations ont été enregistrées avec succès !');
     this.loadData();
+  }
+
+  setActiveTab(tab: 'TD' | 'TP' | 'CM') {
+    this.activeTab = tab;
+  }
+
+  openAssignModal(resourceId: number, lessonType: 'TD' | 'TP' | 'CM') {
+    this.modalResourceId = resourceId;
+    this.modalLessonType = lessonType;
+    this.modalSearchQuery = '';
+    this.showAssignModal = true;
+  }
+
+  closeModal() {
+    this.showAssignModal = false;
+    this.modalResourceId = null;
+    this.modalLessonType = null;
+  }
+
+  get modalFilteredTeachers(): Teacher[] {
+    if (!this.modalSearchQuery) return this.teachers;
+    const q = this.modalSearchQuery.toLowerCase();
+    return this.teachers.filter(t =>
+      t.name.toLowerCase().includes(q) ||
+      (t.subject && t.subject.toLowerCase().includes(q))
+    );
+  }
+
+  assignFromModal(teacher: Teacher) {
+    if (this.modalResourceId === null || !this.modalLessonType) return;
+
+    const module = this.affectationGrid.find(m => m.resourceId === this.modalResourceId);
+    if (!module) return;
+
+    let teacherList: TeacherAssignment[];
+    let moduleHours: number;
+
+    switch (this.modalLessonType) {
+      case 'TD': teacherList = module.tdTeachers; moduleHours = module.tdHours || 10; break;
+      case 'TP': teacherList = module.tpTeachers; moduleHours = module.tpHours || 10; break;
+      case 'CM': teacherList = module.cmTeachers; moduleHours = module.cmHours || 10; break;
+      default: return;
+    }
+
+    const usedHours = teacherList.reduce((sum, t) => sum + t.assignedHours, 0);
+    const remainingHours = moduleHours - usedHours;
+    const defaultHours = remainingHours > 0 ? remainingHours : moduleHours;
+
+    const hoursStr = prompt(
+      `Heures pour ${teacher.name} en ${this.modalLessonType} ? (quota : ${moduleHours}h, utilisées : ${usedHours}h)`,
+      `${defaultHours}`
+    );
+    if (!hoursStr) return;
+
+    const hours = parseInt(hoursStr);
+    if (isNaN(hours) || hours <= 0) { alert('Nombre d\'heures invalide.'); return; }
+
+    if (usedHours + hours > moduleHours) {
+      const over = usedHours + hours - moduleHours;
+      if (!confirm(`Dépasse le quota de ${moduleHours}h de ${over}h. Confirmer quand même ?`)) return;
+    }
+
+    const assignment: CreateAssignment = {
+      userId: teacher.id,
+      resourceId: this.modalResourceId,
+      lessonType: this.modalLessonType,
+      assignedTimes: hours
+    };
+
+    this.teacherService.createAssignment(assignment).subscribe({
+      next: () => { this.closeModal(); this.loadData(); },
+      error: (error) => {
+        console.error('Erreur création affectation:', error);
+        alert('Erreur lors de l\'affectation: ' + (error.error?.message || error.message));
+      }
+    });
   }
 }

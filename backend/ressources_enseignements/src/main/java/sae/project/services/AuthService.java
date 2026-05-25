@@ -18,7 +18,7 @@ public class AuthService {
 
     public User authenticate(String username, String password) {
         System.out.println("Tentative de connexion pour : " + username);
-        Optional<User> usersOptional = userRepository.findByUsername(username);
+        Optional<User> usersOptional = userRepository.findByUsernameIgnoreCase(username);
         if (usersOptional.isPresent()) {
             User user = usersOptional.get();
             System.out.println("usename dans BD : " + user.getUsername());

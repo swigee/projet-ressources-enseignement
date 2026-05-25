@@ -1,14 +1,14 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from "@angular/router";
+import { Component, inject, signal } from '@angular/core';
+import { Router } from "@angular/router";
+import { FormsModule } from '@angular/forms';
 import { EducationalManagerService } from '../../services/educational-manager/educational-manager';
 import { Education } from '../../models/education/education.model';
 import { LessonService } from '../../services/lesson/lesson-service';
-import { AsyncPipe } from '@angular/common';
-import {PageTitle} from '../../services/page-title/page-title-service';
+import { PageTitle } from '../../services/page-title/page-title-service';
 
 @Component({
   selector: 'app-training-manager',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './educational-manager.html',
 })
 export class EducationalManager {
@@ -30,7 +30,7 @@ export class EducationalManager {
     });
   }
   clickDelete(id: number) {
-    this.edManager.deleteEducation(id)
+    this.edManager.deleteEducation(id);
   }
 
   updateEducation(etu: Education){
@@ -38,6 +38,43 @@ export class EducationalManager {
   }
 
   getUsers(id: number){
-    this.edManager.getUsers(id)
+    this.edManager.getUsers(id);
+  }
+
+  // --- Duplication ---
+  readonly showDuplicateModal = signal(false);
+  duplicateSourceId = signal<number | null>(null);
+  duplicateSourceName = signal('');
+  duplicateNewName = signal('');
+  duplicateLoading = signal(false);
+
+  openDuplicateModal(ed: Education) {
+    this.duplicateSourceId.set(ed.id!);
+    this.duplicateSourceName.set(ed.name);
+    this.duplicateNewName.set(ed.name + ' - Copie');
+    this.showDuplicateModal.set(true);
+  }
+
+  closeDuplicateModal() {
+    this.showDuplicateModal.set(false);
+    this.duplicateLoading.set(false);
+  }
+
+  confirmDuplicate() {
+    const id = this.duplicateSourceId();
+    const name = this.duplicateNewName().trim();
+    if (!id || !name) return;
+
+    this.duplicateLoading.set(true);
+    this.edManager.duplicateEducation(id, name).subscribe({
+      next: () => {
+        this.edManager.loadEducations();
+        this.closeDuplicateModal();
+      },
+      error: (err) => {
+        console.error('Erreur duplication:', err);
+        this.duplicateLoading.set(false);
+      }
+    });
   }
 }

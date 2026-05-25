@@ -44,12 +44,32 @@ public class Resource implements Serializable {
     @Column(name = "title")
     private String title;
 
-    @Lob
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "category", length = 100)
     private String category;
+
+    @Column(name = "savoirs", columnDefinition = "TEXT")
+    private String savoirs;
+
+    @Column(name = "apprentissages_critiques", columnDefinition = "TEXT")
+    private String apprentissagesCritiques;
+
+    @Column(name = "volume_officiel", columnDefinition = "TEXT")
+    private String volumeOfficiel;
+
+    @Column(name = "personal_description", columnDefinition = "TEXT")
+    private String personalDescription;
+
+    @Column(name = "personal_savoirs", columnDefinition = "TEXT")
+    private String personalSavoirs;
+
+    @Column(name = "personal_apprentissages", columnDefinition = "TEXT")
+    private String personalApprentissages;
+
+    @Column(name = "personal_volume", columnDefinition = "TEXT")
+    private String personalVolume;
 
     @Column(name = "td_state_hours")
     private Integer tdStateHours;

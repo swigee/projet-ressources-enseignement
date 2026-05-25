@@ -3,7 +3,13 @@
     <div>
       <h1 class="text-3xl font-bold text-gray-800">Gestion des Utilisateurs</h1>
     </div>
-    <div class="flex justify-end pt-5 pb-5 relative">
+    <div class="flex justify-end pt-5 pb-5 relative gap-3">
+      <button
+        type="button"
+        class="bg-blue-600 text-white px-4 py-2 rounded-full font-semibold cursor-pointer hover:bg-blue-700 flex items-center gap-2"
+        (click)="openImportModal()">
+        <i class="fa-solid fa-file-import"></i> Importer CSV
+      </button>
       <button
         type="button"
         class="bg-gray-200 px-4 py-2 rounded-full font-semibold cursor-pointer hover:bg-[#afb1b6]"
@@ -184,3 +190,53 @@
     </div>
   </div>
 </div>
+
+<!-- Modale import CSV -->
+@if (showImportModal()) {
+<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 space-y-5">
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl font-bold text-gray-800">Importer des utilisateurs (CSV)</h2>
+      <button (click)="closeImportModal()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+    </div>
+
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+      <p class="font-semibold mb-1">Format attendu (séparateur : <code>;</code>)</p>
+      <code class="block text-xs bg-white rounded p-2 border border-blue-100">username;prenom;nom;email;motdepasse</code>
+      <p class="mt-2 text-xs text-blue-600">La première ligne peut être un en-tête (ignoré). Le mot de passe est optionnel (défaut : <em>ChangeMe123</em>).</p>
+    </div>
+
+    <label class="block">
+      <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors">
+        <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2 block"></i>
+        <p class="text-sm text-gray-600">Cliquez pour sélectionner un fichier CSV</p>
+        <input type="file" accept=".csv,text/csv" class="hidden" (change)="onCsvFileSelected($event)" />
+      </div>
+    </label>
+
+    @if (importLoading()) {
+      <div class="text-center text-blue-600">
+        <i class="fa-solid fa-spinner fa-spin mr-2"></i> Import en cours...
+      </div>
+    }
+
+    @if (importResult(); as result) {
+      <div [class]="result.errorCount === 0 ? 'bg-green-50 border border-green-200 rounded-lg p-4' : 'bg-amber-50 border border-amber-200 rounded-lg p-4'">
+        <p class="font-semibold text-sm mb-1">
+          <i class="fa-solid fa-circle-check text-green-600 mr-1"></i>{{ result.successCount }} utilisateur(s) importé(s)
+          @if (result.errorCount > 0) { · <span class="text-red-600">{{ result.errorCount }} erreur(s)</span> }
+        </p>
+        @if (result.errors.length > 0) {
+          <ul class="text-xs text-red-700 space-y-1 mt-2 list-disc pl-4">
+            @for (err of result.errors; track $index) { <li>{{ err }}</li> }
+          </ul>
+        }
+      </div>
+    }
+
+    <div class="flex justify-end">
+      <button (click)="closeImportModal()" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 font-medium text-sm">Fermer</button>
+    </div>
+  </div>
+</div>
+}

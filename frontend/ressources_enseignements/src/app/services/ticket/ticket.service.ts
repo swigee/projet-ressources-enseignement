@@ -1,4 +1,5 @@
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -22,7 +23,7 @@ export interface TicketResponseDTO {
   providedIn: 'root',
 })
 export class TicketService {
-  private apiUrl = 'http://localhost:8080/api/tickets';
+  private apiUrl = `${environment.apiUrl}/api/tickets`;
 
   constructor(private http: HttpClient) { }
 

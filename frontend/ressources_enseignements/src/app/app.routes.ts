@@ -7,8 +7,13 @@ import { TeacherAssignmentComponent } from './components/teacher-assignment/teac
 import { UserManager } from './components/user-manager/user-manager';
 import { Ressource } from './components/ressource/ressource';
 import { GroupTracking } from './components/group-tracking/group-tracking';
+import { VacataireManager } from './components/vacataire-manager/vacataire-manager';
 import { authGuard } from './services/auth/auth.guard';
 import { roleGuard } from './services/auth/role.guard';
+import { SyllabusComponent } from './components/syllabus/syllabus';
+import { SyllabusDetailComponent } from './components/syllabus-detail/syllabus-detail';
+import { SoftwareList } from './components/software-list/software-list';
+import { ServiceValidation } from './components/service-validation/service-validation';
 
 export const routes: Routes = [
   {
@@ -27,9 +32,15 @@ export const routes: Routes = [
   },
   {
     path: 'syllabus',
-    component: Dashboard,
+    component: SyllabusComponent,
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['STUDENT', 'TEACHER'] }
+    data: { roles: ['STUDENT', 'TEACHER', 'ADMIN'] }
+  },
+  {
+    path: 'syllabus/:id',
+    component: SyllabusDetailComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['STUDENT', 'TEACHER', 'ADMIN'] }
   },
   {
     path: 'educational-model',
@@ -84,6 +95,24 @@ export const routes: Routes = [
     component: GroupTracking,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['ADMIN'] }
+  },
+  {
+    path: 'vacataire-manager',
+    component: VacataireManager,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
+  },
+  {
+    path: 'liste-logiciels',
+    component: SoftwareList,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['TEACHER', 'ADMIN'] }
+  },
+  {
+    path: 'service-validation',
+    component: ServiceValidation,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['TEACHER', 'ADMIN'] }
   }
 
 ];

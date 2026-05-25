@@ -527,8 +527,73 @@ INSERT INTO ticket (id, date, resolution_date, description, status, title, user_
 (4, '2025-12-19', NULL, 'Mes heures de TP en réseau ne sont pas comptabilisées.', 'IN_PROGRESS', 'Heures TP manquantes', 5),
 (5, '2025-12-20', NULL, 'Serait-il possible de décaler mes heures de projet tutoré ?', 'OPEN', 'Décalage heures projet', 6),
 (6, '2025-12-21', '2025-12-23', 'Le système n''enregistre pas mes nouvelles heures vacataires.', 'RESOLVED', 'Enregistrement heures', 7),
-(7, '2025-12-22', NULL, 'Problème de validation des mes services par le responsable.', 'IN_PROGRESS', 'Validation des services', 4)
-ON CONFLICT (id) DO NOTHING;
+(7, '2025-12-22', NULL, 'Problème de validation des mes services par le responsable.', 'IN_PROGRESS', 'Validation des services', 4);
+
+
+INSERT INTO semester (semester_id, year, semester_number, parcours) VALUES
+-- Informatique
+(1, 1, 1, ''),
+(2, 1, 2, ''),
+(3, 2, 1, 'DACS'),
+(4, 2, 2, 'DACS'),
+(5, 3, 1, 'DACS'),
+(6, 3, 2, 'DACS'),
+
+-- R&T
+(7, 1, 1, ''),
+(8, 1, 2, ''),
+(9, 2, 1, ''),
+(10, 2, 2, 'RA'),
+(11, 3, 1, 'RA'),
+(12, 3, 2, 'RA');
+
+INSERT INTO semester_resource (semester_id, resource_id) VALUES
+
+-- =========================
+-- SEMESTRE 1
+-- =========================
+(1, 38),
+(1, 39),
+(1, 40),
+(1, 41),
+
+(1, 46),
+(1, 47),
+(1, 48),
+(1, 49),
+
+(1, 54),
+(1, 55),
+(1, 56),
+(1, 57),
+
+(1, 62),
+(1, 63),
+(1, 64),
+(1, 65),
+
+-- =========================
+-- SEMESTRE 2
+-- =========================
+(2, 42),
+(2, 43),
+(2, 44),
+(2, 45),
+
+(2, 50),
+(2, 51),
+(2, 52),
+(2, 53),
+
+(2, 58),
+(2, 59),
+(2, 60),
+(2, 61),
+
+(2, 66),
+(2, 67),
+(2, 68),
+(2, 69);
 
 -- =========================
 -- VACATAIRES
@@ -564,6 +629,7 @@ SELECT setval('position_id_seq',  (SELECT MAX(id) FROM position));
 SELECT setval('users_id_seq',     (SELECT MAX(id) FROM users));
 SELECT setval('formation_id_seq', (SELECT MAX(id) FROM formation));
 SELECT setval('resource_id_seq',  (SELECT MAX(id) FROM resource));
+SELECT setval(pg_get_serial_sequence('semester', 'semester_id'), (SELECT COALESCE(MAX(semester_id), 0) FROM semester));
 SELECT setval('syllabus_id_seq',  (SELECT MAX(id) FROM syllabus));
 SELECT setval('assignment_id_seq',(SELECT MAX(id) FROM assignment));
 SELECT setval('ticket_id_seq',    (SELECT MAX(id) FROM ticket));

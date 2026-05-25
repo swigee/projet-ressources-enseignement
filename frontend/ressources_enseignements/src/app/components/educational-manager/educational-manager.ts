@@ -1,14 +1,17 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from "@angular/router";
-import { FormsModule } from '@angular/forms';
 import { EducationalManagerService } from '../../services/educational-manager/educational-manager';
-import { Education } from '../../models/education/education.model';
+import { Education, EducationSemester } from '../../models/education/education.model';
 import { LessonService } from '../../services/lesson/lesson-service';
 import { PageTitle } from '../../services/page-title/page-title-service';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
+import { Lesson } from '../../models/lesson/lesson.model';
 
 @Component({
-  selector: 'app-training-manager',
-  imports: [FormsModule],
+  selector: 'educational-manager',
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './educational-manager.html',
 })
 export class EducationalManager {
@@ -16,8 +19,12 @@ export class EducationalManager {
   edManager = inject(EducationalManagerService)
   lessonsService = inject(LessonService)
   userCounts: Record<number, number> = {};
-  constructor(private router: Router, private pageTitle: PageTitle) {
-  }
+  form!: FormGroup;
+  popUp: boolean = false;
+  private isPatchInProgress = false;
+  
+  constructor(private router: Router, private pageTitle: PageTitle, private fb: FormBuilder,) {}
+ 
   ngOnInit() {
     this.pageTitle.title.set("Gestion des formations");
     this.edManager.educationList().forEach(ed => {
@@ -28,53 +35,299 @@ export class EducationalManager {
         });
       }
     });
+    this.initializeForm();
+    this.setupAutoSave();
   }
+
+  get semesters() {
+    return this.form.get('semesters') as FormArray;
+  }
+
+  get semesterFormGroups(): FormGroup[] {
+    return this.semesters.controls as FormGroup[];
+  }
+
+  get allLessons(): Lesson[] {
+    return this.lessonsService.lessonsList();
+  }
+
+  getAvailableLessons(group: FormGroup): Lesson[] {
+    const semesterValue = group.get('semester_number')?.value;
+    const selectedLessons = this.getLessonsFromGroup(group);
+    const filteredLessons = this.allLessons.filter(lesson => {
+      if (semesterValue == null || semesterValue === '') {
+        return true;
+      }
+      return lesson.semester === semesterValue;
+    });
+    const allAvailable = [...filteredLessons];
+    selectedLessons.forEach(lesson => {
+      if (!allAvailable.some(l => l.id === lesson.id)) {
+        allAvailable.push(lesson);
+      }
+    });
+    return allAvailable;
+  }
+
+  get totalSelectedLessons(): number {
+    return this.semesters.controls.reduce((total, group) => {
+      const lessons: Lesson[] = group.get('lessons')?.value || [];
+      return total + lessons.length;
+    }, 0);
+  }
+
+  initializeForm() {
+    this.form = this.fb.group({
+      id: [null],
+      name: ['', Validators.required],
+      description: [''],
+      parcours: [''],
+      semesters: this.fb.array([this.createSemesterGroup()])
+    });
+  }
+
+  setupAutoSave() {
+    this.form.valueChanges.pipe(
+      debounceTime(800),
+      distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+      filter(() => !this.isPatchInProgress),
+      filter(() => !!this.form.value?.id)
+    ).subscribe(() => {
+      if (this.form.valid) {
+        this.submit(false);
+      }
+    });
+  }
+
+  createSemesterGroup(): FormGroup {
+    return this.fb.group({
+      semester_number: [1, Validators.required],
+      parcours: [''],
+      lessons: [[]]
+    });
+  }
+
+  addSemester() {
+    this.semesters.push(this.createSemesterGroup());
+  }
+
+  removeSemester(index: number) {
+    this.semesters.removeAt(index);
+  }
+
+  openCreate() {
+    this.popUp = true;
+    this.initializeForm();
+  }
+
+  detailsEducation(ed: Education) {
+    this.popUp = true;
+    this.form.reset();
+    if (ed.id) {
+      this.edManager.getEducationById(+ed.id).subscribe(edu => {
+        this.patchEducation(edu);
+      });
+    }
+  }
+
+  private groupResourcesBySemester(resources: Lesson[]): Array<{ semester_number: number; parcours: string; lessons: Lesson[] }> {
+    const groups = new Map<number, { semester_number: number; parcours: string; lessons: Lesson[] }>();
+
+    resources.forEach((resource) => {
+      const semesterNumber = Number(resource.semester || 1) || 1;
+      if (!groups.has(semesterNumber)) {
+        groups.set(semesterNumber, {
+          semester_number: semesterNumber,
+          parcours: this.form.value.parcours || '',
+          lessons: []
+        });
+      }
+      groups.get(semesterNumber)?.lessons.push(resource);
+    });
+
+    return Array.from(groups.values()).sort((a, b) => a.semester_number - b.semester_number);
+  }
+
+  patchEducation(edu: Education) {
+    this.isPatchInProgress = true;
+    this.form.patchValue({
+      id: edu.id,
+      name: edu.name,
+      description: edu.description,
+      parcours: edu.parcours || ''
+    });
+
+    this.semesters.clear();
+
+    if (edu.semesters && edu.semesters.length) {
+      edu.semesters
+        .slice()
+        .sort((a, b) => a.semester_number - b.semester_number)
+        .forEach((semester) => {
+          this.semesters.push(this.fb.group({
+            semester_number: [semester.semester_number, Validators.required],
+            parcours: [semester.parcours || ''],
+            lessons: [semester.resourceList || []]
+          }));
+        });
+    } else {
+      const resources = edu.resourceList || [];
+      const semesterGroups = this.groupResourcesBySemester(resources);
+
+      if (semesterGroups.length) {
+        semesterGroups.forEach((semester) => {
+          this.semesters.push(this.fb.group({
+            semester_number: [semester.semester_number, Validators.required],
+            parcours: [semester.parcours || ''],
+            lessons: [semester.lessons || []]
+          }));
+        });
+      } else {
+        const defaultGroup = this.createSemesterGroup();
+        defaultGroup.patchValue({ lessons: resources });
+        this.semesters.push(defaultGroup);
+      }
+    }
+
+    this.isPatchInProgress = false;
+  }
+
+  getLessonsFromGroup(group: FormGroup): Lesson[] {
+    return group.get('lessons')?.value || [];
+  }
+
+  isLessonSelected(l: Lesson, group: FormGroup): boolean {
+    const lessons = this.getLessonsFromGroup(group);
+    return lessons.some(sl => sl.id === l.id);
+  }
+
+  toggleLesson(l: Lesson, group: FormGroup) {
+    const semesterGroup = group;
+    const lessons: Lesson[] = [...this.getLessonsFromGroup(semesterGroup)];
+    const existingIndex = lessons.findIndex(sl => sl.id === l.id);
+
+    if (existingIndex !== -1) {
+      lessons.splice(existingIndex, 1);
+    } else {
+      lessons.push(l);
+    }
+
+    semesterGroup.get('lessons')?.setValue(lessons);
+  }
+
+  onSemesterChange(selectedSemester: number, group: FormGroup) {
+    group.get('semester_number')?.setValue(selectedSemester);
+    const filteredLessons = this.getLessonsFromGroup(group).filter(lesson =>
+      lesson.semester === selectedSemester
+    );
+    group.get('lessons')?.setValue(filteredLessons);
+  }
+
   clickDelete(id: number) {
     this.edManager.deleteEducation(id);
   }
 
-  updateEducation(etu: Education){
-    this.router.navigate(['/education-manager/edit', etu.id]);
+  openDetails(){
+
   }
 
-  getUsers(id: number){
-    this.edManager.getUsers(id);
+  private mapLessonToResourceId(lesson: Lesson) {
+    return { id: lesson.id };
   }
 
-  // --- Duplication ---
-  readonly showDuplicateModal = signal(false);
-  duplicateSourceId = signal<number | null>(null);
-  duplicateSourceName = signal('');
-  duplicateNewName = signal('');
-  duplicateLoading = signal(false);
+  buildFormCreationPayload(): any {
+    const formValue = this.form.value;
+    const resourceList = [] as Array<{ id: number }>;
 
-  openDuplicateModal(ed: Education) {
-    this.duplicateSourceId.set(ed.id!);
-    this.duplicateSourceName.set(ed.name);
-    this.duplicateNewName.set(ed.name + ' - Copie');
-    this.showDuplicateModal.set(true);
-  }
-
-  closeDuplicateModal() {
-    this.showDuplicateModal.set(false);
-    this.duplicateLoading.set(false);
-  }
-
-  confirmDuplicate() {
-    const id = this.duplicateSourceId();
-    const name = this.duplicateNewName().trim();
-    if (!id || !name) return;
-
-    this.duplicateLoading.set(true);
-    this.edManager.duplicateEducation(id, name).subscribe({
-      next: () => {
-        this.edManager.loadEducations();
-        this.closeDuplicateModal();
-      },
-      error: (err) => {
-        console.error('Erreur duplication:', err);
-        this.duplicateLoading.set(false);
-      }
+    (formValue.semesters || []).forEach((semester: any) => {
+      (semester.lessons || []).forEach((lesson: Lesson) => {
+        const resource = this.mapLessonToResourceId(lesson);
+        if (!resourceList.some(r => r.id === resource.id)) {
+          resourceList.push(resource);
+        }
+      });
     });
+
+    const semesters = (formValue.semesters || []).map((semester: any) => ({
+      semester_number: Number(semester.semester_number),
+      parcours: semester.parcours,
+      resourceList: (semester.lessons || []).map((lesson: Lesson) => this.mapLessonToResourceId(lesson))
+    }));
+
+    return {
+      name: formValue.name,
+      description: formValue.description,
+      parcours: formValue.parcours,
+      resourceList,
+      semesters
+    };
+  }
+
+  buildEducationUpdatePayload(): any {
+    const formValue = this.form.value;
+    const semesters = (formValue.semesters || []).map((semester: any) => ({
+      semester_number: Number(semester.semester_number),
+      parcours: semester.parcours,
+      resourceList: (semester.lessons || []).map((lesson: Lesson) => this.mapLessonToResourceId(lesson))
+    }));
+
+    const resources: Array<{ id: number }> = [];
+    semesters.forEach((semester: any) => {
+      (semester.resourceList || []).forEach((lesson: { id: number }) => {
+        if (!resources.some(r => r.id === lesson.id)) {
+          resources.push(lesson);
+        }
+      });
+    });
+
+    return {
+      formation: {
+        id: formValue.id,
+        name: formValue.name,
+        description: formValue.description,
+        parcours: formValue.parcours
+      },
+      semesters,
+      resources
+    };
+  }
+
+  submit(closeOnSuccess: boolean = true) {
+    this.form.updateValueAndValidity();
+    if (this.form.invalid) {
+      console.warn('Form invalid, cannot submit:', this.form.value, this.form.errors);
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    if (this.form.value.id) {
+      const edu = this.buildEducationUpdatePayload();
+      console.log('Payload to save:', edu);
+      this.edManager.updateEducation(edu).subscribe({
+        next: () => {
+          if (closeOnSuccess) {
+            this.popUp = false;
+          }
+          this.edManager.loadEducations();
+        },
+        error: (err) => {
+          console.error('Error updating education:', err);
+        }
+      });
+    } else {
+      const formation = this.buildFormCreationPayload();
+      console.log('Payload to create:', formation);
+      this.edManager.createEducation(formation).subscribe({
+        next: () => {
+          if (closeOnSuccess) {
+            this.popUp = false;
+          }
+          this.edManager.loadEducations();
+        },
+        error: (err) => {
+          console.error('Error creating education:', err);
+        }
+      });
+    }
   }
 }

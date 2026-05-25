@@ -4,9 +4,9 @@ import { Education } from '../../models/education/education.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
-import { LessonService } from '../lesson/lesson-service';
-import { map, switchMap } from 'rxjs';
 import { User } from '../../interfaces/user.interface';
+import { map, switchMap } from 'rxjs';
+import { LessonService } from '../lesson/lesson-service';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +28,9 @@ export class EducationalManagerService {
   loadEducations(){
     this.http
     .get<Education[]>(`${this.api}/list`)
-    .subscribe(t => this.educationListDatabase.set(t));
+    .subscribe(t => {
+      this.educationListDatabase.set(t);
+    });
   }
 
   deleteEducation(id: number){
@@ -37,13 +39,16 @@ export class EducationalManagerService {
     .subscribe(() => this.loadEducations());
   }
 
-  createEducation(education: Education): Observable<Education>{
-    return this.http.post<Education>(`${this.api}`, education)
+  createEducation(education: any): Observable<any>{
+    return this.http.post<any>(`${this.api}`, education)
   }
 
-  updateEducation(etu: Education): Observable<Education>{
-    console.log(etu);
-    return this.http.put<Education>(`${this.api}/${etu.id}`, etu)
+  updateEducation(etu: any): Observable<any>{
+    const id = etu.id ?? etu.formation?.id;
+    if (!id) {
+      throw new Error('Education id is required to update formation');
+    }
+    return this.http.patch<any>(`${this.api}/${id}`, etu)
   }
 
   getEducationById(id: number): Observable<Education>{
@@ -51,7 +56,7 @@ export class EducationalManagerService {
       switchMap(education =>
         this.lessonsService.loadLessonsById(id).pipe(
           map(lessons => {
-            education.lessons = lessons;
+            education.resourceList = lessons;
             return education;
           })
         )

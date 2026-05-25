@@ -1,5 +1,6 @@
 package sae.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -98,8 +99,10 @@ public class Resource implements Serializable {
     @Column(name = "semester")
     private Integer semester;
 
+    
+    //TODO plus tard (revoir si ces deux proprietes servent a quelque chose)
     @ManyToMany(mappedBy = "resourceList", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("resourceList")
+    @JsonIgnore
     private List<Formation> formationList;
 
     @ManyToMany(fetch = FetchType.LAZY)

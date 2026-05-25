@@ -25,8 +25,4 @@ export class LessonService {
     .get<Lesson[]>(`${this.api}/lessons/list`)
     .subscribe(t => this.lessonListDatabase.set(t));
   }
-
-  loadLessonsById(id: number): Observable<Lesson[]>{
-    return this.http.get<Lesson[]>(`${this.api}/lessons/${id}`);
-  }
 }

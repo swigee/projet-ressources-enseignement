@@ -3,10 +3,9 @@ import { environment } from '../../../environments/environment';
 import { Education } from '../../models/education/education.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/internal/Observable';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { User } from '../../interfaces/user.interface';
-import { map, switchMap } from 'rxjs';
-import { LessonService } from '../lesson/lesson-service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +18,6 @@ export class EducationalManagerService {
 
   private readonly educationListDatabase = signal<Education[]>([]);
   educationList = this.educationListDatabase.asReadonly()
-  lessonsService = inject(LessonService)
 
   constructor(private router: Router){
     this.loadEducations();
@@ -52,16 +50,7 @@ export class EducationalManagerService {
   }
 
   getEducationById(id: number): Observable<Education>{
-    return this.http.get<Education>(`${this.api}/${id}`).pipe(
-      switchMap(education =>
-        this.lessonsService.loadLessonsById(id).pipe(
-          map(lessons => {
-            education.resourceList = lessons;
-            return education;
-          })
-        )
-      )
-    );
+    return this.http.get<Education>(`${this.api}/${id}`);
   }
 
   getUsers(id: number): Observable<User[]>{

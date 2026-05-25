@@ -1,20 +1,26 @@
 export interface VacataireModel {
   id?: number;
+  // Étape 1 — Fiche de recrutement
   responsableRecrutement?: string;
+  qualiteResponsable?: string;
+  departement?: string;
+  dateEntretien?: string;
   prenom?: string;
   nom?: string;
-  dateNaissance?: string;
-  departement?: string;
-  fonction?: string;
-  experience?: string;
-  profil?: string;
+  formationVisee?: string;
+  natureVacation?: string;
+  profilTechnique?: string;
+  profilPedagogique?: string;
   competences?: string;
-  vueEnAmont?: boolean;
-  etablissement?: string;
-  site?: string;
-  transmisResponsable?: boolean;
+  // Étape 2 — Autres
+  siteBourgenBresse?: string;
+  siteVilleurbanneDoua?: string;
+  siteVilleurbanneGratteCiel?: string;
+  transmisCV?: string;
   signatureResponsable?: string;
-  sourceConnaissance?: string;
+  // Étape 3 — Source de connaissance (valeurs séparées par virgule)
+  sourceConnaissances?: string;
   sourceConnaissanceAutre?: string;
+  // Admin
   statut?: string;
 }

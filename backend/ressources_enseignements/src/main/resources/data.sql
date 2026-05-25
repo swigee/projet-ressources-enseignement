@@ -529,3 +529,14 @@ INSERT INTO ticket (id, date, resolution_date, description, status, title, user_
 (6, '2025-12-21', '2025-12-23', 'Le système n''enregistre pas mes nouvelles heures vacataires.', 'RESOLVED', 'Enregistrement heures', 7),
 (7, '2025-12-22', NULL, 'Problème de validation des mes services par le responsable.', 'IN_PROGRESS', 'Validation des services', 4)
 ON CONFLICT (id) DO NOTHING;
+
+-- =========================
+-- RESET SEQUENCES
+-- =========================
+SELECT setval('position_id_seq',  (SELECT MAX(id) FROM position));
+SELECT setval('users_id_seq',     (SELECT MAX(id) FROM users));
+SELECT setval('formation_id_seq', (SELECT MAX(id) FROM formation));
+SELECT setval('resource_id_seq',  (SELECT MAX(id) FROM resource));
+SELECT setval('syllabus_id_seq',  (SELECT MAX(id) FROM syllabus));
+SELECT setval('assignment_id_seq',(SELECT MAX(id) FROM assignment));
+SELECT setval('ticket_id_seq',    (SELECT MAX(id) FROM ticket));

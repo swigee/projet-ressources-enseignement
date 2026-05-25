@@ -9,23 +9,35 @@ type View = 'list' | 'wizard' | 'summary';
 
 const emptyForm = (): VacataireModel => ({
   responsableRecrutement: '',
+  qualiteResponsable: '',
+  departement: '',
+  dateEntretien: '',
   prenom: '',
   nom: '',
-  dateNaissance: '',
-  departement: '',
-  fonction: '',
-  experience: '',
-  profil: 'professionnel',
+  formationVisee: '',
+  natureVacation: '',
+  profilTechnique: '',
+  profilPedagogique: '',
   competences: '',
-  vueEnAmont: undefined,
-  etablissement: '',
-  site: '',
-  transmisResponsable: undefined,
+  siteBourgenBresse: '',
+  siteVilleurbanneDoua: '',
+  siteVilleurbanneGratteCiel: '',
+  transmisCV: '',
   signatureResponsable: '',
-  sourceConnaissance: '',
+  sourceConnaissances: '',
   sourceConnaissanceAutre: '',
   statut: 'A_CONTACTER',
 });
+
+export const SOURCE_OPTIONS = [
+  { value: 'COLLEGUE',      label: 'Par un collègue' },
+  { value: 'PERSONNEL_IUT', label: 'Par un personnel de l\'IUT' },
+  { value: 'SITE_IUT',      label: 'Par le site de l\'IUT' },
+  { value: 'RESPONSABLE',   label: 'Par la personne en charge du recrutement' },
+  { value: 'PROCHE',        label: 'Par un proche' },
+  { value: 'BOUCHE_OREILLE',label: 'Par le bouche à oreille' },
+  { value: 'AUTRE',         label: 'Autre (préciser)' },
+];
 
 @Component({
   selector: 'app-vacataire-manager',
@@ -36,6 +48,9 @@ const emptyForm = (): VacataireModel => ({
 export class VacataireManager implements OnInit {
   private readonly vacataireService = inject(VacataireService);
   private readonly pageTitle = inject(PageTitle);
+
+  readonly sourceOptions = SOURCE_OPTIONS;
+  readonly ouiNonOptions = ['Oui', 'Non'];
 
   view = signal<View>('list');
   step = signal<1 | 2 | 3>(1);
@@ -102,7 +117,7 @@ export class VacataireManager implements OnInit {
   validateStep1(): boolean {
     const f = this.formData();
     if (!f.nom?.trim() || !f.prenom?.trim()) {
-      this.errorMessage.set('Le nom et le prénom sont obligatoires.');
+      this.errorMessage.set('Le nom et le prénom du candidat sont obligatoires.');
       return false;
     }
     this.errorMessage.set('');
@@ -112,7 +127,6 @@ export class VacataireManager implements OnInit {
   save() {
     const data = this.formData();
     const id = this.editId();
-
     const request = id
       ? this.vacataireService.update(id, data)
       : this.vacataireService.create(data);
@@ -152,6 +166,19 @@ export class VacataireManager implements OnInit {
     this.formData.set({ ...this.formData(), [field]: value });
   }
 
+  isSourceChecked(value: string): boolean {
+    return (this.formData().sourceConnaissances ?? '').split(',').includes(value);
+  }
+
+  toggleSource(value: string) {
+    const current = (this.formData().sourceConnaissances ?? '')
+      .split(',').filter(v => v.length > 0);
+    const idx = current.indexOf(value);
+    if (idx >= 0) current.splice(idx, 1);
+    else current.push(value);
+    this.updateField('sourceConnaissances', current.join(','));
+  }
+
   statutLabel(statut?: string): string {
     const map: Record<string, string> = {
       A_CONTACTER: 'À contacter',
@@ -170,15 +197,17 @@ export class VacataireManager implements OnInit {
     return statut ? (map[statut] ?? 'bg-gray-100 text-gray-600') : 'bg-gray-100 text-gray-600';
   }
 
-  sourceLabel(source?: string): string {
+  sourcesLabel(sources?: string): string {
+    if (!sources) return '-';
     const map: Record<string, string> = {
-      COLLEGUE: 'Par un collègue',
-      CV: 'Par son CV personnel',
-      F2P: 'Par le biais de la F2P',
-      RESPONSABLE: 'Par la personne en charge du recrutement',
-      BUREAU: 'Par le bureau à accès',
-      AUTRE: 'Autre',
+      COLLEGUE:       'Par un collègue',
+      PERSONNEL_IUT:  'Par un personnel de l\'IUT',
+      SITE_IUT:       'Par le site de l\'IUT',
+      RESPONSABLE:    'Par la personne en charge du recrutement',
+      PROCHE:         'Par un proche',
+      BOUCHE_OREILLE: 'Par le bouche à oreille',
+      AUTRE:          'Autre',
     };
-    return source ? (map[source] ?? source) : '-';
+    return sources.split(',').map(v => map[v] ?? v).filter(Boolean).join(', ') || '-';
   }
 }

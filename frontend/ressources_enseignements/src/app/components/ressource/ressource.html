@@ -50,4 +50,6 @@
     (scheduleHoursChanged)="onScheduleHoursChanged($event)" (projectHoursChanged)="onProjectHoursChanged($event)" />
   }
 
+  <app-ticket-modal [isOpen]="showModal()" (closed)="showModal.set(false)" />
+
 </div>

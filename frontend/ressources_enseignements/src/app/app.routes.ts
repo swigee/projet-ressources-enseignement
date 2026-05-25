@@ -85,6 +85,12 @@ export const routes: Routes = [
     data: { roles: ['TEACHER'] }
   },
   {
+    path: 'ticket-manager',
+    loadComponent: () => import('./components/ticket-manager/ticket-manager').then(m => m.TicketManager),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
+  },
+  {
     path: 'group-tracking',
     component: GroupTracking,
     canActivate: [authGuard, roleGuard],

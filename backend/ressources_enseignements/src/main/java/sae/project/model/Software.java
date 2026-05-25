@@ -51,9 +51,8 @@ public class Software implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties({"password", "assignmentList", "formationList", "roleList"})
-    private List<User> userList;
-
+    @JsonIgnoreProperties({"password", "assignmentList", "ticketsList", "formationList", "roleList"})
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resource_id")

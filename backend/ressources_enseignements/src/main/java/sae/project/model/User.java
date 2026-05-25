@@ -4,11 +4,13 @@
  */
 package sae.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.List;
@@ -64,11 +66,15 @@ public class User implements Serializable {
     @Column(name = "email")
     private String email;
 
+    @Builder.Default
     @Column(name = "validation_status")
     private String validationStatus = "NONE"; // NONE, SUBMITTED, VALIDATED
 
     @Column(name = "validation_comment", columnDefinition = "TEXT")
     private String validationComment;
+
+    @Column(name = "type")
+    private String type;
 
     @ManyToMany(mappedBy = "usersList", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Formation> formationList;
@@ -81,7 +87,16 @@ public class User implements Serializable {
     private List<Ticket> ticketsList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Assignment> assignmentList; // Will fix Assignment relation later
+    private List<Assignment> assignmentList;
+
+    /**
+     * Optional link to the contractor recruitment profile.
+     * Null for permanent staff members.
+     */
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    @ToString.Exclude
+    private Vacataire contractorProfile;
 
     // Lombok handles Getters/Setters/Constructors/toString/Data
 }

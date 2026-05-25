@@ -76,7 +76,7 @@
                             <span *ngIf="section.isModified" class="text-[8px] bg-blue-600 text-white px-1.5 py-0.5 rounded font-bold uppercase tracking-tighter">Modifié</span>
                         </div>
                         
-                        <button (click)="copyToUniversity(section.id)" 
+                        <button (click)="copyToUniversity(section.id, editor)" 
                                 class="text-[9px] font-bold uppercase px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors flex items-center gap-1"
                                 title="Copier le contenu du programme national pour le modifier">
                             <i class="fa-solid fa-copy"></i> Copier National
@@ -89,10 +89,11 @@
                         <button class="hover:text-blue-600 text-xs px-1" title="Liste" onclick="document.execCommand('insertUnorderedList', false, null)"><i class="fa-solid fa-list-ul"></i></button>
                     </div>
 
-                    <div class="p-8 flex-1 cursor-text outline-none text-gray-800 text-sm leading-relaxed min-h-[150px]" 
+                    <div #editor
+                         class="p-8 flex-1 cursor-text outline-none text-gray-800 text-sm leading-relaxed min-h-[150px]" 
                          contenteditable="true" 
                          (input)="onFieldChange(section.id, $event)"
-                         [innerHTML]="universityData[section.id]">
+                         [innerHTML]="initialUniversityData[section.id]">
                     </div>
                     
                     <div *ngIf="!universityData[section.id]" class="absolute pointer-events-none p-8 pt-18 text-gray-400 text-sm italic opacity-50">
@@ -121,7 +122,6 @@
                         <span *ngIf="section.isModified" class="text-[8px] bg-blue-50 text-blue-400 px-1.5 py-0.5 rounded border border-blue-100">Adapté</span>
                     </h3>
                     
-                    <!-- Display University adaptation if exists, else fallback to National -->
                     <div class="text-gray-700 leading-relaxed pl-4 border-l-2 border-gray-100" 
                          [innerHTML]="universityData[section.id] ? universityData[section.id] : formatContent(section.content)">
                     </div>

@@ -35,4 +35,10 @@ public class VacataireDTO {
     private String sourceConnaissanceAutre;
 
     private String statut;
+
+    /** ID of the linked user account, null if no account has been created yet. */
+    private Integer userId;
+
+    /** True if a user account has been created and linked to this contractor profile. */
+    private Boolean accountActive;
 }

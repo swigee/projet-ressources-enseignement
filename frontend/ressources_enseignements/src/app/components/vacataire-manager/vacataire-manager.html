@@ -41,6 +41,7 @@
           <th class="px-6 py-3">Prénom</th>
           <th class="px-6 py-3">Département</th>
           <th class="px-6 py-3">Statut</th>
+          <th class="px-6 py-3">Compte</th>
           <th class="px-6 py-3 text-right">Actions</th>
         </tr>
       </thead>
@@ -54,6 +55,20 @@
             <span class="px-2 py-1 rounded-full text-xs font-medium" [ngClass]="statutClass(v.statut)">
               {{ statutLabel(v.statut) }}
             </span>
+          </td>
+          <td class="px-6 py-4">
+            @if (v.accountActive) {
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              Actif
+            </span>
+            } @else {
+            <span class="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+              Aucun compte
+            </span>
+            }
           </td>
           <td class="px-6 py-4">
             <div class="flex justify-end gap-2">
@@ -117,67 +132,83 @@
       </button>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm border-t pt-4">
-      <div>
-        <span class="text-gray-500 text-xs uppercase">Responsable recrutement</span>
-        <p class="font-medium text-gray-800 mt-0.5">{{ v.responsableRecrutement || '-' }}</p>
-      </div>
-      <div>
-        <span class="text-gray-500 text-xs uppercase">Date de naissance</span>
-        <p class="font-medium text-gray-800 mt-0.5">{{ v.dateNaissance || '-' }}</p>
-      </div>
-      <div>
-        <span class="text-gray-500 text-xs uppercase">Département / Service</span>
-        <p class="font-medium text-gray-800 mt-0.5">{{ v.departement || '-' }}</p>
-      </div>
-      <div>
-        <span class="text-gray-500 text-xs uppercase">Fonction</span>
-        <p class="font-medium text-gray-800 mt-0.5">{{ v.fonction || '-' }}</p>
-      </div>
-      <div>
-        <span class="text-gray-500 text-xs uppercase">Expérience</span>
-        <p class="font-medium text-gray-800 mt-0.5">{{ v.experience || '-' }}</p>
-      </div>
-      <div>
-        <span class="text-gray-500 text-xs uppercase">Profil requis</span>
-        <p class="font-medium text-gray-800 mt-0.5">{{ v.profil || '-' }}</p>
-      </div>
-    </div>
-
-    @if (v.competences) {
+    <!-- Fiche recrutement -->
     <div class="border-t pt-4 text-sm">
-      <span class="text-gray-500 text-xs uppercase">Compétences</span>
-      <p class="text-gray-800 mt-0.5 whitespace-pre-wrap">{{ v.competences }}</p>
+      <p class="text-gray-500 text-xs uppercase font-semibold mb-3">Fiche de recrutement</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <span class="text-gray-500 text-xs uppercase">Responsable recrutement</span>
+          <p class="font-medium text-gray-800 mt-0.5">{{ v.responsableRecrutement || '-' }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500 text-xs uppercase">Qualité du responsable</span>
+          <p class="font-medium text-gray-800 mt-0.5">{{ v.qualiteResponsable || '-' }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500 text-xs uppercase">Département / Site</span>
+          <p class="font-medium text-gray-800 mt-0.5">{{ v.departement || '-' }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500 text-xs uppercase">Date de l'entretien</span>
+          <p class="font-medium text-gray-800 mt-0.5">{{ v.dateEntretien || '-' }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500 text-xs uppercase">Formation visée</span>
+          <p class="font-medium text-gray-800 mt-0.5">{{ v.formationVisee || '-' }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500 text-xs uppercase">Nature de la vacation</span>
+          <p class="font-medium text-gray-800 mt-0.5">{{ v.natureVacation || '-' }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500 text-xs uppercase">Profil technique / professionnel</span>
+          <p class="font-medium text-gray-800 mt-0.5">{{ v.profilTechnique || '-' }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500 text-xs uppercase">Profil pédagogique</span>
+          <p class="font-medium text-gray-800 mt-0.5">{{ v.profilPedagogique || '-' }}</p>
+        </div>
+      </div>
+      @if (v.competences) {
+      <div class="mt-3">
+        <span class="text-gray-500 text-xs uppercase">Compétences</span>
+        <p class="text-gray-800 mt-0.5 whitespace-pre-wrap">{{ v.competences }}</p>
+      </div>
+      }
     </div>
-    }
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm border-t pt-4">
-      <div>
-        <span class="text-gray-500 text-xs uppercase">Vue en amont</span>
-        <p class="font-medium text-gray-800 mt-0.5">{{ v.vueEnAmont === true ? 'Oui' : v.vueEnAmont === false ? 'Non' : '-' }}</p>
-      </div>
-      <div>
-        <span class="text-gray-500 text-xs uppercase">Établissement</span>
-        <p class="font-medium text-gray-800 mt-0.5">{{ v.etablissement || '-' }}</p>
-      </div>
-      <div>
-        <span class="text-gray-500 text-xs uppercase">Site</span>
-        <p class="font-medium text-gray-800 mt-0.5">{{ v.site || '-' }}</p>
-      </div>
-      <div>
-        <span class="text-gray-500 text-xs uppercase">Transmis responsable TUT</span>
-        <p class="font-medium text-gray-800 mt-0.5">{{ v.transmisResponsable === true ? 'Oui' : v.transmisResponsable === false ? 'Non' : '-' }}</p>
-      </div>
-      <div class="sm:col-span-2">
-        <span class="text-gray-500 text-xs uppercase">Signature responsable</span>
-        <p class="font-medium text-gray-800 mt-0.5">{{ v.signatureResponsable || '-' }}</p>
+    <!-- Autres -->
+    <div class="border-t pt-4 text-sm">
+      <p class="text-gray-500 text-xs uppercase font-semibold mb-3">Autres</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <span class="text-gray-500 text-xs uppercase">Site Bourg-en-Bresse</span>
+          <p class="font-medium text-gray-800 mt-0.5">{{ v.siteBourgenBresse || '-' }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500 text-xs uppercase">Site Villeurbanne Doua</span>
+          <p class="font-medium text-gray-800 mt-0.5">{{ v.siteVilleurbanneDoua || '-' }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500 text-xs uppercase">Site Villeurbanne Gratte-Ciel</span>
+          <p class="font-medium text-gray-800 mt-0.5">{{ v.siteVilleurbanneGratteCiel || '-' }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500 text-xs uppercase">Transmission CV à d'autres départements</span>
+          <p class="font-medium text-gray-800 mt-0.5">{{ v.transmisCV || '-' }}</p>
+        </div>
+        <div class="sm:col-span-2">
+          <span class="text-gray-500 text-xs uppercase">Signature responsable</span>
+          <p class="font-medium text-gray-800 mt-0.5">{{ v.signatureResponsable || '-' }}</p>
+        </div>
       </div>
     </div>
 
+    <!-- Source -->
     <div class="border-t pt-4 text-sm">
       <span class="text-gray-500 text-xs uppercase">Source de connaissance</span>
-      <p class="font-medium text-gray-800 mt-0.5">{{ sourceLabel(v.sourceConnaissance) }}</p>
-      @if (v.sourceConnaissance === 'AUTRE' && v.sourceConnaissanceAutre) {
+      <p class="font-medium text-gray-800 mt-0.5">{{ sourcesLabel(v.sourceConnaissances) }}</p>
+      @if (v.sourceConnaissances?.includes('AUTRE') && v.sourceConnaissanceAutre) {
       <p class="text-gray-600 mt-1 italic">{{ v.sourceConnaissanceAutre }}</p>
       }
     </div>
@@ -226,24 +257,51 @@
     </h2>
 
     <div class="space-y-4">
-      <div>
-        <label class="block text-xs font-medium text-gray-600 mb-1">Personne en charge du recrutement</label>
-        <input type="text" [value]="formData().responsableRecrutement"
-          (input)="updateField('responsableRecrutement', $any($event.target).value)"
-          placeholder="Nom du responsable"
-          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+      <p class="text-xs font-semibold text-gray-500 uppercase">Personne en charge du recrutement</p>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Nom – Prénom</label>
+          <input type="text" [value]="formData().responsableRecrutement"
+            (input)="updateField('responsableRecrutement', $any($event.target).value)"
+            placeholder="Nom et prénom du responsable"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Qualité</label>
+          <input type="text" [value]="formData().qualiteResponsable"
+            (input)="updateField('qualiteResponsable', $any($event.target).value)"
+            placeholder="ex : directeur des études, chef de département..."
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+        </div>
       </div>
 
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">Prénom <span class="text-red-500">*</span></label>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Département / Site</label>
+          <input type="text" [value]="formData().departement"
+            (input)="updateField('departement', $any($event.target).value)"
+            placeholder="Ex : Informatique"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Date de l'entretien</label>
+          <input type="date" [value]="formData().dateEntretien"
+            (input)="updateField('dateEntretien', $any($event.target).value)"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Prénom du candidat <span class="text-red-500">*</span></label>
           <input type="text" [value]="formData().prenom"
             (input)="updateField('prenom', $any($event.target).value)"
             placeholder="Prénom"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
         </div>
         <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">Nom <span class="text-red-500">*</span></label>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Nom du candidat <span class="text-red-500">*</span></label>
           <input type="text" [value]="formData().nom"
             (input)="updateField('nom', $any($event.target).value)"
             placeholder="Nom de famille"
@@ -251,50 +309,47 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">Date de naissance</label>
-          <input type="date" [value]="formData().dateNaissance"
-            (input)="updateField('dateNaissance', $any($event.target).value)"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">Département / Service</label>
-          <input type="text" [value]="formData().departement"
-            (input)="updateField('departement', $any($event.target).value)"
-            placeholder="Ex: Informatique"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
-        </div>
-      </div>
-
       <div>
-        <label class="block text-xs font-medium text-gray-600 mb-1">Fonction enseignée</label>
-        <input type="text" [value]="formData().fonction"
-          (input)="updateField('fonction', $any($event.target).value)"
-          placeholder="Ex: Math, BCD, LP..."
+        <label class="block text-xs font-medium text-gray-600 mb-1">Formation d'enseignement visée</label>
+        <input type="text" [value]="formData().formationVisee"
+          (input)="updateField('formationVisee', $any($event.target).value)"
+          placeholder="ex : BUT Informatique, LP..."
           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-gray-600 mb-1">Expérience</label>
-        <input type="text" [value]="formData().experience"
-          (input)="updateField('experience', $any($event.target).value)"
-          placeholder="Ex: 3 ans CPGE, supérieur..."
+        <label class="block text-xs font-medium text-gray-600 mb-1">Nature de la vacation</label>
+        <input type="text" [value]="formData().natureVacation"
+          (input)="updateField('natureVacation', $any($event.target).value)"
+          placeholder="ex : module, C/TD/TP, volume horaire..."
           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
       </div>
 
-      <div>
-        <label class="block text-xs font-medium text-gray-600 mb-1">Profil requis</label>
-        <div class="flex gap-4 flex-wrap pt-1">
-          @for (p of ['professionnel', 'pédagogique', 'public pédagogique']; track p) {
-          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
-            <input type="radio" name="profil" [value]="p"
-              [checked]="formData().profil === p"
-              (change)="updateField('profil', p)"
-              class="accent-blue-600"/>
-            {{ p | titlecase }}
-          </label>
-          }
+      <div class="border-t pt-4">
+        <p class="text-xs font-semibold text-gray-500 uppercase mb-3">Synthèse de l'entretien — Profil adapté</p>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Au plan technique / professionnel</label>
+            <select [value]="formData().profilTechnique"
+              (change)="updateField('profilTechnique', $any($event.target).value)"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <option value="">...</option>
+              <option value="Oui">Oui</option>
+              <option value="Non">Non</option>
+              <option value="Moyen">Moyen</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Au plan pédagogique</label>
+            <select [value]="formData().profilPedagogique"
+              (change)="updateField('profilPedagogique', $any($event.target).value)"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <option value="">...</option>
+              <option value="Oui">Oui</option>
+              <option value="Non">Non</option>
+              <option value="Moyen">Moyen</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -319,77 +374,63 @@
     </div>
     }
 
-    <!-- ======= ÉTAPE 2 – Tableau de bord ======= -->
+    <!-- ======= ÉTAPE 2 – Autres ======= -->
     @if (step() === 2) {
     <h2 class="text-sm font-bold text-gray-700 uppercase tracking-widest border-b pb-3">
-      Tableau de bord — Informations complémentaires
+      Autres
     </h2>
 
     <div class="space-y-5">
-      <div>
-        <label class="block text-xs font-medium text-gray-600 mb-2">
-          Cette personne a-t-elle été vue en amont ?
-        </label>
-        <div class="flex gap-6">
-          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
-            <input type="radio" name="vueEnAmont" [value]="true"
-              [checked]="formData().vueEnAmont === true"
-              (change)="updateField('vueEnAmont', true)"
-              class="accent-blue-600"/> Oui
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
-            <input type="radio" name="vueEnAmont" [value]="false"
-              [checked]="formData().vueEnAmont === false"
-              (change)="updateField('vueEnAmont', false)"
-              class="accent-blue-600"/> Non
-          </label>
+      <p class="text-sm text-gray-700">Est-ce que cette personne souhaite faire des vacations à :</p>
+
+      <div class="space-y-3 pl-2">
+        <div class="flex items-center justify-between gap-4">
+          <label class="text-sm text-gray-700">Site Bourg-en-Bresse :</label>
+          <select [value]="formData().siteBourgenBresse"
+            (change)="updateField('siteBourgenBresse', $any($event.target).value)"
+            class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <option value="">...</option>
+            <option value="Oui">Oui</option>
+            <option value="Non">Non</option>
+          </select>
+        </div>
+
+        <div class="flex items-center justify-between gap-4">
+          <label class="text-sm text-gray-700">Site Villeurbanne Doua :</label>
+          <select [value]="formData().siteVilleurbanneDoua"
+            (change)="updateField('siteVilleurbanneDoua', $any($event.target).value)"
+            class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <option value="">...</option>
+            <option value="Oui">Oui</option>
+            <option value="Non">Non</option>
+          </select>
+        </div>
+
+        <div class="flex items-center justify-between gap-4">
+          <label class="text-sm text-gray-700">Site Villeurbanne Gratte-Ciel :</label>
+          <select [value]="formData().siteVilleurbanneGratteCiel"
+            (change)="updateField('siteVilleurbanneGratteCiel', $any($event.target).value)"
+            class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <option value="">...</option>
+            <option value="Oui">Oui</option>
+            <option value="Non">Non</option>
+          </select>
         </div>
       </div>
 
-      <div>
-        <label class="block text-xs font-medium text-gray-600 mb-1">Nom de l'établissement</label>
-        <input type="text" [value]="formData().etablissement"
-          (input)="updateField('etablissement', $any($event.target).value)"
-          placeholder="Ex: IUT Lyon 1"
-          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+      <div class="flex items-center justify-between gap-4 border-t pt-4">
+        <label class="text-sm text-gray-700">Est-ce que cette personne accepte que nous transmettions son CV à d'autres départements de l'IUT ?</label>
+        <select [value]="formData().transmisCV"
+          (change)="updateField('transmisCV', $any($event.target).value)"
+          class="flex-shrink-0 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          <option value="">...</option>
+          <option value="Oui">Oui</option>
+          <option value="Non">Non</option>
+        </select>
       </div>
 
-      <div>
-        <label class="block text-xs font-medium text-gray-600 mb-2">Site</label>
-        <div class="flex gap-6">
-          @for (site of ['Villeurbanne', 'Bron-Oullins']; track site) {
-          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
-            <input type="radio" name="site" [value]="site"
-              [checked]="formData().site === site"
-              (change)="updateField('site', site)"
-              class="accent-blue-600"/> {{ site }}
-          </label>
-          }
-        </div>
-      </div>
-
-      <div>
-        <label class="block text-xs font-medium text-gray-600 mb-2">
-          Cette personne sera-t-elle transmise au responsable CI / TUT ?
-        </label>
-        <div class="flex gap-6">
-          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
-            <input type="radio" name="transmis" [value]="true"
-              [checked]="formData().transmisResponsable === true"
-              (change)="updateField('transmisResponsable', true)"
-              class="accent-blue-600"/> Oui
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
-            <input type="radio" name="transmis" [value]="false"
-              [checked]="formData().transmisResponsable === false"
-              (change)="updateField('transmisResponsable', false)"
-              class="accent-blue-600"/> Non
-          </label>
-        </div>
-      </div>
-
-      <div>
-        <label class="block text-xs font-medium text-gray-600 mb-1">Signature du responsable du recrutement</label>
+      <div class="border-t pt-4">
+        <label class="block text-xs font-medium text-gray-600 mb-1">Signature de la personne en charge du recrutement</label>
         <input type="text" [value]="formData().signatureResponsable"
           (input)="updateField('signatureResponsable', $any($event.target).value)"
           placeholder="Nom et prénom"
@@ -401,31 +442,22 @@
     <!-- ======= ÉTAPE 3 – Source de connaissance ======= -->
     @if (step() === 3) {
     <h2 class="text-sm font-bold text-gray-700 uppercase tracking-widest border-b pb-3">
-      Source de connaissance
+      Comment la personne a pris connaissance de la vacation proposée par l'IUT
     </h2>
-    <p class="text-sm text-gray-600">
-      Comment la personne a-t-elle eu connaissance de la vacation proposée ?
-    </p>
+    <p class="text-sm text-gray-600">Merci de cocher la ou les bonne(s) case(s).</p>
 
     <div class="space-y-3 pt-1">
-      @for (opt of [
-        { value: 'COLLEGUE', label: 'Par un collègue' },
-        { value: 'CV', label: 'Par son CV personnel' },
-        { value: 'F2P', label: 'Par le biais de la F2P' },
-        { value: 'RESPONSABLE', label: 'Par la personne en charge du recrutement' },
-        { value: 'BUREAU', label: 'Par le bureau à accès' },
-        { value: 'AUTRE', label: 'Autre (précisez)' }
-      ]; track opt.value) {
+      @for (opt of sourceOptions; track opt.value) {
       <label class="flex items-center gap-3 cursor-pointer text-sm text-gray-700 py-1">
-        <input type="radio" name="sourceConnaissance" [value]="opt.value"
-          [checked]="formData().sourceConnaissance === opt.value"
-          (change)="updateField('sourceConnaissance', opt.value)"
-          class="accent-blue-600"/>
+        <input type="checkbox"
+          [checked]="isSourceChecked(opt.value)"
+          (change)="toggleSource(opt.value)"
+          class="accent-blue-600 w-4 h-4"/>
         {{ opt.label }}
       </label>
       }
 
-      @if (formData().sourceConnaissance === 'AUTRE') {
+      @if (isSourceChecked('AUTRE')) {
       <input type="text" [value]="formData().sourceConnaissanceAutre"
         (input)="updateField('sourceConnaissanceAutre', $any($event.target).value)"
         placeholder="Précisez..."

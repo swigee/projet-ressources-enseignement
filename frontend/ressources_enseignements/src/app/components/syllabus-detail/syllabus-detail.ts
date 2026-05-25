@@ -36,8 +36,16 @@ export class SyllabusDetailComponent implements OnInit, OnDestroy {
   // Sections from National Program
   nationalSections: Section[] = [];
   
-  // Mapped sections for University Program
+  // Live model for saving
   universityData: any = {
+    personalDescription: '',
+    personalSavoirs: '',
+    personalApprentissages: '',
+    personalVolume: ''
+  };
+
+  // Initial data used only for the first render to avoid cursor jumping
+  initialUniversityData: any = {
     personalDescription: '',
     personalSavoirs: '',
     personalApprentissages: '',
@@ -64,7 +72,7 @@ export class SyllabusDetailComponent implements OnInit, OnDestroy {
     this.isEditor = this.auth.hasRole(['ADMIN', 'TEACHER']);
     this.loadResource();
 
-    // Auto-save logic for the whole university object
+    // Auto-save logic
     this.update$.pipe(
       debounceTime(1000),
       takeUntil(this.destroy$)
@@ -95,12 +103,15 @@ export class SyllabusDetailComponent implements OnInit, OnDestroy {
         this.nationalSections.forEach(s => this.activeSections.add(s.id));
         
         // Load university adaptations
-        this.universityData = {
+        const personalData = {
           personalDescription: data.personalDescription || '',
           personalSavoirs: data.personalSavoirs || '',
           personalApprentissages: data.personalApprentissages || '',
           personalVolume: data.personalVolume || ''
         };
+
+        this.universityData = { ...personalData };
+        this.initialUniversityData = { ...personalData };
         
         this.isLoading = false;
       },
@@ -119,11 +130,14 @@ export class SyllabusDetailComponent implements OnInit, OnDestroy {
     this.update$.next();
   }
 
-  copyToUniversity(sectionId: string): void {
+  copyToUniversity(sectionId: string, editorElement: HTMLDivElement): void {
     const nationalSection = this.nationalSections.find(s => s.id === sectionId);
     if (nationalSection) {
-      // Replace newlines with <br/> for the HTML editor
-      this.universityData[sectionId] = this.formatContent(nationalSection.content);
+      const content = this.formatContent(nationalSection.content);
+      // Manually update the DOM element to avoid cursor reset
+      editorElement.innerHTML = content;
+      // Update the model
+      this.universityData[sectionId] = content;
       this.saveStatus = 'saving';
       this.update$.next();
     }

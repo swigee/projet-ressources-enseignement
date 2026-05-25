@@ -217,10 +217,10 @@ public class TeacherAssignmentService {
                 String firstName = (String) data[1];
                 String lastName = (String) data[2];
                 Integer totalHours = ((Number) data[3]).intValue();
+                String type = data[4] != null ? (String) data[4] : "VACATAIRE";
 
-                // Déterminer le statut (à adapter selon votre logique)
-                String status = totalHours < 100 ? "Vacataire" : "Permanent";
-                String statusColor = status.equals("Permanent") ? "bg-green-100 text-green-800"
+                String status = "PERMANENT".equals(type) ? "Permanent" : "Vacataire";
+                String statusColor = "PERMANENT".equals(type) ? "bg-green-100 text-green-800"
                                 : "bg-blue-100 text-blue-800";
 
                 return TeacherDTO.builder()

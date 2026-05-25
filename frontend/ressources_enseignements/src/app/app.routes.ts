@@ -12,6 +12,7 @@ import { roleGuard } from './services/auth/role.guard';
 import { SyllabusComponent } from './components/syllabus/syllabus';
 import { SyllabusDetailComponent } from './components/syllabus-detail/syllabus-detail';
 import { SoftwareList } from './components/software-list/software-list';
+import { ServiceValidation } from './components/service-validation/service-validation';
 
 export const routes: Routes = [
   {
@@ -91,6 +92,12 @@ export const routes: Routes = [
   {
     path: 'liste-logiciels',
     component: SoftwareList,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['TEACHER', 'ADMIN'] }
+  },
+  {
+    path: 'service-validation',
+    component: ServiceValidation,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['TEACHER', 'ADMIN'] }
   }

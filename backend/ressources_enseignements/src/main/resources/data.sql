@@ -10,22 +10,22 @@ ON CONFLICT (id) DO NOTHING;
 -- =========================
 -- USERS
 -- =========================
-INSERT INTO users (id, address, email, first_name, last_name, password, phone_number, validation_status, username) VALUES
-(1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', '$2a$10$G9CG3yuKGV9l6mDuxZy/ZuHgKgp62NAm/1ZXhcqXoZM4Om021JV3K', '0101010101', 'NONE', 'P2600001'),
-(2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', '$2a$10$1hrZWYwDa5MopVXf1LeGmusoN2lrzH06tFHBGLTIsk92dHE6p3p8G', '0202020202', 'VALIDATED', 'P2600002'),
-(3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', '$2a$10$x9fz8aI5xHPa4L5N1tBtaOtXE0dLjzFvyjPVRoWRXwyK9FYgCS8AO', '0303030303', 'NONE', 'P2600003'),
-(4, '10 rue des Lilas', 'martin.dupont@univ.fr', 'Martin', 'Dupont', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604010101', 'NONE', 'P2600004'),
-(5, '12 avenue Pasteur', 'sophie.bernard@univ.fr', 'Sophie', 'Bernard', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604020202', 'NONE', 'P2600005'),
-(6, '5 boulevard Victor Hugo', 'jean.moreau@univ.fr', 'Jean', 'Moreau', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604030303', 'NONE', 'P2600006'),
-(7, '8 rue de la Paix', 'claire.petit@univ.fr', 'Claire', 'Petit', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604040404', 'NONE', 'P2600007'),
-(8, '3 place de la Gare', 'pierre.leroy@univ.fr', 'Pierre', 'Leroy', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604050505', 'NONE', 'P2600008'),
-(9, '15 rue Voltaire', 'nathalie.roux@univ.fr', 'Nathalie', 'Roux', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604060606', 'NONE', 'P2600009'),
-(10, '22 avenue de la Republique', 'francois.garcia@univ.fr', 'Francois', 'Garcia', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604070707', 'NONE', 'P2600010'),
-(11, '7 rue Descartes', 'isabelle.martinez@univ.fr', 'Isabelle', 'Martinez', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604080808', 'NONE', 'P2600011'),
-(12, '9 rue Pascal', 'david.thomas@univ.fr', 'David', 'Thomas', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604090909', 'NONE', 'P2600012'),
-(13, '18 avenue Foch', 'emilie.robert@univ.fr', 'Emilie', 'Robert', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604101010', 'NONE', 'P2600013'),
-(14, '4 rue Moliere', 'philippe.richard@univ.fr', 'Philippe', 'Richard', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604111111', 'NONE', 'P2600014'),
-(15, '11 boulevard Gambetta', 'anne.dubois@univ.fr', 'Anne', 'Dubois', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604121212', 'NONE', 'P2600015')
+INSERT INTO users (id, address, email, first_name, last_name, password, phone_number, validation_status, username, type) VALUES
+(1, '1 rue Admin', 'admin@mail.com', 'Alice', 'Admin', '$2a$10$G9CG3yuKGV9l6mDuxZy/ZuHgKgp62NAm/1ZXhcqXoZM4Om021JV3K', '0101010101', 'NONE', 'P2600001', 'PERMANENT'),
+(2, '2 rue Prof', 'prof@mail.com', 'Bob', 'Teacher', '$2a$10$1hrZWYwDa5MopVXf1LeGmusoN2lrzH06tFHBGLTIsk92dHE6p3p8G', '0202020202', 'VALIDATED', 'P2600002', 'PERMANENT'),
+(3, '3 rue Etudiant', 'student@mail.com', 'Charlie', 'Student', '$2a$10$x9fz8aI5xHPa4L5N1tBtaOtXE0dLjzFvyjPVRoWRXwyK9FYgCS8AO', '0303030303', 'NONE', 'P2600003', NULL),
+(4, '10 rue des Lilas', 'martin.dupont@univ.fr', 'Martin', 'Dupont', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604010101', 'NONE', 'P2600004', 'VACATAIRE'),
+(5, '12 avenue Pasteur', 'sophie.bernard@univ.fr', 'Sophie', 'Bernard', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604020202', 'NONE', 'P2600005', 'PERMANENT'),
+(6, '5 boulevard Victor Hugo', 'jean.moreau@univ.fr', 'Jean', 'Moreau', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604030303', 'NONE', 'P2600006', 'VACATAIRE'),
+(7, '8 rue de la Paix', 'claire.petit@univ.fr', 'Claire', 'Petit', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604040404', 'NONE', 'P2600007', 'VACATAIRE'),
+(8, '3 place de la Gare', 'pierre.leroy@univ.fr', 'Pierre', 'Leroy', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604050505', 'NONE', 'P2600008', 'PERMANENT'),
+(9, '15 rue Voltaire', 'nathalie.roux@univ.fr', 'Nathalie', 'Roux', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604060606', 'NONE', 'P2600009', 'VACATAIRE'),
+(10, '22 avenue de la Republique', 'francois.garcia@univ.fr', 'Francois', 'Garcia', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604070707', 'NONE', 'P2600010', 'VACATAIRE'),
+(11, '7 rue Descartes', 'isabelle.martinez@univ.fr', 'Isabelle', 'Martinez', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604080808', 'NONE', 'P2600011', 'VACATAIRE'),
+(12, '9 rue Pascal', 'david.thomas@univ.fr', 'David', 'Thomas', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604090909', 'NONE', 'P2600012', 'PERMANENT'),
+(13, '18 avenue Foch', 'emilie.robert@univ.fr', 'Emilie', 'Robert', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604101010', 'NONE', 'P2600013', 'VACATAIRE'),
+(14, '4 rue Moliere', 'philippe.richard@univ.fr', 'Philippe', 'Richard', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604111111', 'NONE', 'P2600014', 'PERMANENT'),
+(15, '11 boulevard Gambetta', 'anne.dubois@univ.fr', 'Anne', 'Dubois', '$2a$10$.XcVqasfSqKAfc/RtKksje55IYTesCCGyr/58zsV462DPvES9c7Xu', '0604121212', 'NONE', 'P2600015', 'VACATAIRE')
 ON CONFLICT (id) DO NOTHING;
 
 -- =========================

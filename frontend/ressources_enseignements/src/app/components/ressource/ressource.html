@@ -17,9 +17,6 @@
     <button (click)="setActiveTab('maquette')" [class]="activeTab() === 'maquette'
         ? 'px-6 py-3 font-medium bg-gray-500 text-white'
         : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'">Maquette</button>
-    <button (click)="setActiveTab('validation')" [class]="activeTab() === 'validation'
-        ? 'px-6 py-3 font-medium bg-gray-500 text-white'
-        : 'px-6 py-3 font-medium bg-white text-gray-700 hover:bg-gray-100'">Validation services</button>
   </div>
 
   <app-filter-controls [selectedFormation]="selectedFormation()" [formations]="formations()" [selectedYear]="selectedYear()" [selectedClass]="selectedClass()"
@@ -51,10 +48,6 @@
     [isEditing]="isEditing()" [successMessage]="successMessage()" [errorMessage]="errorMessage()"
     (editingEnabled)="enableEditing()" (editingValidated)="validateEditing()" (editingCancelled)="cancelEditing()"
     (scheduleHoursChanged)="onScheduleHoursChanged($event)" (projectHoursChanged)="onProjectHoursChanged($event)" />
-  }
-
-  @if (activeTab() === 'validation' && !isLoading()) {
-  <app-validation-tab [selectedYear]="selectedYear()" (ticketRequested)="showModal.set(true)" />
   }
 
   <app-ticket-modal [isOpen]="showModal()" (closed)="showModal.set(false)" />

@@ -121,7 +121,7 @@ public class UserService {
                     continue;
                 }
 
-                if (userRepository.findByUsername(username).isPresent()) {
+                if (userRepository.findByUsernameIgnoreCase(username).isPresent()) {
                     errors.add("Ligne " + lineNumber + " : l'utilisateur '" + username + "' existe déjà");
                     continue;
                 }

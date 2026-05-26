@@ -34,6 +34,17 @@ public interface FormationRepository extends JpaRepository<Formation, Integer> {
     @Query("SELECT DISTINCT f.className FROM Formation f WHERE f.year = :year ORDER BY f.className")
     List<String> findClassesByYear(@Param("year") String year);
 
+    /**
+     * Returns distinct class names, with optional year and formation filters.
+     * Passing null for either parameter disables that filter.
+     */
+    @Query("SELECT DISTINCT f.className FROM Formation f " +
+           "WHERE (:year IS NULL OR f.year = :year) " +
+           "AND (:formation IS NULL OR f.name = :formation) " +
+           "ORDER BY f.className")
+    List<String> findDistinctClassNames(@Param("year") String year,
+                                        @Param("formation") String formation);
+
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM user_formation uf WHERE uf.user_id = :userId", nativeQuery = true)

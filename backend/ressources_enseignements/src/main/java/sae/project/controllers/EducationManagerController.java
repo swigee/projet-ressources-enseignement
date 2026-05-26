@@ -67,10 +67,10 @@ public class EducationManagerController {
         return emrep.getUsersByFormation(id);
     }
 
-//    @GetMapping("/classes")
-//    public List<String> getDistinctClasses(
-//            @RequestParam(required = false) String year,
-//            @RequestParam(required = false) String formation) {
-//        return emrep.getDistinctClasses(year, formation);
-//    }
+    @GetMapping("/classes")
+    public List<String> getDistinctClasses(
+            @RequestParam(required = false) String year,
+            @RequestParam(required = false) String formation) {
+        return emrep.getDistinctClasses(year, formation);
+    }
 }

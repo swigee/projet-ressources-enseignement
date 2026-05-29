@@ -1,5 +1,7 @@
 package sae.project.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,38 +20,30 @@ import java.util.List;
 @RequestMapping("/api/teacher-assignment")
 @CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
+@Tag(name = "Teacher Assignment", description = "API for managing teacher assignments to resources")
 public class TeacherAssignmentController {
 
     @Autowired
     private TeacherAssignmentService assignmentService;
 
-    /**
-     * Récupérer tous les enseignants
-     * GET /api/teacher-assignment/teachers
-     */
     @GetMapping("/teachers")
+    @Operation(summary = "Get all teachers")
     public ResponseEntity<List<TeacherDTO>> getAllTeachers() {
         log.info("GET /api/teacher-assignment/teachers");
         List<TeacherDTO> teachers = assignmentService.getAllTeachers();
         return ResponseEntity.ok(teachers);
     }
 
-    /**
-     * Rechercher des enseignants
-     * GET /api/teacher-assignment/teachers/search?keyword=martin
-     */
     @GetMapping("/teachers/search")
+    @Operation(summary = "Search teachers by keyword")
     public ResponseEntity<List<TeacherDTO>> searchTeachers(@RequestParam String keyword) {
         log.info("GET /api/teacher-assignment/teachers/search?keyword={}", keyword);
         List<TeacherDTO> teachers = assignmentService.searchTeachers(keyword);
         return ResponseEntity.ok(teachers);
     }
 
-    /**
-     * Récupérer la grille d'affectation complète
-     * GET /api/teacher-assignment/grid?formation=info&year=2&className=A
-     */
     @GetMapping("/grid")
+    @Operation(summary = "Get the full assignment grid, optionally filtered by formation, year, class and semester")
     public ResponseEntity<AssignmentGridDTO> getAssignmentGrid(
             @RequestParam(required = false) String formation,
             @RequestParam(required = false) String year,
@@ -62,30 +56,24 @@ public class TeacherAssignmentController {
         return ResponseEntity.ok(grid);
     }
 
-    /**
-     * Créer une nouvelle affectation
-     * POST /api/teacher-assignment/assignments
-     */
     @PostMapping("/assignments")
+    @Operation(summary = "Create a new teacher assignment")
     public ResponseEntity<Assignment> createAssignment(@RequestBody CreateAssignmentDTO dto) {
         log.info("POST /api/teacher-assignment/assignments - {}", dto);
         try {
             Assignment assignment = assignmentService.createAssignment(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(assignment);
         } catch (IllegalArgumentException e) {
-            log.error("Erreur lors de la création de l'affectation", e);
+            log.error("Invalid data for assignment creation", e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (Exception e) {
-            log.error("Erreur lors de la création de l'affectation", e);
+            log.error("Error while creating assignment", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    /**
-     * Mettre à jour une affectation
-     * PUT /api/teacher-assignment/assignments/{id}
-     */
     @PutMapping("/assignments/{id}")
+    @Operation(summary = "Update an existing assignment by ID")
     public ResponseEntity<Assignment> updateAssignment(
             @PathVariable Integer id,
             @RequestBody CreateAssignmentDTO dto) {
@@ -94,32 +82,26 @@ public class TeacherAssignmentController {
             Assignment assignment = assignmentService.updateAssignment(id, dto);
             return ResponseEntity.ok(assignment);
         } catch (RuntimeException e) {
-            log.error("Erreur lors de la mise à jour de l'affectation", e);
+            log.error("Error while updating assignment", e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
-    /**
-     * Supprimer une affectation
-     * DELETE /api/teacher-assignment/assignments/{id}
-     */
     @DeleteMapping("/assignments/{id}")
+    @Operation(summary = "Delete an assignment by ID")
     public ResponseEntity<Void> deleteAssignment(@PathVariable Integer id) {
         log.info("DELETE /api/teacher-assignment/assignments/{}", id);
         try {
             assignmentService.deleteAssignment(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
-            log.error("Erreur lors de la suppression de l'affectation", e);
+            log.error("Error while deleting assignment", e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
-    /**
-     * Supprimer une affectation par enseignant et ressource
-     * DELETE /api/teacher-assignment/assignments/teacher/{userId}/ressource/{ressourceId}
-     */
     @DeleteMapping("/assignments/teacher/{userId}/ressource/{ressourceId}")
+    @Operation(summary = "Delete an assignment by teacher ID and resource ID")
     public ResponseEntity<Void> deleteAssignmentByTeacherAndRessource(
             @PathVariable Integer userId,
             @PathVariable Integer ressourceId) {
@@ -128,16 +110,13 @@ public class TeacherAssignmentController {
             assignmentService.deleteAssignmentByTeacherAndRessource(userId, ressourceId);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
-            log.error("Erreur lors de la suppression de l'affectation", e);
+            log.error("Error while deleting assignment", e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
-    /**
-     * Valider les affectations
-     * POST /api/teacher-assignment/validate?year=2&className=A
-     */
     @PostMapping("/validate")
+    @Operation(summary = "Validate assignments for a given year and class")
     public ResponseEntity<AssignmentValidationResponseDTO> validateAssignments(
             @RequestParam String year,
             @RequestParam String className) {
@@ -147,11 +126,8 @@ public class TeacherAssignmentController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Health check
-     * GET /api/teacher-assignment/health
-     */
     @GetMapping("/health")
+    @Operation(summary = "Check API health")
     public ResponseEntity<String> healthCheck() {
         return ResponseEntity.ok("Teacher Assignment API is running");
     }

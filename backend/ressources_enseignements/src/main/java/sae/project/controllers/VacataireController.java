@@ -1,5 +1,7 @@
 package sae.project.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import java.util.Map;
 @RequestMapping("/api/vacataires")
 @CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
+@Tag(name = "Vacataires", description = "API for managing adjunct/contractor teacher profiles")
 public class VacataireController {
 
     @Autowired
@@ -24,14 +27,14 @@ public class VacataireController {
     // CRUD endpoints
     // ───────────────────────────────────────────────
 
-    /** GET /api/vacataires — list all contractor profiles */
     @GetMapping
+    @Operation(summary = "Get all contractor profiles")
     public ResponseEntity<List<VacataireDTO>> getAll() {
         return ResponseEntity.ok(vacataireService.getAll());
     }
 
-    /** GET /api/vacataires/{id} — get a single contractor profile */
     @GetMapping("/{id}")
+    @Operation(summary = "Get a contractor profile by ID")
     public ResponseEntity<VacataireDTO> getById(@PathVariable Integer id) {
         try {
             return ResponseEntity.ok(vacataireService.getById(id));
@@ -40,15 +43,15 @@ public class VacataireController {
         }
     }
 
-    /** POST /api/vacataires — create a new contractor profile */
     @PostMapping
+    @Operation(summary = "Create a new contractor profile")
     public ResponseEntity<VacataireDTO> create(@RequestBody VacataireDTO dto) {
         VacataireDTO created = vacataireService.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    /** PUT /api/vacataires/{id} — update an existing contractor profile */
     @PutMapping("/{id}")
+    @Operation(summary = "Update an existing contractor profile")
     public ResponseEntity<VacataireDTO> update(@PathVariable Integer id, @RequestBody VacataireDTO dto) {
         try {
             return ResponseEntity.ok(vacataireService.update(id, dto));
@@ -57,8 +60,8 @@ public class VacataireController {
         }
     }
 
-    /** DELETE /api/vacataires/{id} — delete a contractor profile */
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a contractor profile by ID")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
             vacataireService.delete(id);
@@ -68,8 +71,8 @@ public class VacataireController {
         }
     }
 
-    /** GET /api/vacataires/search?keyword=dupont — search by name */
     @GetMapping("/search")
+    @Operation(summary = "Search contractor profiles by name keyword")
     public ResponseEntity<List<VacataireDTO>> search(@RequestParam String keyword) {
         return ResponseEntity.ok(vacataireService.search(keyword));
     }
@@ -78,22 +81,15 @@ public class VacataireController {
     // Filtering endpoints
     // ───────────────────────────────────────────────
 
-    /**
-     * GET /api/vacataires/active
-     * Returns contractor profiles that already have a linked user account.
-     */
     @GetMapping("/active")
+    @Operation(summary = "Get contractor profiles that have a linked user account")
     public ResponseEntity<List<VacataireDTO>> getActive() {
         log.info("GET /api/vacataires/active");
         return ResponseEntity.ok(vacataireService.getActive());
     }
 
-    /**
-     * GET /api/vacataires/pending
-     * Returns contractor profiles that are still in the recruitment pipeline
-     * (no user account linked yet).
-     */
     @GetMapping("/pending")
+    @Operation(summary = "Get contractor profiles still in the recruitment pipeline (no user account yet)")
     public ResponseEntity<List<VacataireDTO>> getPending() {
         log.info("GET /api/vacataires/pending");
         return ResponseEntity.ok(vacataireService.getPending());
@@ -103,21 +99,8 @@ public class VacataireController {
     // Account conversion endpoint
     // ───────────────────────────────────────────────
 
-    /**
-     * POST /api/vacataires/{id}/convert
-     * <p>
-     * Converts a contractor recruitment profile into an active user account.
-     * Expected request body:
-     * <pre>
-     * {
-     *   "username": "P2600099",
-     *   "password": "ChangeMe123"
-     * }
-     * </pre>
-     * Returns the updated contractor DTO with {@code accountActive = true}
-     * and the new {@code userId}.
-     */
     @PostMapping("/{id}/convert")
+    @Operation(summary = "Convert a contractor profile into an active user account")
     public ResponseEntity<?> convertToUser(
             @PathVariable Integer id,
             @RequestBody Map<String, String> body) {

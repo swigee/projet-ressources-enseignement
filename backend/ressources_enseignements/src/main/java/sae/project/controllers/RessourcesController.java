@@ -1,5 +1,7 @@
 package sae.project.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +18,14 @@ import java.util.List;
 @RequestMapping("/api/ressources-table")
 @CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
+@Tag(name = "Resources Table", description = "API for the educational resources table view")
 public class RessourcesController {
 
     @Autowired
     private RessourcesService ressourcesTableService;
 
     @GetMapping("/data")
+    @Operation(summary = "Get resources table data, optionally filtered by year, class, semester and formation")
     public ResponseEntity<RessourcesResponseDTO> getData(
             @RequestParam(required = false) String year,
             @RequestParam(required = false) String className,
@@ -34,6 +38,7 @@ public class RessourcesController {
     }
 
     @GetMapping("/teachers")
+    @Operation(summary = "Get all available teachers")
     public ResponseEntity<List<TeacherBadgeDTO>> getAvailableTeachers() {
         log.info("GET /api/ressources-table/teachers");
 
@@ -42,6 +47,7 @@ public class RessourcesController {
     }
 
     @GetMapping("/conflicts")
+    @Operation(summary = "Detect scheduling conflicts for a given teacher")
     public ResponseEntity<List<ScheduleConflictDTO>> detectConflicts(
             @RequestParam Integer teacherId) {
         log.info("GET /api/ressources-table/conflicts?teacherId={}", teacherId);
@@ -51,6 +57,7 @@ public class RessourcesController {
     }
 
     @GetMapping("/search")
+    @Operation(summary = "Search resources by keyword")
     public ResponseEntity<List<RessourceRowDTO>> searchRessources(
             @RequestParam String keyword) {
         log.info("GET /api/ressources-table/search?keyword={}", keyword);
@@ -60,6 +67,7 @@ public class RessourcesController {
     }
 
     @GetMapping("/health")
+    @Operation(summary = "Check API health")
     public ResponseEntity<String> healthCheck() {
         return ResponseEntity.ok("Ressources Table API is running");
     }

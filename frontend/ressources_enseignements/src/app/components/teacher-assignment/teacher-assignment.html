@@ -19,7 +19,7 @@
       <div>
         <label class="block text-sm font-medium text-red-500 mb-2">Formation</label>
         <select
-          [(ngModel)]="selectedFormation"
+          [(ngModel)]="selectedProgram"
           (change)="onFilterChange()"
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
@@ -154,19 +154,19 @@
     <div class="w-full lg:w-2/3 bg-white rounded-lg shadow">
       <div class="p-6 border-b border-gray-200">
         <h2 class="text-lg font-semibold flex items-center gap-1">
-          Grille d'affectation ({{ affectationGrid.length }} modules)
+          Grille d'affectation ({{ assignmentGrid.length }} modules)
           <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">Chaque ligne est une ressource (module). Les colonnes TD/TP/CM affichent les enseignants affectés et les heures nécessaires.</span></span>
         </h2>
       </div>
 
-      @if (affectationGrid.length === 0 && !isLoading) {
+      @if (assignmentGrid.length === 0 && !isLoading) {
         <div class="p-8 text-center text-gray-500">
           <p class="mb-2">Aucune ressource trouvée pour cette sélection</p>
           <p class="text-sm">Vérifiez vos filtres ou contactez l'administrateur</p>
         </div>
       }
 
-      @if (affectationGrid.length > 0) {
+      @if (assignmentGrid.length > 0) {
         <!-- Onglets TD/TP/CM (mobile uniquement) -->
         <div class="flex border-b border-gray-200 px-4 pt-2 lg:hidden">
           @for (tab of tabs; track tab) {
@@ -193,12 +193,12 @@
             </tr>
             </thead>
             <tbody>
-              @for (row of affectationGrid; track row.resourceId) {
+              @for (row of assignmentGrid; track row.resourceId) {
                 <tr class="border-b border-gray-200 hover:bg-gray-50">
                   <td class="px-4 py-3 text-sm font-medium">{{ row.module }}</td>
                   @if (allClassesMode) {
                     <td class="px-4 py-3 text-center">
-                      @for (g of row.groupes; track g) {
+                      @for (g of row.groups; track g) {
                         <span class="inline-block px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded mr-1">{{ g }}</span>
                       }
                     </td>

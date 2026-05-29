@@ -24,22 +24,21 @@ import java.util.stream.Collectors;
 public class RessourcesService {
 
     @Autowired
-    private PedagogicalScheduleRepository ressourcesRepository;
+    private PedagogicalScheduleRepository resourcesRepository;
 
     @Autowired
     private TeacherAssignmentRepository assignmentRepository;
-
 
     private String nullIfBlank(String s) {
         return (s == null || s.isBlank()) ? null : s;
     }
 
-    public RessourcesResponseDTO getRessourcesTableData(String year, String className, Integer semester, String formation) {
-        log.info("Retrieving table data for year={} className={} semester={} formation={}", year, className, semester, formation);
+    public RessourcesResponseDTO getResourcesTableData(String year, String className, Integer semester, String program) {
+        log.info("Retrieving table data for year={} className={} semester={} program={}", year, className, semester, program);
 
-        List<Resource> resources = ressourcesRepository.findWithFilters(
-                nullIfBlank(year), nullIfBlank(className), nullIfBlank(formation), semester);
-        List<RessourceRowDTO> ressourceRows = resources.stream()
+        List<Resource> resources = resourcesRepository.findWithFilters(
+                nullIfBlank(year), nullIfBlank(className), nullIfBlank(program), semester);
+        List<RessourceRowDTO> resourceRows = resources.stream()
                 .map(this::mapResourceToRowDTO)
                 .collect(Collectors.toList());
 
@@ -47,7 +46,7 @@ public class RessourcesService {
         List<ScheduleConflictDTO> conflicts = new ArrayList<>();
 
         return RessourcesResponseDTO.builder()
-                .ressources(ressourceRows)
+                .resources(resourceRows)
                 .availableTeachers(availableTeachers)
                 .conflicts(conflicts)
                 .build();
@@ -120,7 +119,7 @@ public class RessourcesService {
                         .teacherName(teacherName.trim())
                         .conflictingModules(conflictingModules)
                         .weekNumber(entry.getKey())
-                        .timeSlot("Semaine " + entry.getKey())
+                        .timeSlot("Week " + entry.getKey())
                         .build());
             }
         }
@@ -128,10 +127,10 @@ public class RessourcesService {
         return conflicts;
     }
 
-    public List<RessourceRowDTO> searchRessources(String keyword) {
+    public List<RessourceRowDTO> searchResources(String keyword) {
         log.info("Searching resources with keyword: {}", keyword);
 
-        List<Resource> resources = ressourcesRepository.searchByTitleContaining(keyword);
+        List<Resource> resources = resourcesRepository.searchByTitleContaining(keyword);
 
         return resources.stream()
                 .map(this::mapResourceToRowDTO)
@@ -185,29 +184,10 @@ public class RessourcesService {
                 .build();
     }
 
-    private TeacherBadgeDTO mapAssignmentToTeacherBadge(Assignment assignment) {
-        User user = assignment.getUser();
-
-        String fullName = "";
-        if (user != null) {
-            String lastName = user.getLastName() != null ? user.getLastName().toUpperCase() : "";
-            String firstName = user.getFirstName() != null ? user.getFirstName() : "";
-            fullName = (lastName + " " + firstName).trim();
-        }
-
-        return TeacherBadgeDTO.builder()
-                .teacherId(user != null ? user.getId() : null)
-                .fullName(fullName)
-                .assignedHours(assignment.getAssignedTimes() != null ? assignment.getAssignedTimes() : 0)
-                .build();
-    }
-
     private Integer safeSum(Integer... values) {
         int sum = 0;
         for (Integer value : values) {
-            if (value != null) {
-                sum += value;
-            }
+            if (value != null) sum += value;
         }
         return sum;
     }

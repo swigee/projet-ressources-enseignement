@@ -40,10 +40,10 @@ public interface FormationRepository extends JpaRepository<Formation, Integer> {
      */
     @Query("SELECT DISTINCT f.className FROM Formation f " +
            "WHERE (:year IS NULL OR f.year = :year) " +
-           "AND (:formation IS NULL OR f.name = :formation) " +
+           "AND (:program IS NULL OR f.name = :program) " +
            "ORDER BY f.className")
     List<String> findDistinctClassNames(@Param("year") String year,
-                                        @Param("formation") String formation);
+                                        @Param("program") String program);
 
     @Modifying
     @Transactional

@@ -51,11 +51,11 @@ public class Software implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties({"password", "assignmentList", "ticketsList", "formationList", "roleList"})
+    @JsonIgnoreProperties({"password", "assignments", "ticketsList", "programs", "roles"})
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resource_id")
-    @JsonIgnoreProperties({"formationList", "syllabusList", "assignmentList", "hoursPerWeekJson"})
+    @JsonIgnoreProperties({"programs", "syllabusList", "assignments", "hoursPerWeekJson"})
     private Resource resource;
 }

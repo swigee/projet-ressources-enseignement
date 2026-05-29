@@ -32,7 +32,7 @@ export class EducationManagerCreation {
       id: [null],
       name: ['', Validators.required],
       description: [''],
-      parcours: [''],
+      pathway: [''],
       semesters: this.fb.array([])
     });
 
@@ -84,20 +84,20 @@ export class EducationManagerCreation {
   createSemesterGroup(): FormGroup {
     return this.fb.group({
       semester_number: ['1', Validators.required],
-      parcours: [''],
+      pathway: [''],
       lessons: [[]]
     });
   }
 
-  private groupResourcesBySemester(resources: Lesson[]): Array<{ semester_number: number; parcours: string; lessons: Lesson[] }> {
-    const groups = new Map<number, { semester_number: number; parcours: string; lessons: Lesson[] }>();
+  private groupResourcesBySemester(resources: Lesson[]): Array<{ semester_number: number; pathway: string; lessons: Lesson[] }> {
+    const groups = new Map<number, { semester_number: number; pathway: string; lessons: Lesson[] }>();
 
     resources.forEach((resource) => {
       const semesterNumber = Number(resource.semester || 1) || 1;
       if (!groups.has(semesterNumber)) {
         groups.set(semesterNumber, {
           semester_number: semesterNumber,
-          parcours: this.form.value.parcours || '',
+          pathway: this.form.value.pathway || '',
           lessons: []
         });
       }
@@ -112,7 +112,7 @@ export class EducationManagerCreation {
       id: edu.id,
       name: edu.name,
       description: edu.description,
-      parcours: edu.parcours || ''
+      pathway: edu.pathway || ''
     });
 
     this.semesters.clear();
@@ -124,19 +124,19 @@ export class EducationManagerCreation {
         .forEach((semester) => {
           this.semesters.push(this.fb.group({
             semester_number: [semester.semester_number, Validators.required],
-            parcours: [semester.parcours || '', Validators.required],
-            lessons: [semester.resourceList || []]
+            pathway: [semester.pathway || '', Validators.required],
+            lessons: [semester.resources || []]
           }));
         });
     } else {
-      const resources = edu.resourceList || [];
+      const resources = edu.resources || [];
       const semesterGroups = this.groupResourcesBySemester(resources);
 
       if (semesterGroups.length) {
         semesterGroups.forEach((semester) => {
           this.semesters.push(this.fb.group({
             semester_number: [semester.semester_number, Validators.required],
-            parcours: [semester.parcours, Validators.required],
+            pathway: [semester.pathway, Validators.required],
             lessons: [semester.lessons || []]
           }));
         });
@@ -190,14 +190,14 @@ export class EducationManagerCreation {
 
     const semesters = (formValue.semesters || []).map((semester: any) => ({
       semester_number: Number(semester.semester_number),
-      parcours: semester.parcours,
+      pathway: semester.pathway,
       resourceList: (semester.lessons || []).map((lesson: Lesson) => this.mapLessonToResourceId(lesson))
     }));
 
     return {
       name: formValue.name,
       description: formValue.description,
-      parcours: formValue.parcours,
+      pathway: formValue.pathway,
       resourceList,
       semesters
     };
@@ -207,7 +207,7 @@ export class EducationManagerCreation {
     const formValue = this.form.value;
     const semesters = (formValue.semesters || []).map((semester: any) => ({
       semester_number: Number(semester.semester_number),
-      parcours: semester.parcours,
+      pathway: semester.pathway,
       resourceList: (semester.lessons || []).map((lesson: Lesson) => this.mapLessonToResourceId(lesson))
     }));
 
@@ -221,11 +221,11 @@ export class EducationManagerCreation {
     });
 
     return {
-      formation: {
+      program: {
         id: formValue.id,
         name: formValue.name,
         description: formValue.description,
-        parcours: formValue.parcours
+        pathway: formValue.pathway
       },
       semesters,
       resources
@@ -246,8 +246,8 @@ export class EducationManagerCreation {
         this.edService.loadEducations();
       });
     } else {
-      const formation = this.buildFormCreationPayload();
-      this.service.createEducation(formation).subscribe(() => {
+      const payload = this.buildFormCreationPayload();
+      this.service.createEducation(payload).subscribe(() => {
         this.router.navigate(['/education-manager']);
         this.edService.loadEducations();
       });

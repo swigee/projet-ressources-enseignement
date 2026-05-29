@@ -9,12 +9,12 @@
         <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">Sélectionnez la formation (ex : BUT Informatique) pour afficher les ressources associées.</span></span>
       </label>
       <select
-        [ngModel]="selectedFormation"
-        (ngModelChange)="formationChange.emit($event)"
+        [ngModel]="selectedProgram"
+        (ngModelChange)="programChange.emit($event)"
         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
       >
         <option value="">Toutes les formations</option>
-        @for (f of formations; track f.id) {
+        @for (f of programs; track f.id) {
           <option [value]="f.id">{{ f.name }}</option>
         }
       </select>

@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RessourceRow, RessourcesTotals, ScheduleConflict, TeacherBadge } from '../../../models/ressources/ressources.model';
+import { ResourceRow, ResourceTotals, ScheduleConflict, TeacherBadge } from '../../../models/ressources/ressources.model';
 
 @Component({
   selector: 'app-resources-tab',
@@ -9,8 +9,8 @@ import { RessourceRow, RessourcesTotals, ScheduleConflict, TeacherBadge } from '
   templateUrl: './resources-tab.html'
 })
 export class ResourcesTab {
-  @Input() filteredRessources: RessourceRow[] = [];
-  @Input() calculatedTotals: RessourcesTotals = {
+  @Input() filteredResources: ResourceRow[] = [];
+  @Input() calculatedTotals: ResourceTotals = {
     totalPlannedHours: 0, totalActualHours: 0,
     totalTDHours: 0, totalTPHours: 0, totalCMHours: 0
   };
@@ -59,7 +59,7 @@ export class ResourcesTab {
     return this.availableTeachers.find(t => t.teacherId === teacherId)?.fullName ?? '';
   }
 
-  hasConflict(ressource: RessourceRow): boolean {
-    return this.filteredConflicts.some(c => c.conflictingModules.includes(ressource.moduleName));
+  hasConflict(resource: ResourceRow): boolean {
+    return this.filteredConflicts.some(c => c.conflictingModules.includes(resource.moduleName));
   }
 }

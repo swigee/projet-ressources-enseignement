@@ -24,72 +24,66 @@ public class Vacataire implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    /**
-     * Link to the user account of this contractor.
-     * Null until the candidate has been converted to an active account.
-     */
+    /** Link to the user account. Null until the contractor has been converted to an active account. */
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     @JsonIgnore
     @ToString.Exclude
     private User user;
 
-    // Étape 1 – Fiche de recrutement
+    // Step 1 – Recruitment form
     @Column(name = "responsable_recrutement")
-    private String responsableRecrutement;
+    private String recruitmentManager;
 
     @Column(name = "prenom")
-    private String prenom;
+    private String firstName;
 
     @Column(name = "nom")
-    private String nom;
+    private String lastName;
 
     @Column(name = "date_naissance")
-    private String dateNaissance;
+    private String birthDate;
 
     @Column(name = "departement")
-    private String departement;
+    private String department;
 
     @Column(name = "fonction")
-    private String fonction;
+    private String position;
 
     @Column(name = "experience")
     private String experience;
 
     @Column(name = "profil")
-    private String profil;
+    private String profile;
 
     @Column(name = "competences", columnDefinition = "TEXT")
-    private String competences;
+    private String skills;
 
-    // Étape 2 – Tableau de bord
+    // Step 2 – Dashboard
     @Column(name = "vue_en_amont")
-    private Boolean vueEnAmont;
+    private Boolean advanceNotice;
 
     @Column(name = "etablissement")
-    private String etablissement;
+    private String institution;
 
     @Column(name = "site")
     private String site;
 
     @Column(name = "transmis_responsable")
-    private Boolean transmisResponsable;
+    private Boolean sentToManager;
 
     @Column(name = "signature_responsable")
-    private String signatureResponsable;
+    private String managerSignature;
 
-    // Étape 3 – Source de connaissance
+    // Step 3 – Knowledge source
     @Column(name = "source_connaissance")
-    private String sourceConnaissance;
+    private String knowledgeSource;
 
     @Column(name = "source_connaissance_autre")
-    private String sourceConnaissanceAutre;
+    private String otherKnowledgeSource;
 
-    /**
-     * Recruitment status. Allowed values: A_CONTACTER, EN_COURS, VALIDE.
-     * Automatically set to VALIDE when a user account is created.
-     */
+    /** Recruitment status. Allowed values: A_CONTACTER, EN_COURS, VALIDE. */
     @Column(name = "statut")
     @Builder.Default
-    private String statut = "A_CONTACTER";
+    private String status = "A_CONTACTER";
 }

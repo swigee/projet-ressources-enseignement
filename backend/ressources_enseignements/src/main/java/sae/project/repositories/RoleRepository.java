@@ -12,10 +12,10 @@ import java.util.List;
 public interface RoleRepository extends JpaRepository<Role, Integer> {
     Role findByName(String name);
 
-    @Query("SELECT COUNT(u) FROM User u JOIN u.roleList r WHERE r.id = :roleId")
+    @Query("SELECT COUNT(u) FROM User u JOIN u.roles r WHERE r.id = :roleId")
     long countUsersByRoleId(@Param("roleId") int roleId);
 
-    @Query("SELECT r.id, COUNT(u) FROM Role r LEFT JOIN r.userList u GROUP BY r.id")
+    @Query("SELECT r.id, COUNT(u) FROM Role r LEFT JOIN r.users u GROUP BY r.id")
     List<Object[]> countUsersForAllRoles();
 
     @Query("SELECT r.id, COUNT(p) FROM Role r LEFT JOIN r.permissions p GROUP BY r.id")

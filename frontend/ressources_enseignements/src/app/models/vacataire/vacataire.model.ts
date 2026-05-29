@@ -1,29 +1,29 @@
 export interface VacataireModel {
   id?: number;
-  // Étape 1 — Fiche de recrutement
-  responsableRecrutement?: string;
-  qualiteResponsable?: string;
-  departement?: string;
-  dateEntretien?: string;
-  prenom?: string;
-  nom?: string;
-  formationVisee?: string;
-  natureVacation?: string;
-  profilTechnique?: string;
-  profilPedagogique?: string;
-  competences?: string;
-  // Étape 2 — Autres
+  // Step 1 — Recruitment form
+  recruitmentManager?: string;
+  managerTitle?: string;
+  department?: string;
+  interviewDate?: string;
+  firstName?: string;
+  lastName?: string;
+  targetFormation?: string;
+  vacationType?: string;
+  technicalProfile?: string;
+  pedagogicalProfile?: string;
+  skills?: string;
+  // Step 2 — Other
   siteBourgenBresse?: string;
   siteVilleurbanneDoua?: string;
   siteVilleurbanneGratteCiel?: string;
-  transmisCV?: string;
-  signatureResponsable?: string;
-  // Étape 3 — Source de connaissance (valeurs séparées par virgule)
-  sourceConnaissances?: string;
-  sourceConnaissanceAutre?: string;
+  cvSubmitted?: string;
+  managerSignature?: string;
+  // Step 3 — Knowledge source (comma-separated values)
+  knowledgeSource?: string;
+  otherKnowledgeSource?: string;
   // Admin
-  statut?: string;
-  /** ID of the linked user account — populated once statut becomes VALIDE. */
+  status?: string;
+  /** ID of the linked user account — populated once status becomes VALIDATED. */
   userId?: number;
   /** True when a user account has been created for this contractor. */
   accountActive?: boolean;

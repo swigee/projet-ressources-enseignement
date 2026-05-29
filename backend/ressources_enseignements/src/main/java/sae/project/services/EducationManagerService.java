@@ -17,57 +17,60 @@ import sae.project.repositories.SemesterRepository;
 
 @Service
 public class EducationManagerService {
+
     @Autowired
-    private EducationManagerRepository emrep;
+    private EducationManagerRepository formationRepository;
+
     @Autowired
-    private ResourceRepository rrep;
+    private ResourceRepository resourceRepository;
+
     @Autowired
-    private SemesterRepository semrep;
+    private SemesterRepository semesterRepository;
 
     public List<Formation> getAll() {
-        return emrep.findAllWithResources();
+        return formationRepository.findAllWithResources();
     }
-       
-    public Formation getById(Integer id){
-        Formation formation = emrep.findById(id)
-                .orElseThrow(() -> new RuntimeException("Formation non trouvée"));
-        formation.getUsersList();
-        formation.getResourceList();
-        return formation;
+
+    public Formation getById(Integer id) {
+        Formation program = formationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Formation not found"));
+        program.getUsers();
+        program.getResources();
+        return program;
     }
-    
+
     public void delete(Integer id) {
-        emrep.deleteById(id);
+        formationRepository.deleteById(id);
     }
 
     public void create(Formation f) {
         if (f.getSemesters() != null) {
-            f.getSemesters().forEach(semester -> semester.setFormation(f));
+            f.getSemesters().forEach(semester -> semester.setProgram(f));
         }
-        emrep.save(f);
+        formationRepository.save(f);
     }
 
-    public List<Resource> getRessourcesList() {
-       return rrep.findAll();
+    public List<Resource> getResourcesList() {
+        return resourceRepository.findAll();
     }
-    
-   @Transactional
+
+    @Transactional
     public Formation update(Integer id, EducationDTO request) {
-        Formation existing = emrep.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Formation introuvable : " + id));
+        Formation existing = formationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Formation not found: " + id));
 
-        Formation formationDto = request.getFormation();
-        if (formationDto != null) {
-            existing.setName(formationDto.getName());
-            existing.setDescription(formationDto.getDescription());
-            if (formationDto.getYear() != null) {
-                existing.setYear(formationDto.getYear());
+        Formation programDto = request.getProgram();
+        if (programDto != null) {
+            existing.setName(programDto.getName());
+            existing.setDescription(programDto.getDescription());
+            if (programDto.getYear() != null) {
+                existing.setYear(programDto.getYear());
             }
-            if (formationDto.getClassName() != null) {
-                existing.setClassName(formationDto.getClassName());
+            if (programDto.getClassName() != null) {
+                existing.setClassName(programDto.getClassName());
             }
-            if (formationDto.getParcours() != null) {
-                existing.setParcours(formationDto.getParcours());
+            if (programDto.getPathway() != null) {
+                existing.setPathway(programDto.getPathway());
             }
         }
 
@@ -87,24 +90,24 @@ public class EducationManagerService {
                     }
                 }
                 semester.setSemester_number(incomingSemester.getSemester_number());
-                semester.setParcours(incomingSemester.getParcours());
-                semester.setFormation(existing);
+                semester.setPathway(incomingSemester.getPathway());
+                semester.setProgram(existing);
 
                 List<Resource> resources = new ArrayList<>();
-                if (incomingSemester.getResourceList() != null) {
-                    for (Resource incomingResource : incomingSemester.getResourceList()) {
+                if (incomingSemester.getResources() != null) {
+                    for (Resource incomingResource : incomingSemester.getResources()) {
                         if (incomingResource.getId() != null) {
-                            rrep.findById(incomingResource.getId()).ifPresent(resource -> {
+                            resourceRepository.findById(incomingResource.getId()).ifPresent(resource -> {
                                 if (incomingSemester.getSemester_number() != null) {
                                     resource.setSemester(incomingSemester.getSemester_number());
                                 }
                                 resources.add(resource);
-                                rrep.save(resource);
+                                resourceRepository.save(resource);
                             });
                         }
                     }
                 }
-                semester.setResourceList(resources);
+                semester.setResources(resources);
                 existing.getSemesters().add(semester);
             }
         }
@@ -113,43 +116,43 @@ public class EducationManagerService {
             List<Resource> resources = new ArrayList<>();
             for (Resource incomingResource : request.getResources()) {
                 if (incomingResource.getId() != null) {
-                    rrep.findById(incomingResource.getId())
+                    resourceRepository.findById(incomingResource.getId())
                             .ifPresent(resources::add);
                 }
             }
-            existing.setResourceList(resources);
+            existing.setResources(resources);
         }
 
-        return emrep.save(existing);
+        return formationRepository.save(existing);
     }
-    
-    public Formation update(Formation f){
-        return emrep.save(f);
+
+    public Formation update(Formation f) {
+        return formationRepository.save(f);
     }
 
     public Formation duplicate(Integer id, String newName) {
-        Formation source = emrep.findById(id)
-                .orElseThrow(() -> new RuntimeException("Formation non trouvée : " + id));
+        Formation source = formationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Formation not found: " + id));
 
         Formation copy = Formation.builder()
                 .name(newName)
                 .year(source.getYear())
                 .className(source.getClassName())
                 .description(source.getDescription())
-                .resourceList(new java.util.ArrayList<>(source.getResourceList()))
+                .resources(new java.util.ArrayList<>(source.getResources()))
                 .build();
 
-        return emrep.save(copy);
+        return formationRepository.save(copy);
     }
 
-    public List<User> getUsersByFormation(Integer id){
-        Formation f = emrep.getById(id);
-        return f.getUsersList();
+    public List<User> getUsersByFormation(Integer id) {
+        Formation f = formationRepository.getById(id);
+        return f.getUsers();
     }
 
-    public List<String> getDistinctClasses(String year, String formation) {
-        String yearParam      = (year      == null || year.isBlank())      ? null : year;
-        String formationParam = (formation == null || formation.isBlank()) ? null : formation;
-        return emrep.findDistinctClassNames(yearParam, formationParam);
+    public List<String> getDistinctClasses(String year, String program) {
+        String yearParam    = (year    == null || year.isBlank())    ? null : year;
+        String programParam = (program == null || program.isBlank()) ? null : program;
+        return formationRepository.findDistinctClassNames(yearParam, programParam);
     }
 }

@@ -59,7 +59,7 @@ public class UserService {
                         return roleOpt.get();
                     })
                     .collect(Collectors.toCollection(ArrayList::new));
-            user.setRoleList(newRoles);
+            user.setRoles(newRoles);
             userRepository.save(user);
         } else {
             throw new IllegalArgumentException("Utilisateur non trouvé pour l'id " + id);
@@ -70,10 +70,10 @@ public class UserService {
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            List<Role> roles = user.getRoleList();
+            List<Role> roles = user.getRoles();
             if (roles != null && !roles.isEmpty()) {
                 roles.clear();
-                user.setRoleList(roles);
+                user.setRoles(roles);
                 userRepository.save(user);
                 System.out.println("Tous les rôles supprimés et utilisateur sauvegardé.");
             }
@@ -85,7 +85,7 @@ public class UserService {
         User user = userRepository.findById(iduser)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.getRoleList().removeIf(r -> r.getId().equals(idrole));
+        user.getRoles().removeIf(r -> r.getId().equals(idrole));
 
         userRepository.save(user);
     }

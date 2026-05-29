@@ -14,11 +14,11 @@ public class SyllabusResourceDTO {
     private String code;
     private String title;
     private String description;
-    private String savoirs;
-    private String apprentissagesCritiques;
-    private String volumeOfficiel;
+    private String knowledge;
+    private String criticalLearning;
+    private String officialVolume;
     private String personalDescription;
-    private String personalSavoirs;
-    private String personalApprentissages;
+    private String personalKnowledge;
+    private String personalLearning;
     private String personalVolume;
 }

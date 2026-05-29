@@ -3,11 +3,11 @@ export interface SyllabusResource {
   code: string;
   title: string;
   description: string;
-  savoirs: string;
-  apprentissagesCritiques: string;
-  volumeOfficiel: string;
+  knowledge: string;
+  criticalLearning: string;
+  officialVolume: string;
   personalDescription: string;
-  personalSavoirs: string;
-  personalApprentissages: string;
+  personalKnowledge: string;
+  personalLearning: string;
   personalVolume: string;
 }

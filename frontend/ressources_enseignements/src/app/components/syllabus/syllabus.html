@@ -1,12 +1,12 @@
 <div class="h-full flex flex-col p-6 space-y-6 overflow-y-auto bg-gray-50/30">
-    
+
     <!-- Header & Search -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Syllabus des Ressources</h1>
             <p class="text-sm text-gray-500 mt-1">Consultez et éditez les programmes nationaux et personnels.</p>
         </div>
-        
+
         <div class="flex items-center gap-4">
             <!-- Upload Button (Admin Only) -->
             <label *ngIf="isAdmin" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors cursor-pointer shadow-sm">
@@ -37,7 +37,7 @@
     <!-- Filters -->
     <div class="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
         <span class="text-sm font-semibold text-gray-700 w-24">Filtrer par :</span>
-        
+
         <div class="flex items-center gap-2">
             <label class="text-sm text-gray-500">Semestre</label>
             <select [(ngModel)]="selectedSemester" (change)="onSemesterChange()"
@@ -50,9 +50,9 @@
 
         <div class="flex items-center gap-2">
             <label class="text-sm text-gray-500">Parcours</label>
-            <select [(ngModel)]="selectedParcours" [disabled]="selectedSemester === 'S1' || selectedSemester === 'S2'"
+            <select [(ngModel)]="selectedPathway" [disabled]="selectedSemester === 'S1' || selectedSemester === 'S2'"
                     class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                <option *ngFor="let p of parcoursOptions" [value]="p">{{ p }}</option>
+                <option *ngFor="let p of pathwayOptions" [value]="p">{{ p }}</option>
             </select>
             <span *ngIf="selectedSemester === 'S1' || selectedSemester === 'S2'" class="text-xs text-blue-500 italic ml-2">
                 (Tronc commun uniquement)
@@ -74,10 +74,10 @@
 
     <!-- Grid -->
     <div *ngIf="!isLoading && !errorMessage" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <div *ngFor="let res of filteredResources" 
+        <div *ngFor="let res of filteredResources"
              (click)="goToDetail(res.id)"
              class="bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 p-6 cursor-pointer transition-all hover:-translate-y-1 group">
-            
+
             <div class="flex justify-between items-start mb-4">
                 <span class="inline-flex items-center justify-center px-2.5 py-1 text-xs font-bold leading-none text-blue-700 bg-blue-100 rounded-full">
                     {{ res.code }}
@@ -85,7 +85,7 @@
                 <div class="flex gap-1">
                     <span *ngIf="res.isAdapted" class="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-1 rounded border border-green-200" title="Contenu adapté par l'université">Adapté</span>
                     <span class="text-xs font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded">{{ res.semester }}</span>
-                    <span *ngIf="res.parcours !== 'Tronc Commun'" class="text-xs font-medium bg-purple-100 text-purple-700 px-2 py-1 rounded">{{ res.parcours }}</span>
+                    <span *ngIf="res.pathway !== 'Tronc Commun'" class="text-xs font-medium bg-purple-100 text-purple-700 px-2 py-1 rounded">{{ res.pathway }}</span>
                 </div>
             </div>
 

@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class RessourcesResponseDTO {
-    private List<RessourceRowDTO> ressources;
+    private List<RessourceRowDTO> resources;
     private List<TeacherBadgeDTO> availableTeachers;
     private List<ScheduleConflictDTO> conflicts;
 }

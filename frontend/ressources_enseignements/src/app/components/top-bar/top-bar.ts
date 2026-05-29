@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 export class TopBar implements OnInit {
   pageTitleService = inject(PageTitle);
   authService = inject(Auth);
-  
+
   title = this.pageTitleService.title;
   readonly currentUser = signal<any>(null);
 
@@ -26,8 +26,8 @@ export class TopBar implements OnInit {
   }
 
   getRole() {
-    if (this.currentUser() && this.currentUser().roleList && this.currentUser().roleList.length != 0) {
-      return this.currentUser().roleList[0].name;
+    if (this.currentUser() && this.currentUser().roles && this.currentUser().roles.length != 0) {
+      return this.currentUser().roles[0].name;
     }
     return "";
   }

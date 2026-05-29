@@ -19,10 +19,10 @@ export interface TeacherAssignment {
   assignedHours: number;
 }
 
-export interface AffectationRow {
+export interface AssignmentRow {
   resourceId: number;
   module: string;
-  groupes?: string[];
+  groups?: string[];
   td: string;
   tp: string;
   cm: string;
@@ -45,11 +45,11 @@ export interface AssignmentStatistics {
 }
 
 export interface AssignmentGrid {
-  selectedFormation: string;
+  selectedProgram: string;
   selectedYear: string;
   selectedSemester?: string;
   availableTeachers: Teacher[];
-  affectationGrid: AffectationRow[];
+  assignmentGrid: AssignmentRow[];
   statistics: AssignmentStatistics;
 }
 

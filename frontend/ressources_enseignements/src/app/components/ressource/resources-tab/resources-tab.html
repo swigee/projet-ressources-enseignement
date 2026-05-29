@@ -83,12 +83,12 @@
         </tr>
       </thead>
       <tbody>
-        @if (filteredRessources.length === 0) {
+        @if (filteredResources.length === 0) {
         <tr>
           <td colspan="8" class="text-center text-gray-500 italic py-8">Aucune ressource trouvee</td>
         </tr>
         } @else {
-        @for (row of filteredRessources; track row.id) {
+        @for (row of filteredResources; track row.id) {
         <tr [class]="(row.isHighlighted ? 'bg-blue-100' : 'bg-white') + ' border-b border-gray-300 hover:bg-blue-50'">
           <td [class]="'px-4 py-3 font-medium ' + (row.isHighlighted ? 'bg-blue-100' : '')">
             {{ row.moduleName }}

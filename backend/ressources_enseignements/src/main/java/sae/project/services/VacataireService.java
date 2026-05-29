@@ -20,10 +20,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class VacataireService {
 
-    /** Allowed statut values — must match the frontend dropdown. */
-    public static final String STATUT_A_CONTACTER = "A_CONTACTER";
-    public static final String STATUT_EN_COURS     = "EN_COURS";
-    public static final String STATUT_VALIDE       = "VALIDE";
+    public static final String STATUS_TO_CONTACT = "A_CONTACTER";
+    public static final String STATUS_IN_PROGRESS = "EN_COURS";
+    public static final String STATUS_VALIDATED   = "VALIDE";
 
     @Autowired
     private VacataireRepository vacataireRepository;
@@ -34,9 +33,7 @@ public class VacataireService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // ───────────────────────────────────────────────
-    // CRUD
-    // ───────────────────────────────────────────────
+    // ── CRUD ────────────────────────────────────────
 
     public List<VacataireDTO> getAll() {
         return vacataireRepository.findAll().stream()
@@ -45,45 +42,40 @@ public class VacataireService {
     }
 
     public VacataireDTO getById(Integer id) {
-        Vacataire v = vacataireRepository.findById(id)
+        Vacataire contractor = vacataireRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Contractor not found"));
-        return toDTO(v);
+        return toDTO(contractor);
     }
 
     public VacataireDTO create(VacataireDTO dto) {
-        Vacataire v = fromDTO(dto);
-        if (v.getStatut() == null) v.setStatut(STATUT_A_CONTACTER);
-        return toDTO(vacataireRepository.save(v));
+        Vacataire contractor = fromDTO(dto);
+        if (contractor.getStatus() == null) contractor.setStatus(STATUS_TO_CONTACT);
+        return toDTO(vacataireRepository.save(contractor));
     }
 
     /**
      * Update a contractor profile.
-     * <p>
-     * <b>If the statut changes to {@code VALIDE} and no user account exists yet,
-     * a User account is automatically created</b> using the contractor's first
-     * and last name. The generated username follows the pattern
-     * {@code firstname.lastname} (lowercased, accent-free, unique).
-     * A temporary password {@code ChangeMe123} is assigned; the user must
-     * change it on first login.
+     * If the status changes to VALIDATED and no user account exists yet,
+     * a User account is automatically created using the contractor's first and last name.
+     * A temporary password "ChangeMe123" is assigned.
      */
     public VacataireDTO update(Integer id, VacataireDTO dto) {
-        Vacataire v = vacataireRepository.findById(id)
+        Vacataire contractor = vacataireRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Contractor not found"));
 
-        String previousStatut = v.getStatut();
-        applyDTO(v, dto);
+        String previousStatus = contractor.getStatus();
+        applyDTO(contractor, dto);
 
-        // Auto-create user account when status transitions to VALIDE
-        boolean becomesValidated = STATUT_VALIDE.equals(dto.getStatut())
-                && !STATUT_VALIDE.equals(previousStatut);
+        boolean becomesValidated = STATUS_VALIDATED.equals(dto.getStatus())
+                && !STATUS_VALIDATED.equals(previousStatus);
 
-        if (becomesValidated && v.getUser() == null) {
-            autoCreateUserAccount(v);
+        if (becomesValidated && contractor.getUser() == null) {
+            autoCreateUserAccount(contractor);
             log.info("User account auto-created for contractor id={} ({} {})",
-                    id, v.getPrenom(), v.getNom());
+                    id, contractor.getFirstName(), contractor.getLastName());
         }
 
-        return toDTO(vacataireRepository.save(v));
+        return toDTO(vacataireRepository.save(contractor));
     }
 
     public void delete(Integer id) {
@@ -99,32 +91,25 @@ public class VacataireService {
                 .collect(Collectors.toList());
     }
 
-    // ───────────────────────────────────────────────
-    // Filtering
-    // ───────────────────────────────────────────────
+    // ── Filtering ───────────────────────────────────
 
-    /** Returns contractor profiles that already have a linked user account. */
     public List<VacataireDTO> getActive() {
         return vacataireRepository.findByUserIsNotNull().stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    /** Returns contractor profiles still in the recruitment pipeline (no account). */
     public List<VacataireDTO> getPending() {
         return vacataireRepository.findByUserIsNull().stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    // ───────────────────────────────────────────────
-    // Manual account conversion (still available as explicit action)
-    // ───────────────────────────────────────────────
+    // ── Manual account conversion ────────────────────
 
     /**
-     * Manually converts a contractor profile into an active user account,
-     * using a caller-supplied username and password.
-     * Use this when you want to override the auto-generated credentials.
+     * Manually converts a contractor profile into an active user account
+     * using caller-supplied credentials. Use this to override auto-generated ones.
      */
     @Transactional
     public VacataireDTO convertToUser(Integer contractorId, String username, String rawPassword) {
@@ -142,8 +127,8 @@ public class VacataireService {
         }
 
         User user = User.builder()
-                .firstName(contractor.getPrenom())
-                .lastName(contractor.getNom())
+                .firstName(contractor.getFirstName())
+                .lastName(contractor.getLastName())
                 .username(username)
                 .password(passwordEncoder.encode(rawPassword))
                 .type("VACATAIRE")
@@ -151,28 +136,25 @@ public class VacataireService {
         userRepository.save(user);
 
         contractor.setUser(user);
-        contractor.setStatut(STATUT_VALIDE);
+        contractor.setStatus(STATUS_VALIDATED);
         vacataireRepository.save(contractor);
 
         return toDTO(contractor);
     }
 
-    // ───────────────────────────────────────────────
-    // Private helpers
-    // ───────────────────────────────────────────────
+    // ── Private helpers ─────────────────────────────
 
     /**
-     * Automatically creates and links a User account for the given contractor.
-     * Username follows the pattern {@code prenom.nom} (lowercased, accent-free,
-     * guaranteed unique). A temporary password {@code ChangeMe123} is assigned.
+     * Auto-creates a User account for the contractor.
+     * Username pattern: "firstname.lastname" (lowercased, accent-free, unique).
      */
     private void autoCreateUserAccount(Vacataire contractor) {
-        String base     = buildUsername(contractor.getPrenom(), contractor.getNom());
+        String base     = buildUsername(contractor.getFirstName(), contractor.getLastName());
         String username = resolveUniqueUsername(base);
 
         User user = User.builder()
-                .firstName(contractor.getPrenom())
-                .lastName(contractor.getNom())
+                .firstName(contractor.getFirstName())
+                .lastName(contractor.getLastName())
                 .username(username)
                 .password(passwordEncoder.encode("ChangeMe123"))
                 .type("VACATAIRE")
@@ -182,33 +164,24 @@ public class VacataireService {
         contractor.setUser(user);
 
         log.info("Auto-generated username '{}' for contractor '{} {}'",
-                username, contractor.getPrenom(), contractor.getNom());
+                username, contractor.getFirstName(), contractor.getLastName());
     }
 
-    /**
-     * Builds a candidate username from first and last name.
-     * Examples: "Jean-Paul Dupont" → "jean-paul.dupont"
-     *           "Élodie Lefèvre"   → "elodie.lefevre"
-     */
+    /** Builds a candidate username from first and last name. */
     private String buildUsername(String firstName, String lastName) {
         String f = normalize(firstName != null ? firstName : "user");
         String l = normalize(lastName  != null ? lastName  : "unknown");
         return f + "." + l;
     }
 
-    /**
-     * Strips accents, lowercases and removes non-alphanumeric characters (except dash).
-     */
+    /** Strips accents, lowercases and removes non-alphanumeric characters (except dash). */
     private String normalize(String input) {
         String nfd = Normalizer.normalize(input.trim().toLowerCase(), Normalizer.Form.NFD);
         return nfd.replaceAll("[^\\p{ASCII}]", "")
                   .replaceAll("[^a-z0-9\\-]", "");
     }
 
-    /**
-     * Ensures the username is unique by appending an incrementing suffix if needed.
-     * e.g. "jean.dupont" → "jean.dupont2" → "jean.dupont3" …
-     */
+    /** Appends an incrementing suffix until the username is unique. */
     private String resolveUniqueUsername(String base) {
         if (userRepository.findByUsernameIgnoreCase(base).isEmpty()) return base;
         int suffix = 2;
@@ -219,30 +192,28 @@ public class VacataireService {
         }
     }
 
-    // ───────────────────────────────────────────────
-    // Mapping
-    // ───────────────────────────────────────────────
+    // ── Mapping ─────────────────────────────────────
 
     private VacataireDTO toDTO(Vacataire v) {
         return VacataireDTO.builder()
                 .id(v.getId())
-                .responsableRecrutement(v.getResponsableRecrutement())
-                .prenom(v.getPrenom())
-                .nom(v.getNom())
-                .dateNaissance(v.getDateNaissance())
-                .departement(v.getDepartement())
-                .fonction(v.getFonction())
+                .recruitmentManager(v.getRecruitmentManager())
+                .firstName(v.getFirstName())
+                .lastName(v.getLastName())
+                .birthDate(v.getBirthDate())
+                .department(v.getDepartment())
+                .position(v.getPosition())
                 .experience(v.getExperience())
-                .profil(v.getProfil())
-                .competences(v.getCompetences())
-                .vueEnAmont(v.getVueEnAmont())
-                .etablissement(v.getEtablissement())
+                .profile(v.getProfile())
+                .skills(v.getSkills())
+                .advanceNotice(v.getAdvanceNotice())
+                .institution(v.getInstitution())
                 .site(v.getSite())
-                .transmisResponsable(v.getTransmisResponsable())
-                .signatureResponsable(v.getSignatureResponsable())
-                .sourceConnaissance(v.getSourceConnaissance())
-                .sourceConnaissanceAutre(v.getSourceConnaissanceAutre())
-                .statut(v.getStatut())
+                .sentToManager(v.getSentToManager())
+                .managerSignature(v.getManagerSignature())
+                .knowledgeSource(v.getKnowledgeSource())
+                .otherKnowledgeSource(v.getOtherKnowledgeSource())
+                .status(v.getStatus())
                 .userId(v.getUser() != null ? v.getUser().getId() : null)
                 .accountActive(v.getUser() != null)
                 .build();
@@ -255,23 +226,23 @@ public class VacataireService {
     }
 
     private void applyDTO(Vacataire v, VacataireDTO dto) {
-        v.setResponsableRecrutement(dto.getResponsableRecrutement());
-        v.setPrenom(dto.getPrenom());
-        v.setNom(dto.getNom());
-        v.setDateNaissance(dto.getDateNaissance());
-        v.setDepartement(dto.getDepartement());
-        v.setFonction(dto.getFonction());
+        v.setRecruitmentManager(dto.getRecruitmentManager());
+        v.setFirstName(dto.getFirstName());
+        v.setLastName(dto.getLastName());
+        v.setBirthDate(dto.getBirthDate());
+        v.setDepartment(dto.getDepartment());
+        v.setPosition(dto.getPosition());
         v.setExperience(dto.getExperience());
-        v.setProfil(dto.getProfil());
-        v.setCompetences(dto.getCompetences());
-        v.setVueEnAmont(dto.getVueEnAmont());
-        v.setEtablissement(dto.getEtablissement());
+        v.setProfile(dto.getProfile());
+        v.setSkills(dto.getSkills());
+        v.setAdvanceNotice(dto.getAdvanceNotice());
+        v.setInstitution(dto.getInstitution());
         v.setSite(dto.getSite());
-        v.setTransmisResponsable(dto.getTransmisResponsable());
-        v.setSignatureResponsable(dto.getSignatureResponsable());
-        v.setSourceConnaissance(dto.getSourceConnaissance());
-        v.setSourceConnaissanceAutre(dto.getSourceConnaissanceAutre());
-        if (dto.getStatut() != null) v.setStatut(dto.getStatut());
-        // userId and accountActive are read-only output fields — never applied back
+        v.setSentToManager(dto.getSentToManager());
+        v.setManagerSignature(dto.getManagerSignature());
+        v.setKnowledgeSource(dto.getKnowledgeSource());
+        v.setOtherKnowledgeSource(dto.getOtherKnowledgeSource());
+        if (dto.getStatus() != null) v.setStatus(dto.getStatus());
+        // userId and accountActive are read-only output fields
     }
 }

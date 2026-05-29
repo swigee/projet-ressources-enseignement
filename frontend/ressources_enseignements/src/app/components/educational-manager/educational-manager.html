@@ -8,7 +8,7 @@
 <div class="flex flex-row gap-3 flex-wrap items-stretch pl-13">
 
     @for(ed of edManager.educationList(); track ed.id){
-        
+
         <div class="flex flex-col justify-between p-6 border rounded-3xl w-80">
             <div class="flex-1">
                 <h3 class="text-xl font-bold text-gray-900 mb-2">{{ ed.name }}</h3>
@@ -20,12 +20,12 @@
                         <span class="font-semibold text-gray-900">{{ ed.semesters?.length || 0 }}</span>
                     </div>
                     <div class="flex flex-col items-start gap-2 mb-4">
-                        
+
                         @for (s of ed.semesters; let i = $index; let total = $count; track i) {
 
                             @if (i < 3) {
                             <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
-                                Semestre {{ s.semester_number }} - {{ s.parcours }}
+                                Semestre {{ s.semester_number }} - {{ s.pathway }}
                             </span>
                             }
 
@@ -38,7 +38,7 @@
                     </div>
                 </div>
                 <div class="mt-2 text-sm text-gray-500">
-                    <span>Parcours: {{ ed.parcours || 'Non défini' }}</span>
+                    <span>Parcours: {{ ed.pathway || 'Non défini' }}</span>
                     <span class="mx-2">•</span>
                     <span>Semestres: {{ ed.semesters?.length || 0 }}</span>
                 </div>
@@ -54,12 +54,12 @@
 </div>
 
 
-<div [class]="popUp 
+<div [class]="popUp
     ? 'fixed inset-0 z-50 overflow-auto bg-black/40 flex items-center justify-center p-4'
     : 'hidden'">
-               
+
     <div class="bg-white w-full max-w-3xl max-h-[90vh] rounded-2xl shadow-xl overflow-hidden">
-        
+
         <div class="px-6 py-4 flex justify-between items-center border-b border-gray-200">
             <h2 class="text-lg font-semibold">
                 {{ form.value.id ? 'Modification' : 'Création' }}
@@ -85,8 +85,8 @@
                     <label for="training-description" class="block text-sm font-medium text-gray-700 mb-2">
                         Description de la formation <span class="text-red-500">*</span>
                     </label>
-                    <textarea #description formControlName="description" rows="6" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 
-                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none" 
+                    <textarea #description formControlName="description" rows="6" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400
+                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
                         placeholder="Décrivez les objectifs, le contenu et les compétences que les participants acquerront...">
                     </textarea>
                 </div>
@@ -121,7 +121,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Parcours du semestre</label>
-                                    <input type="text" formControlName="parcours"
+                                    <input type="text" formControlName="pathway"
                                         class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Parcours du semestre">
                                 </div>
                             </div>

@@ -12,7 +12,7 @@ interface ResourceDisplay {
   code: string;
   title: string;
   semester: string;
-  parcours: string;
+  pathway: string;
   description: string;
   isAdapted: boolean;
 }
@@ -24,14 +24,14 @@ interface ResourceDisplay {
   templateUrl: './syllabus.html',
 })
 export class SyllabusComponent implements OnInit {
-  
+
   // Filters
   selectedSemester: string = 'Tous';
-  selectedParcours: string = 'Tous';
+  selectedPathway: string = 'Tous';
   searchQuery: string = '';
 
   semesters = ['Tous', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6'];
-  parcoursOptions = ['Tous', 'RA', 'AGED', 'DACS'];
+  pathwayOptions = ['Tous', 'RA', 'AGED', 'DACS'];
 
   // Data loaded from backend
   resources: ResourceDisplay[] = [];
@@ -42,7 +42,7 @@ export class SyllabusComponent implements OnInit {
   successMessage: string = '';
 
   constructor(
-    private pageTitle: PageTitle, 
+    private pageTitle: PageTitle,
     private router: Router,
     private syllabusService: SyllabusService,
     private auth: Auth
@@ -62,10 +62,10 @@ export class SyllabusComponent implements OnInit {
           id: r.id,
           code: r.code || '',
           title: r.title || '',
-          semester: SyllabusService.getSemestreFromCode(r.code || ''),
-          parcours: SyllabusService.getParcoursFromCode(r.code || ''),
+          semester: SyllabusService.getSemesterFromCode(r.code || ''),
+          pathway: SyllabusService.getPathwayFromCode(r.code || ''),
           description: r.description || '',
-          isAdapted: !!(r.personalDescription || r.personalSavoirs || r.personalApprentissages || r.personalVolume)
+          isAdapted: !!(r.personalDescription || r.personalKnowledge || r.personalLearning || r.personalVolume)
         }));
         this.isLoading = false;
       },
@@ -88,7 +88,7 @@ export class SyllabusComponent implements OnInit {
         next: (response) => {
           this.successMessage = 'Programme National importé avec succès !';
           this.isUploading = false;
-          this.loadResources(); // Refresh the list
+          this.loadResources();
           setTimeout(() => this.successMessage = '', 5000);
         },
         error: (err) => {
@@ -99,35 +99,29 @@ export class SyllabusComponent implements OnInit {
     }
   }
 
-  // Lógica intelligente pour forcer Tronc Commun sur S1/S2
-
   onSemesterChange() {
     if (this.selectedSemester === 'S1' || this.selectedSemester === 'S2') {
-      this.selectedParcours = 'Tous';
+      this.selectedPathway = 'Tous';
     }
   }
 
   get filteredResources(): ResourceDisplay[] {
     return this.resources.filter(res => {
-      // Filtre texte
-      const matchesSearch = res.title.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
+      const matchesSearch = res.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
                             res.code.toLowerCase().includes(this.searchQuery.toLowerCase());
-      
-      // Filtre Semestre
+
       const matchesSemester = this.selectedSemester === 'Tous' || res.semester === this.selectedSemester;
-      
-      // Filtre Parcours (Ignoré si S1/S2, ou si "Tous")
-      let matchesParcours = true;
-      if (this.selectedParcours !== 'Tous') {
+
+      let matchesPathway = true;
+      if (this.selectedPathway !== 'Tous') {
         if (this.selectedSemester === 'S1' || this.selectedSemester === 'S2') {
-           // S1 et S2 sont en tronc commun, ils ne matchent jamais un parcours spécifique
-           matchesParcours = res.parcours === 'Tronc Commun';
+           matchesPathway = res.pathway === 'Tronc Commun';
         } else {
-           matchesParcours = res.parcours === this.selectedParcours || res.parcours === 'Tronc Commun';
+           matchesPathway = res.pathway === this.selectedPathway || res.pathway === 'Tronc Commun';
         }
       }
 
-      return matchesSearch && matchesSemester && matchesParcours;
+      return matchesSearch && matchesSemester && matchesPathway;
     });
   }
 

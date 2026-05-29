@@ -22,7 +22,7 @@ import java.util.List;
 public class RessourcesController {
 
     @Autowired
-    private RessourcesService ressourcesTableService;
+    private RessourcesService resourcesTableService;
 
     @GetMapping("/data")
     @Operation(summary = "Get resources table data, optionally filtered by year, class, semester and formation")
@@ -30,10 +30,10 @@ public class RessourcesController {
             @RequestParam(required = false) String year,
             @RequestParam(required = false) String className,
             @RequestParam(required = false) Integer semester,
-            @RequestParam(required = false) String formation) {
-        log.info("GET /api/ressources-table/data?year={}&className={}&semester={}&formation={}", year, className, semester, formation);
+            @RequestParam(required = false) String program) {
+        log.info("GET /api/ressources-table/data?year={}&className={}&semester={}&program={}", year, className, semester, program);
 
-        RessourcesResponseDTO response = ressourcesTableService.getRessourcesTableData(year, className, semester, formation);
+        RessourcesResponseDTO response = resourcesTableService.getResourcesTableData(year, className, semester, program);
         return ResponseEntity.ok(response);
     }
 
@@ -42,7 +42,7 @@ public class RessourcesController {
     public ResponseEntity<List<TeacherBadgeDTO>> getAvailableTeachers() {
         log.info("GET /api/ressources-table/teachers");
 
-        List<TeacherBadgeDTO> teachers = ressourcesTableService.getAvailableTeachers();
+        List<TeacherBadgeDTO> teachers = resourcesTableService.getAvailableTeachers();
         return ResponseEntity.ok(teachers);
     }
 
@@ -52,23 +52,23 @@ public class RessourcesController {
             @RequestParam Integer teacherId) {
         log.info("GET /api/ressources-table/conflicts?teacherId={}", teacherId);
 
-        List<ScheduleConflictDTO> conflicts = ressourcesTableService.detectConflicts(teacherId);
+        List<ScheduleConflictDTO> conflicts = resourcesTableService.detectConflicts(teacherId);
         return ResponseEntity.ok(conflicts);
     }
 
     @GetMapping("/search")
     @Operation(summary = "Search resources by keyword")
-    public ResponseEntity<List<RessourceRowDTO>> searchRessources(
+    public ResponseEntity<List<RessourceRowDTO>> searchResources(
             @RequestParam String keyword) {
         log.info("GET /api/ressources-table/search?keyword={}", keyword);
 
-        List<RessourceRowDTO> ressources = ressourcesTableService.searchRessources(keyword);
-        return ResponseEntity.ok(ressources);
+        List<RessourceRowDTO> resources = resourcesTableService.searchResources(keyword);
+        return ResponseEntity.ok(resources);
     }
 
     @GetMapping("/health")
     @Operation(summary = "Check API health")
     public ResponseEntity<String> healthCheck() {
-        return ResponseEntity.ok("Ressources Table API is running");
+        return ResponseEntity.ok("Resources Table API is running");
     }
 }

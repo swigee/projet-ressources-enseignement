@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sae.project.dtos.assignment.AffectationRowDTO;
+import sae.project.dtos.assignment.AssignmentRowDTO;
 import sae.project.dtos.assignment.AssignmentGridDTO;
 import sae.project.dtos.assignment.AssignmentStatisticsDTO;
 import sae.project.dtos.assignment.AssignmentValidationResponseDTO;
@@ -34,13 +34,10 @@ public class TeacherAssignmentService {
         private UserRepository userRepository;
 
         @Autowired
-        private PedagogicalScheduleRepository ressourcesRepository;
+        private PedagogicalScheduleRepository resourcesRepository;
 
-        /**
-         * Récupérer tous les enseignants avec leurs informations
-         */
         public List<TeacherDTO> getAllTeachers() {
-                log.info("Récupération de tous les enseignants");
+                log.info("Retrieving all teachers");
 
                 List<Object[]> teachersWithHours = assignmentRepository.getTeachersWithHours();
 
@@ -49,11 +46,9 @@ public class TeacherAssignmentService {
                                 .collect(Collectors.toList());
         }
 
-        /**
-         * Récupérer la grille d'affectation complète
-         */
-        public AssignmentGridDTO getAssignmentGrid(String formation, String year, String className, String semester) {
-                log.info("Récupération de la grille d'affectation pour {} - {} - {} - semester={}", formation, year, className, semester);
+        public AssignmentGridDTO getAssignmentGrid(String program, String year, String className, String semester) {
+                log.info("Retrieving assignment grid for program={} year={} className={} semester={}",
+                                program, year, className, semester);
 
                 Integer semesterInt = null;
                 if (semester != null && !semester.isEmpty()) {
@@ -61,26 +56,21 @@ public class TeacherAssignmentService {
                 }
 
                 List<TeacherDTO> teachers = getAllTeachers();
-                List<AffectationRowDTO> affectationGrid = getAffectationRows(formation, year, className, semesterInt);
-                AssignmentStatisticsDTO statistics = calculateStatistics(formation, year, className, semesterInt);
+                List<AssignmentRowDTO> assignmentGrid = getAssignmentRows(program, year, className, semesterInt);
+                AssignmentStatisticsDTO statistics = calculateStatistics(program, year, className, semesterInt);
 
                 return AssignmentGridDTO.builder()
-                                .selectedFormation(formation)
+                                .selectedProgram(program)
                                 .selectedYear(year)
                                 .availableTeachers(teachers)
-                                .affectationGrid(affectationGrid)
+                                .assignmentGrid(assignmentGrid)
                                 .statistics(statistics)
                                 .build();
         }
 
-        /**
-         * Créer une nouvelle affectation
-         */
         public Assignment createAssignment(CreateAssignmentDTO dto) {
-                log.info("Création d'une affectation pour user {} et ressource {}",
-                                dto.getUserId(), dto.getResourceId());
+                log.info("Creating assignment for user={} resource={}", dto.getUserId(), dto.getResourceId());
 
-                // Vérifier si l'affectation existe déjà
                 Optional<Assignment> existing = assignmentRepository.findByUserIdAndResourceIdAndLessonType(
                                 dto.getUserId(),
                                 dto.getResourceId(),
@@ -88,32 +78,27 @@ public class TeacherAssignmentService {
 
                 if (existing.isPresent()) {
                         throw new IllegalArgumentException(
-                                        "Cet enseignant est déjà affecté à ce type de cours (" + dto.getLessonType()
-                                                        + ") pour cette ressource");
+                                        "This teacher is already assigned to this lesson type ("
+                                                        + dto.getLessonType() + ") for this resource");
                 }
 
-                // Récupérer l'enseignant et la ressource
                 User teacher = userRepository.findById(dto.getUserId())
-                                .orElseThrow(() -> new RuntimeException("Enseignant non trouvé"));
+                                .orElseThrow(() -> new RuntimeException("Teacher not found"));
 
-                Resource ressource = ressourcesRepository.findById(dto.getResourceId())
-                                .orElseThrow(() -> new RuntimeException("Ressource non trouvée"));
+                Resource resource = resourcesRepository.findById(dto.getResourceId())
+                                .orElseThrow(() -> new RuntimeException("Resource not found"));
 
-                // Créer l'affectation
                 Assignment assignment = new Assignment();
                 assignment.setUser(teacher);
-                assignment.setResource(ressource);
+                assignment.setResource(resource);
                 assignment.setLessonType(dto.getLessonType());
                 assignment.setAssignedTimes(dto.getAssignedTimes());
 
                 return assignmentRepository.save(assignment);
         }
 
-        /**
-         * Mettre à jour une affectation
-         */
         public Assignment updateAssignment(Integer id, CreateAssignmentDTO dto) {
-                log.info("Mise à jour de l'affectation {}", id);
+                log.info("Updating assignment {}", id);
 
                 return assignmentRepository.findById(id)
                                 .map(assignment -> {
@@ -121,39 +106,30 @@ public class TeacherAssignmentService {
                                         assignment.setAssignedTimes(dto.getAssignedTimes());
                                         return assignmentRepository.save(assignment);
                                 })
-                                .orElseThrow(() -> new RuntimeException("Affectation non trouvée"));
+                                .orElseThrow(() -> new RuntimeException("Assignment not found"));
         }
 
-        /**
-         * Supprimer une affectation
-         */
         public void deleteAssignment(Integer id) {
-                log.info("Suppression de l'affectation {}", id);
+                log.info("Deleting assignment {}", id);
 
                 if (!assignmentRepository.existsById(id)) {
-                        throw new RuntimeException("Affectation non trouvée");
+                        throw new RuntimeException("Assignment not found");
                 }
 
                 assignmentRepository.deleteById(id);
         }
 
-        /**
-         * Supprimer une affectation par enseignant et ressource
-         */
-        public void deleteAssignmentByTeacherAndRessource(Integer userId, Integer ressourceId) {
-                log.info("Suppression de l'affectation pour l'enseignant {} et la ressource {}", userId, ressourceId);
+        public void deleteAssignmentByTeacherAndResource(Integer userId, Integer resourceId) {
+                log.info("Deleting assignment for teacher={} resource={}", userId, resourceId);
 
-                Assignment assignment = assignmentRepository.findByUserIdAndResourceId(userId, ressourceId)
-                                .orElseThrow(() -> new RuntimeException("Affectation non trouvée"));
+                Assignment assignment = assignmentRepository.findByUserIdAndResourceId(userId, resourceId)
+                                .orElseThrow(() -> new RuntimeException("Assignment not found"));
 
                 assignmentRepository.delete(assignment);
         }
 
-        /**
-         * Rechercher des enseignants
-         */
         public List<TeacherDTO> searchTeachers(String keyword) {
-                log.info("Recherche d'enseignants avec le mot-clé: {}", keyword);
+                log.info("Searching teachers with keyword: {}", keyword);
 
                 return getAllTeachers().stream()
                                 .filter(teacher -> teacher.getName().toLowerCase().contains(keyword.toLowerCase()) ||
@@ -162,42 +138,33 @@ public class TeacherAssignmentService {
                                 .collect(Collectors.toList());
         }
 
-        /**
-         * Valider les affectations
-         */
         public AssignmentValidationResponseDTO validateAssignments(String year, String className) {
-                log.info("Validation des affectations pour {} - {}", year, className);
+                log.info("Validating assignments for year={} className={}", year, className);
 
                 List<String> errors = new ArrayList<>();
                 List<String> warnings = new ArrayList<>();
 
-                // Récupérer toutes les ressources de la formation
-                List<Resource> ressources = ressourcesRepository.findByYearAndClass(year, className);
-                // Note: validateAssignments validates all semesters
+                List<Resource> resources = resourcesRepository.findByYearAndClass(year, className);
 
-                // Vérifier les ressources non affectées
-                for (Resource ressource : ressources) {
-                        // Note: Updated findByRessourceId logic in repo if needed, assuming okay.
-                        List<Assignment> assignments = assignmentRepository.findByResourceId(ressource.getId());
+                for (Resource resource : resources) {
+                        List<Assignment> assignments = assignmentRepository.findByResourceId(resource.getId());
 
                         if (assignments.isEmpty()) {
-                                warnings.add("La ressource '" + ressource.getTitle()
-                                                + "' n'a aucun enseignant affecté");
+                                warnings.add("Resource '" + resource.getTitle() + "' has no assigned teacher");
                         }
                 }
 
-                // Vérifier la charge horaire des enseignants
                 List<TeacherDTO> teachers = getAllTeachers();
                 for (TeacherDTO teacher : teachers) {
-                        if (teacher.getTotalHours() > 192) { // Exemple: max 192h par an
-                                warnings.add("L'enseignant " + teacher.getName()
-                                                + " dépasse la charge horaire maximale");
+                        if (teacher.getTotalHours() > 192) {
+                                warnings.add("Teacher " + teacher.getName() + " exceeds maximum workload");
                         }
                 }
 
                 boolean success = errors.isEmpty();
-                String message = success ? "Validation réussie avec " + warnings.size() + " avertissement(s)"
-                                : "Validation échouée avec " + errors.size() + " erreur(s)";
+                String message = success
+                                ? "Validation successful with " + warnings.size() + " warning(s)"
+                                : "Validation failed with " + errors.size() + " error(s)";
 
                 return AssignmentValidationResponseDTO.builder()
                                 .success(success)
@@ -207,11 +174,8 @@ public class TeacherAssignmentService {
                                 .build();
         }
 
-        // ============ Méthodes privées ============
+        // ── Private helpers ────────────────────────────────────────────────────
 
-        /**
-         * Mapper les données brutes en TeacherDTO
-         */
         private TeacherDTO mapToTeacherDTO(Object[] data) {
                 Integer id = (Integer) data[0];
                 String firstName = (String) data[1];
@@ -228,37 +192,33 @@ public class TeacherAssignmentService {
                                 .firstName(firstName)
                                 .lastName(lastName)
                                 .name(firstName + " " + lastName)
-                                .subject("À définir") // À récupérer depuis une autre source
+                                .subject("Non renseigné")
                                 .status(status)
                                 .totalHours(totalHours)
-                                .remainingHours(192 - totalHours) // Exemple: 192h max
+                                .remainingHours(192 - totalHours)
                                 .statusColor(statusColor)
                                 .build();
         }
 
-        /**
-         * Récupérer les lignes d'affectation pour une formation
-         */
         private String nullIfBlank(String s) {
                 return (s == null || s.isBlank()) ? null : s;
         }
 
-        private List<AffectationRowDTO> getAffectationRows(String formation, String year, String className, Integer semester) {
-                String yearParam       = nullIfBlank(year);
-                String classParam      = nullIfBlank(className);
-                String formationParam  = nullIfBlank(formation);
-                boolean allClasses     = (classParam == null);
+        private List<AssignmentRowDTO> getAssignmentRows(String program, String year, String className, Integer semester) {
+                String yearParam      = nullIfBlank(year);
+                String classParam     = nullIfBlank(className);
+                String programParam = nullIfBlank(program);
+                boolean allClasses    = (classParam == null);
 
-                List<Resource> ressources = ressourcesRepository.findWithFilters(yearParam, classParam, formationParam, semester);
+                List<Resource> resources = resourcesRepository.findWithFilters(yearParam, classParam, programParam, semester);
 
-                return ressources.stream()
-                                .map(ressource -> {
-                                        List<Assignment> assignments = assignmentRepository.findByResourceId(ressource.getId());
+                return resources.stream()
+                                .map(resource -> {
+                                        List<Assignment> assignments = assignmentRepository.findByResourceId(resource.getId());
 
-                                        // Nombre total de groupes partageant cette ressource (même formation/année)
-                                        List<String> allGroupsForResource = ressource.getFormationList().stream()
+                                        List<String> allGroupsForResource = resource.getPrograms().stream()
                                                         .filter(f -> yearParam == null || yearParam.equals(f.getYear()))
-                                                        .filter(f -> formationParam == null || formationParam.equals(f.getName()))
+                                                        .filter(f -> programParam == null || programParam.equals(f.getName()))
                                                         .map(Formation::getClassName)
                                                         .filter(cn -> cn != null)
                                                         .distinct()
@@ -266,10 +226,9 @@ public class TeacherAssignmentService {
                                                         .collect(Collectors.toList());
                                         int totalGroupCount = Math.max(1, allGroupsForResource.size());
 
-                                        // En vue groupe spécifique, on divise les heures affectées par le nombre total de groupes
                                         int hoursDivisor = allClasses ? 1 : totalGroupCount;
                                         int displayGroupCount = allClasses ? totalGroupCount : 1;
-                                        List<String> groupes = allClasses ? allGroupsForResource : null;
+                                        List<String> groups = allClasses ? allGroupsForResource : null;
 
                                         List<TeacherAssignmentDTO> tdTeachers = assignments.stream()
                                                         .filter(a -> "TD".equals(a.getLessonType()))
@@ -286,13 +245,13 @@ public class TeacherAssignmentService {
                                                         .map(a -> mapToTeacherAssignmentDTO(a, hoursDivisor))
                                                         .collect(Collectors.toList());
 
-                                        return AffectationRowDTO.builder()
-                                                        .resourceId(ressource.getId())
-                                                        .module(ressource.getTitle())
-                                                        .groupes(groupes)
-                                                        .tdHours((ressource.getTdStateHours() != null ? ressource.getTdStateHours() : 0) * displayGroupCount)
-                                                        .tpHours((ressource.getTpStateHours() != null ? ressource.getTpStateHours() : 0) * displayGroupCount)
-                                                        .cmHours((ressource.getCmStateHours() != null ? ressource.getCmStateHours() : 0) * displayGroupCount)
+                                        return AssignmentRowDTO.builder()
+                                                        .resourceId(resource.getId())
+                                                        .module(resource.getTitle())
+                                                        .groups(groups)
+                                                        .tdHours((resource.getTdStateHours() != null ? resource.getTdStateHours() : 0) * displayGroupCount)
+                                                        .tpHours((resource.getTpStateHours() != null ? resource.getTpStateHours() : 0) * displayGroupCount)
+                                                        .cmHours((resource.getCmStateHours() != null ? resource.getCmStateHours() : 0) * displayGroupCount)
                                                         .tdTeachers(tdTeachers)
                                                         .tpTeachers(tpTeachers)
                                                         .cmTeachers(cmTeachers)
@@ -301,10 +260,7 @@ public class TeacherAssignmentService {
                                 .collect(Collectors.toList());
         }
 
-        /**
-         * Mapper une affectation en TeacherAssignmentDTO
-         * @param divisor nombre de groupes : divise les heures affectées quand on filtre par groupe spécifique
-         */
+        /** @param divisor number of groups — divides assigned hours when filtering by a specific group */
         private TeacherAssignmentDTO mapToTeacherAssignmentDTO(Assignment assignment, int divisor) {
                 User teacher = assignment.getUser();
                 int hours = assignment.getAssignedTimes() != null ? assignment.getAssignedTimes() : 0;
@@ -318,16 +274,13 @@ public class TeacherAssignmentService {
                                 .build();
         }
 
-        /**
-         * Calculer les statistiques
-         */
-        private AssignmentStatisticsDTO calculateStatistics(String formation, String year, String className, Integer semester) {
+        private AssignmentStatisticsDTO calculateStatistics(String program, String year, String className, Integer semester) {
                 String yearParam      = nullIfBlank(year);
                 String classParam     = nullIfBlank(className);
-                String formationParam = nullIfBlank(formation);
+                String programParam = nullIfBlank(program);
 
-                List<Assignment> assignments = assignmentRepository.findByFormationFlexible(yearParam, classParam, formationParam);
-                List<Resource> ressources    = ressourcesRepository.findWithFilters(yearParam, classParam, formationParam, semester);
+                List<Assignment> assignments = assignmentRepository.findByFormationFlexible(yearParam, classParam, programParam);
+                List<Resource> resources     = resourcesRepository.findWithFilters(yearParam, classParam, programParam, semester);
 
                 Integer totalHours = assignments.stream()
                                 .mapToInt(a -> a.getAssignedTimes() != null ? a.getAssignedTimes() : 0)
@@ -343,7 +296,7 @@ public class TeacherAssignmentService {
                                                 a -> a.getUser().getFirstName() + " " + a.getUser().getLastName(),
                                                 Collectors.summingInt(a -> a.getAssignedTimes() != null ? a.getAssignedTimes() : 0)));
 
-                long unassignedModules = ressources.stream()
+                long unassignedModules = resources.stream()
                                 .filter(r -> assignmentRepository.findByResourceId(r.getId()).isEmpty())
                                 .count();
 

@@ -1,7 +1,7 @@
 import {Component, inject, signal} from '@angular/core';
 import {PageTitle} from '../../services/page-title/page-title-service';
 import {RessourcesService} from '../../services/ressources/ressources-service';
-import {RessourcesTableResponse} from '../../models/ressources/ressources.model';
+import {ResourcesTableResponse} from '../../models/ressources/ressources.model';
 import {RoleModel} from '../../models/role/role.model';
 
 
@@ -25,7 +25,7 @@ export class Dashboard {
 
   loadData(){
     this.isLoading = true;
-    this.ressourcesService.getRessourcesTable().subscribe( (data: RessourcesTableResponse) =>{
+    this.ressourcesService.getResourcesTable().subscribe( (data: ResourcesTableResponse) =>{
       this.hourForecast.set(data.availableTeachers[0].assignedHours);
       this.isLoading = false;
       console.log(data)

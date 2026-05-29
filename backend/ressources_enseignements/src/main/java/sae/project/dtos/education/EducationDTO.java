@@ -15,7 +15,7 @@ import sae.project.model.Semester;
 @AllArgsConstructor
 @Builder
 public class EducationDTO {
-    private Formation formation;
+    private Formation program;
     private List<Semester> semesters;
     private List<Resource> resources;
 }

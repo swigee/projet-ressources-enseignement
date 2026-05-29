@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MonthDTO, WeekDTO, WeekHoursDTO, RessourceScheduleDTO, ProjectScheduleDTO } from '../../../models/schedule/schedule.model';
+import { MonthDTO, WeekDTO, WeekHoursDTO, ResourceScheduleDTO, ProjectScheduleDTO } from '../../../models/schedule/schedule.model';
 
 export interface ScheduleHoursDelta {
   rowId: number;
@@ -23,7 +23,7 @@ export interface ProjectHoursDelta {
 })
 export class MaquetteTab {
   @ViewChildren('weeksRow') weekRowContainers!: QueryList<ElementRef>;
-  @Input() scheduleData: RessourceScheduleDTO[] = [];
+  @Input() scheduleData: ResourceScheduleDTO[] = [];
   @Input() projectData: ProjectScheduleDTO = {
     id: 'project-sae', name: 'Projet SAE', hoursPerWeek: {}, hoursPerHalfGroup: 0, totalHours: 0
   };
@@ -42,22 +42,22 @@ export class MaquetteTab {
     return this.weeks.flatMap(month => month.weeks);
   }
 
-  calculateTotalHours(row: RessourceScheduleDTO): number {
+  calculateTotalHours(row: ResourceScheduleDTO): number {
     if (!row.hoursPerWeek) return 0;
     return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.cm || 0) + (w.td || 0) + (w.tp || 0), 0);
   }
 
-  calculateTotalCM(row: RessourceScheduleDTO): number {
+  calculateTotalCM(row: ResourceScheduleDTO): number {
     if (!row.hoursPerWeek) return 0;
     return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.cm || 0), 0);
   }
 
-  calculateTotalTD(row: RessourceScheduleDTO): number {
+  calculateTotalTD(row: ResourceScheduleDTO): number {
     if (!row.hoursPerWeek) return 0;
     return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.td || 0), 0);
   }
 
-  calculateTotalTP(row: RessourceScheduleDTO): number {
+  calculateTotalTP(row: ResourceScheduleDTO): number {
     if (!row.hoursPerWeek) return 0;
     return Object.values(row.hoursPerWeek).reduce((sum, w) => sum + (w.tp || 0), 0);
   }

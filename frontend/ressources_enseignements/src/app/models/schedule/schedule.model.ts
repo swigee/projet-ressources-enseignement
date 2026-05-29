@@ -5,7 +5,7 @@ export interface WeekHoursDTO {
   total: number;
 }
 
-export interface RessourceScheduleDTO {
+export interface ResourceScheduleDTO {
   id: number;
   courseName: string;
   category?: string;
@@ -49,14 +49,14 @@ export interface PedagogicalScheduleDTO {
   selectedYear: string;
   selectedClass: string;
   selectedSemester: string;
-  scheduleData: RessourceScheduleDTO[];
+  scheduleData: ResourceScheduleDTO[];
   projectData: ProjectScheduleDTO;
   weeks: MonthDTO[];
   statistics: ScheduleStatisticsDTO;
 }
 
 export interface UpdateHoursDTO {
-  ressourceId: number;
+  resourceId: number;
   hoursPerWeek: { [key: string]: WeekHoursDTO };
   hoursPerHalfGroup: number;
 }
@@ -65,7 +65,7 @@ export interface ValidationRequestDTO {
   selectedYear: string;
   selectedClass: string;
   selectedSemester: string;
-  ressources: UpdateHoursDTO[];
+  resources: UpdateHoursDTO[];
   project: UpdateHoursDTO;
 }
 

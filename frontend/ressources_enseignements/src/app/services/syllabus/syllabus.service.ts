@@ -56,9 +56,9 @@ export class SyllabusService {
    * Déduit le semestre à partir du code de la ressource.
    * Ex: R1.01 -> S1, R2.01 -> S2, SAÉ 3.01 -> S3, R4.Real.08 -> S4, R5.Real.05 -> S5, R6.01 -> S6
    */
-  static getSemestreFromCode(code: string): string {
+  static getSemesterFromCode(code: string): string {
     const cleanCode = code.trim().toUpperCase();
-    
+
     // Pour les SAÉ : "SAÉ 1.01" ou "SAE 1.01" -> le chiffre après "SAE/SAÉ "
     const saeMatch = cleanCode.match(/^SA[É|E]\s+(\d)/);
     if (saeMatch) {
@@ -81,7 +81,7 @@ export class SyllabusService {
    * - R5.A.04 -> "AGED" (A = Administration, Gestion et Exploitation des Données)
    * - S1/S2 ou pas d'indicateur -> "Tronc Commun"
    */
-  static getParcoursFromCode(code: string): string {
+  static getPathwayFromCode(code: string): string {
     const codeLower = code.toLowerCase();
 
     if (codeLower.includes('.real.') || codeLower.includes('.real ')) {
@@ -95,7 +95,7 @@ export class SyllabusService {
     }
 
     // S1 et S2 sont toujours tronc commun
-    const semestre = SyllabusService.getSemestreFromCode(code);
+    const semestre = SyllabusService.getSemesterFromCode(code);
     if (semestre === 'S1' || semestre === 'S2') {
       return 'Tronc Commun';
     }

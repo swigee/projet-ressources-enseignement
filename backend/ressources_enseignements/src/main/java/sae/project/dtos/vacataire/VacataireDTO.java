@@ -12,29 +12,29 @@ import lombok.NoArgsConstructor;
 public class VacataireDTO {
     private Integer id;
 
-    // Étape 1
-    private String responsableRecrutement;
-    private String prenom;
-    private String nom;
-    private String dateNaissance;
-    private String departement;
-    private String fonction;
+    // Step 1
+    private String recruitmentManager;
+    private String firstName;
+    private String lastName;
+    private String birthDate;
+    private String department;
+    private String position;
     private String experience;
-    private String profil;
-    private String competences;
+    private String profile;
+    private String skills;
 
-    // Étape 2
-    private Boolean vueEnAmont;
-    private String etablissement;
+    // Step 2
+    private Boolean advanceNotice;
+    private String institution;
     private String site;
-    private Boolean transmisResponsable;
-    private String signatureResponsable;
+    private Boolean sentToManager;
+    private String managerSignature;
 
-    // Étape 3
-    private String sourceConnaissance;
-    private String sourceConnaissanceAutre;
+    // Step 3
+    private String knowledgeSource;
+    private String otherKnowledgeSource;
 
-    private String statut;
+    private String status;
 
     /** ID of the linked user account, null if no account has been created yet. */
     private Integer userId;

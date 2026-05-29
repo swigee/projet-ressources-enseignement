@@ -5,8 +5,8 @@ export interface EducationSemester {
   id?: number;
   year?: number;
   semester_number: number;
-  parcours: string;
-  resourceList: Lesson[];
+  pathway: string;
+  resources: Lesson[];
 }
 
 export interface Education {
@@ -16,8 +16,8 @@ export interface Education {
   className: string;
   year: number;
   lessons: Lesson[];
-  sutdent: User[];
-  parcours?: string;
-  resourceList: Lesson[];
+  students: User[];
+  pathway?: string;
+  resources: Lesson[];
   semesters?: EducationSemester[];
 }

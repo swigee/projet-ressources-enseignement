@@ -1,8 +1,8 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { RessourcesService } from '../../services/ressources/ressources-service';
-import { RessourceRow, RessourcesTotals, ScheduleConflict, TeacherBadge } from '../../models/ressources/ressources.model';
-import { MonthDTO, RessourceScheduleDTO, ProjectScheduleDTO, UpdateHoursDTO, ValidationRequestDTO, WeekHoursDTO } from '../../models/schedule/schedule.model';
+import { ResourceRow, ResourceTotals, ScheduleConflict, TeacherBadge } from '../../models/ressources/ressources.model';
+import { MonthDTO, ResourceScheduleDTO, ProjectScheduleDTO, UpdateHoursDTO, ValidationRequestDTO, WeekHoursDTO } from '../../models/schedule/schedule.model';
 import { PedagogicalScheduleService } from '../../services/pedagogical-schedule/pedagogical-schedule-service';
 import { EducationalManagerService } from '../../services/educational-manager/educational-manager';
 import { FilterControls } from './filter-controls/filter-controls';
@@ -22,21 +22,21 @@ export class Ressource implements OnInit {
   private readonly educationManagerService = inject(EducationalManagerService);
 
   activeTab = signal<string>('ressources');
-  selectedFormation = signal<string>('');
-  formations = signal<{ id: string; name: string }[]>([]);
+  selectedProgram = signal<string>('');
+  programs = signal<{ id: string; name: string }[]>([]);
   selectedYear = signal<string>('');
   selectedClass = signal<string>('');
   availableClasses = signal<string[]>([]);
   selectedSemester = signal<string>('');
 
-  ressources = signal<RessourceRow[]>([]);
+  resources = signal<ResourceRow[]>([]);
   availableTeachers = signal<TeacherBadge[]>([]);
   conflicts = signal<ScheduleConflict[]>([]);
   isLoading = signal<boolean>(false);
   errorMessage = signal<string>('');
   successMessage = signal<string>('');
 
-  scheduleData = signal<RessourceScheduleDTO[]>([]);
+  scheduleData = signal<ResourceScheduleDTO[]>([]);
   projectData = signal<ProjectScheduleDTO>({
     id: 'project-sae', name: 'Projet SAE', hoursPerWeek: {}, hoursPerHalfGroup: 0, totalHours: 0
   });
@@ -52,8 +52,8 @@ export class Ressource implements OnInit {
     '3': { name: 'Année 3' }
   };
 
-  filteredRessources = computed<RessourceRow[]>(() => {
-    let result = this.ressources();
+  filteredResources = computed<ResourceRow[]>(() => {
+    let result = this.resources();
     const query = this.searchQuery().toLowerCase();
     const selectedTeachers = this.selectedTeacherIds();
     if (query) {
@@ -68,8 +68,8 @@ export class Ressource implements OnInit {
     return result;
   });
 
-  calculatedTotals = computed<RessourcesTotals>(() => {
-    const filtered = this.filteredRessources();
+  calculatedTotals = computed<ResourceTotals>(() => {
+    const filtered = this.filteredResources();
     return {
       totalPlannedHours: filtered.reduce((sum, r) => sum + r.plannedHours, 0),
       totalActualHours: filtered.reduce((sum, r) => sum + r.actualHours, 0),
@@ -87,18 +87,18 @@ export class Ressource implements OnInit {
 
   ngOnInit(): void {
     this.pageTitle.title.set("Gestion pédagogique - Ressources et plannings");
-    this.loadFormations();
+    this.loadPrograms();
   }
 
   constructor(private pageTitle: PageTitle) {
   }
 
-  loadFormations(): void {
-    this.educationManagerService.loadDistinctFormationNames().subscribe({
+  loadPrograms(): void {
+    this.educationManagerService.loadDistinctProgramNames().subscribe({
       next: (names) => {
-        this.formations.set(names.map(n => ({ id: n, name: n })));
-        if (!this.selectedFormation() && names.length > 0) {
-          this.selectedFormation.set(names[0]);
+        this.programs.set(names.map(n => ({ id: n, name: n })));
+        if (!this.selectedProgram() && names.length > 0) {
+          this.selectedProgram.set(names[0]);
         }
         this.loadClasses();
         this.loadData();
@@ -110,7 +110,7 @@ export class Ressource implements OnInit {
   loadClasses(): void {
     this.educationManagerService.getDistinctClasses(
       this.selectedYear(),
-      this.selectedFormation()
+      this.selectedProgram()
     ).subscribe({
       next: (classes) => {
         this.availableClasses.set(classes);
@@ -126,12 +126,12 @@ export class Ressource implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set('');
     forkJoin({
-      ressourcesData: this.ressourcesTableService.getRessourcesTable(this.selectedYear(), this.selectedClass(), this.selectedSemester(), this.selectedFormation()),
-      scheduleData: this.pedagogicalScheduleService.getCompleteSchedule(this.selectedYear(), this.selectedClass(), this.selectedSemester(), this.selectedFormation())
+      ressourcesData: this.ressourcesTableService.getResourcesTable(this.selectedYear(), this.selectedClass(), this.selectedSemester(), this.selectedProgram()),
+      scheduleData: this.pedagogicalScheduleService.getCompleteSchedule(this.selectedYear(), this.selectedClass(), this.selectedSemester(), this.selectedProgram())
     }).subscribe({
       next: (data) => {
         console.log(data);
-        this.ressources.set(data.ressourcesData.ressources);
+        this.resources.set(data.ressourcesData.resources);
         this.availableTeachers.set(data.ressourcesData.availableTeachers);
         this.conflicts.set(data.ressourcesData.conflicts);
         this.scheduleData.set(data.scheduleData.scheduleData);
@@ -149,7 +149,7 @@ export class Ressource implements OnInit {
   }
 
   initializeDefaultData(): void {
-    this.ressources.set([]);
+    this.resources.set([]);
     this.availableTeachers.set([]);
     this.conflicts.set([]);
     this.scheduleData.set([]);
@@ -162,8 +162,8 @@ export class Ressource implements OnInit {
     this.activeTab.set(tab);
   }
 
-  onFormationChange(formation: string): void {
-    this.selectedFormation.set(formation);
+  onProgramChange(program: string): void {
+    this.selectedProgram.set(program);
     this.loadClasses();
     this.loadData();
   }
@@ -211,7 +211,7 @@ export class Ressource implements OnInit {
     this.errorMessage.set('');
 
     const ressourcesDTO: UpdateHoursDTO[] = this.scheduleData().map(row => ({
-      ressourceId: row.id,
+      resourceId: row.id,
       hoursPerWeek: row.hoursPerWeek,
       hoursPerHalfGroup: row.hoursPerHalfGroup
     }));
@@ -220,8 +220,8 @@ export class Ressource implements OnInit {
       selectedYear: this.selectedYear(),
       selectedClass: this.selectedClass(),
       selectedSemester: this.selectedSemester(),
-      ressources: ressourcesDTO,
-      project: { ressourceId: 0, hoursPerWeek: this.projectData().hoursPerWeek, hoursPerHalfGroup: this.projectData().hoursPerHalfGroup }
+      resources: ressourcesDTO,
+      project: { resourceId: 0, hoursPerWeek: this.projectData().hoursPerWeek, hoursPerHalfGroup: this.projectData().hoursPerHalfGroup }
     };
 
     this.pedagogicalScheduleService.validateSchedule(validationRequest).subscribe({

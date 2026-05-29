@@ -9,19 +9,16 @@ import java.util.List;
 
 import sae.project.dtos.teacher.TeacherDTO;
 
-/**
- * DTO pour la grille d'affectation complète
- * Contient tous les éléments nécessaires pour afficher la page d'affectation
- */
+/** Full assignment grid DTO — contains all data needed to render the assignment page. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class AssignmentGridDTO {
-    private String selectedFormation;
+    private String selectedProgram;
     private String selectedYear;
     private String selectedSemester;
-    private List<TeacherDTO> availableTeachers; // Liste des enseignants disponibles
-    private List<AffectationRowDTO> affectationGrid; // Grille d'affectation
-    private AssignmentStatisticsDTO statistics; // Statistiques
+    private List<TeacherDTO> availableTeachers;
+    private List<AssignmentRowDTO> assignmentGrid;
+    private AssignmentStatisticsDTO statistics;
 }

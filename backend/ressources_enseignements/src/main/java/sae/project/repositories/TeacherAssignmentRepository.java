@@ -37,7 +37,7 @@ public interface TeacherAssignmentRepository extends JpaRepository<Assignment, I
 
     @Query("SELECT a FROM Assignment a " +
             "JOIN a.resource r " +
-            "JOIN r.formationList f " +
+            "JOIN r.programs f " +
             "WHERE f.year = :year AND f.className = :className")
     List<Assignment> findByFormation(
             @Param("year") String year,
@@ -45,20 +45,20 @@ public interface TeacherAssignmentRepository extends JpaRepository<Assignment, I
 
     @Query("SELECT DISTINCT a FROM Assignment a " +
             "JOIN a.resource r " +
-            "JOIN r.formationList f " +
+            "JOIN r.programs f " +
             "WHERE (:year IS NULL OR f.year = :year) " +
             "AND (:className IS NULL OR f.className = :className) " +
-            "AND (:formation IS NULL OR f.name = :formation)")
+            "AND (:program IS NULL OR f.name = :program)")
     List<Assignment> findByFormationFlexible(
             @Param("year") String year,
             @Param("className") String className,
-            @Param("formation") String formation);
+            @Param("program") String program);
 
     @Query("SELECT COALESCE(SUM(a.assignedTimes), 0) FROM Assignment a WHERE a.user.id = :userId")
     Integer getTotalHoursByUserId(@Param("userId") Integer userId);
 
     @Query("SELECT r FROM Resource r " +
-            "JOIN r.formationList f " +
+            "JOIN r.programs f " +
             "WHERE f.year = :year AND f.className = :className " +
             "AND r.id NOT IN (SELECT a.resource.id FROM Assignment a)")
     List<Object> findUnassignedResources(
@@ -73,7 +73,7 @@ public interface TeacherAssignmentRepository extends JpaRepository<Assignment, I
 
     @Query("SELECT u.id, u.firstName, u.lastName, COALESCE(SUM(a.assignedTimes), 0), u.type " +
             "FROM User u LEFT JOIN Assignment a ON u.id = a.user.id " +
-            "WHERE u.id NOT IN (SELECT ur.id FROM User ur JOIN ur.roleList r WHERE r.id = 3) " +
+            "WHERE u.id NOT IN (SELECT ur.id FROM User ur JOIN ur.roles r WHERE r.id = 3) " +
             "GROUP BY u.id, u.firstName, u.lastName, u.type")
     List<Object[]> getTeachersWithHours();
 

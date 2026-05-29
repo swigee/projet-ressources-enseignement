@@ -10,6 +10,6 @@ export interface User {
     firstName: string;
     lastName: string;
     email: string;
-    roleList: Role[];
+    roles: Role[];
     // Add other fields as necessary
 }

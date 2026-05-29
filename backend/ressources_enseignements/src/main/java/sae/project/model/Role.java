@@ -51,8 +51,8 @@ public class Role implements Serializable {
     private String slug;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "roleList")
-    private List<User> userList;
+    @ManyToMany(mappedBy = "roles")
+    private List<User> users;
 
     @JsonIgnore
     @ManyToMany
@@ -110,12 +110,12 @@ public class Role implements Serializable {
         this.slug = slug;
     }
 
-    public List<User> getUserList() {
-        return userList;
+    public List<User> getUsers() {
+        return users;
     }
 
-    public void setUserList(List<User> userList) {
-        this.userList = userList;
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     public Set<Permission> getPermissions() {

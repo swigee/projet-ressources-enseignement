@@ -70,10 +70,9 @@ export class Auth {
 
   hasRole(requiredRoles: string[]): boolean {
     const user = this.currentUserSubject.value;
-    if (!user || !user.roleList) {
+    if (!user || !user.roles) {
       return false;
     }
-    // Check if user has at least one of the required roles
-    return user.roleList.some(role => requiredRoles.includes(role.name));
+    return user.roles.some(role => requiredRoles.includes(role.name));
   }
 }

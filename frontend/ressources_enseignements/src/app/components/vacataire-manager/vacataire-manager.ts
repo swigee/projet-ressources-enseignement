@@ -8,25 +8,25 @@ import { PageTitle } from '../../services/page-title/page-title-service';
 type View = 'list' | 'wizard' | 'summary';
 
 const emptyForm = (): VacataireModel => ({
-  responsableRecrutement: '',
-  qualiteResponsable: '',
-  departement: '',
-  dateEntretien: '',
-  prenom: '',
-  nom: '',
-  formationVisee: '',
-  natureVacation: '',
-  profilTechnique: '',
-  profilPedagogique: '',
-  competences: '',
+  recruitmentManager: '',
+  managerTitle: '',
+  department: '',
+  interviewDate: '',
+  firstName: '',
+  lastName: '',
+  targetFormation: '',
+  vacationType: '',
+  technicalProfile: '',
+  pedagogicalProfile: '',
+  skills: '',
   siteBourgenBresse: '',
   siteVilleurbanneDoua: '',
   siteVilleurbanneGratteCiel: '',
-  transmisCV: '',
-  signatureResponsable: '',
-  sourceConnaissances: '',
-  sourceConnaissanceAutre: '',
-  statut: 'A_CONTACTER',
+  cvSubmitted: '',
+  managerSignature: '',
+  knowledgeSource: '',
+  otherKnowledgeSource: '',
+  status: 'A_CONTACTER',
 });
 
 export const SOURCE_OPTIONS = [
@@ -74,7 +74,7 @@ export class VacataireManager implements OnInit {
     this.isLoading.set(true);
     this.vacataireService.getAll().subscribe({
       next: (data) => { this.vacataires.set(data); this.isLoading.set(false); },
-      error: () => { this.errorMessage.set('Erreur lors du chargement'); this.isLoading.set(false); }
+      error: () => { this.errorMessage.set('Error loading data'); this.isLoading.set(false); }
     });
   }
 
@@ -116,7 +116,7 @@ export class VacataireManager implements OnInit {
 
   validateStep1(): boolean {
     const f = this.formData();
-    if (!f.nom?.trim() || !f.prenom?.trim()) {
+    if (!f.lastName?.trim() || !f.firstName?.trim()) {
       this.errorMessage.set('Le nom et le prénom du candidat sont obligatoires.');
       return false;
     }
@@ -140,17 +140,17 @@ export class VacataireManager implements OnInit {
         this.isLoading.set(false);
       },
       error: () => {
-        this.errorMessage.set('Erreur lors de la sauvegarde.');
+        this.errorMessage.set('Error saving data.');
         this.isLoading.set(false);
       }
     });
   }
 
   delete(v: VacataireModel) {
-    if (!confirm(`Supprimer ${v.prenom} ${v.nom} ?`)) return;
+    if (!confirm(`Supprimer ${v.firstName} ${v.lastName} ?`)) return;
     this.vacataireService.delete(v.id!).subscribe({
       next: () => { this.successMessage.set('Vacataire supprimé.'); this.loadAll(); },
-      error: () => this.errorMessage.set('Erreur lors de la suppression.')
+      error: () => this.errorMessage.set('Error deleting entry.')
     });
   }
 
@@ -167,34 +167,34 @@ export class VacataireManager implements OnInit {
   }
 
   isSourceChecked(value: string): boolean {
-    return (this.formData().sourceConnaissances ?? '').split(',').includes(value);
+    return (this.formData().knowledgeSource ?? '').split(',').includes(value);
   }
 
   toggleSource(value: string) {
-    const current = (this.formData().sourceConnaissances ?? '')
+    const current = (this.formData().knowledgeSource ?? '')
       .split(',').filter(v => v.length > 0);
     const idx = current.indexOf(value);
     if (idx >= 0) current.splice(idx, 1);
     else current.push(value);
-    this.updateField('sourceConnaissances', current.join(','));
+    this.updateField('knowledgeSource', current.join(','));
   }
 
-  statutLabel(statut?: string): string {
+  statusLabel(status?: string): string {
     const map: Record<string, string> = {
       A_CONTACTER: 'À contacter',
       EN_COURS: 'En cours',
       VALIDE: 'Validé',
     };
-    return statut ? (map[statut] ?? statut) : '-';
+    return status ? (map[status] ?? status) : '-';
   }
 
-  statutClass(statut?: string): string {
+  statusClass(status?: string): string {
     const map: Record<string, string> = {
       A_CONTACTER: 'bg-orange-100 text-orange-800',
       EN_COURS: 'bg-blue-100 text-blue-800',
       VALIDE: 'bg-green-100 text-green-800',
     };
-    return statut ? (map[statut] ?? 'bg-gray-100 text-gray-600') : 'bg-gray-100 text-gray-600';
+    return status ? (map[status] ?? 'bg-gray-100 text-gray-600') : 'bg-gray-100 text-gray-600';
   }
 
   sourcesLabel(sources?: string): string {

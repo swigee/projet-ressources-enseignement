@@ -10,14 +10,14 @@ import sae.project.model.Formation;
 import java.util.List;
 
 public interface EducationManagerRepository extends JpaRepository<Formation, Integer> {
-    @Query("SELECT DISTINCT f FROM Formation f LEFT JOIN FETCH f.resourceList")
+    @Query("SELECT DISTINCT f FROM Formation f LEFT JOIN FETCH f.resources")
     List<Formation> findAllWithResources();
     @Query("SELECT DISTINCT f.className FROM Formation f " +
            "WHERE f.className IS NOT NULL " +
            "AND (:year IS NULL OR f.year = :year) " +
-           "AND (:formation IS NULL OR f.name = :formation) " +
+           "AND (:program IS NULL OR f.name = :program) " +
            "ORDER BY f.className")
     List<String> findDistinctClassNames(
             @Param("year") String year,
-            @Param("formation") String formation);
+            @Param("program") String program);
 }

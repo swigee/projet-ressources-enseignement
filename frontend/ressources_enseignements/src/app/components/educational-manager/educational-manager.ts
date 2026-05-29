@@ -22,9 +22,9 @@ export class EducationalManager {
   form!: FormGroup;
   popUp: boolean = false;
   private isPatchInProgress = false;
-  
+
   constructor(private router: Router, private pageTitle: PageTitle, private fb: FormBuilder,) {}
- 
+
   ngOnInit() {
     this.pageTitle.title.set("Gestion des formations");
     this.edManager.educationList().forEach(ed => {
@@ -81,7 +81,7 @@ export class EducationalManager {
       id: [null],
       name: ['', Validators.required],
       description: [''],
-      parcours: [''],
+      pathway: [''],
       semesters: this.fb.array([this.createSemesterGroup()])
     });
   }
@@ -102,7 +102,7 @@ export class EducationalManager {
   createSemesterGroup(): FormGroup {
     return this.fb.group({
       semester_number: [1, Validators.required],
-      parcours: [''],
+      pathway: [''],
       lessons: [[]]
     });
   }
@@ -130,15 +130,15 @@ export class EducationalManager {
     }
   }
 
-  private groupResourcesBySemester(resources: Lesson[]): Array<{ semester_number: number; parcours: string; lessons: Lesson[] }> {
-    const groups = new Map<number, { semester_number: number; parcours: string; lessons: Lesson[] }>();
+  private groupResourcesBySemester(resources: Lesson[]): Array<{ semester_number: number; pathway: string; lessons: Lesson[] }> {
+    const groups = new Map<number, { semester_number: number; pathway: string; lessons: Lesson[] }>();
 
     resources.forEach((resource) => {
       const semesterNumber = Number(resource.semester || 1) || 1;
       if (!groups.has(semesterNumber)) {
         groups.set(semesterNumber, {
           semester_number: semesterNumber,
-          parcours: this.form.value.parcours || '',
+          pathway: this.form.value.pathway || '',
           lessons: []
         });
       }
@@ -154,7 +154,7 @@ export class EducationalManager {
       id: edu.id,
       name: edu.name,
       description: edu.description,
-      parcours: edu.parcours || ''
+      pathway: edu.pathway || ''
     });
 
     this.semesters.clear();
@@ -166,19 +166,19 @@ export class EducationalManager {
         .forEach((semester) => {
           this.semesters.push(this.fb.group({
             semester_number: [semester.semester_number, Validators.required],
-            parcours: [semester.parcours || ''],
-            lessons: [semester.resourceList || []]
+            pathway: [semester.pathway || ''],
+            lessons: [semester.resources || []]
           }));
         });
     } else {
-      const resources = edu.resourceList || [];
+      const resources = edu.resources || [];
       const semesterGroups = this.groupResourcesBySemester(resources);
 
       if (semesterGroups.length) {
         semesterGroups.forEach((semester) => {
           this.semesters.push(this.fb.group({
             semester_number: [semester.semester_number, Validators.required],
-            parcours: [semester.parcours || ''],
+            pathway: [semester.pathway || ''],
             lessons: [semester.lessons || []]
           }));
         });
@@ -250,14 +250,14 @@ export class EducationalManager {
 
     const semesters = (formValue.semesters || []).map((semester: any) => ({
       semester_number: Number(semester.semester_number),
-      parcours: semester.parcours,
+      pathway: semester.pathway,
       resourceList: (semester.lessons || []).map((lesson: Lesson) => this.mapLessonToResourceId(lesson))
     }));
 
     return {
       name: formValue.name,
       description: formValue.description,
-      parcours: formValue.parcours,
+      pathway: formValue.pathway,
       resourceList,
       semesters
     };
@@ -267,7 +267,7 @@ export class EducationalManager {
     const formValue = this.form.value;
     const semesters = (formValue.semesters || []).map((semester: any) => ({
       semester_number: Number(semester.semester_number),
-      parcours: semester.parcours,
+      pathway: semester.pathway,
       resourceList: (semester.lessons || []).map((lesson: Lesson) => this.mapLessonToResourceId(lesson))
     }));
 
@@ -281,11 +281,11 @@ export class EducationalManager {
     });
 
     return {
-      formation: {
+      program: {
         id: formValue.id,
         name: formValue.name,
         description: formValue.description,
-        parcours: formValue.parcours
+        pathway: formValue.pathway
       },
       semesters,
       resources
@@ -315,9 +315,9 @@ export class EducationalManager {
         }
       });
     } else {
-      const formation = this.buildFormCreationPayload();
-      console.log('Payload to create:', formation);
-      this.edManager.createEducation(formation).subscribe({
+      const payload = this.buildFormCreationPayload();
+      console.log('Payload to create:', payload);
+      this.edManager.createEducation(payload).subscribe({
         next: () => {
           if (closeOnSuccess) {
             this.popUp = false;

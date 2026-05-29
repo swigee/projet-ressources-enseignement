@@ -3,10 +3,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable, catchError, throwError } from 'rxjs';
 import {
-  RessourceRow,
+  ResourceRow,
   TeacherBadge,
   ScheduleConflict,
-  RessourcesTableResponse
+  ResourcesTableResponse
 } from '../../models/ressources/ressources.model';
 
 @Injectable({
@@ -17,20 +17,20 @@ export class RessourcesService {
 
   constructor(private http: HttpClient) {}
 
-  getRessourcesTable(year?: string, className?: string, semester?: string, formation?: string): Observable<RessourcesTableResponse> {
+  getResourcesTable(year?: string, className?: string, semester?: string, program?: string): Observable<ResourcesTableResponse> {
     let params = new HttpParams();
     if (year) params = params.set('year', year);
     if (className) params = params.set('className', className);
     if (semester) params = params.set('semester', semester);
-    if (formation) params = params.set('formation', formation);
+    if (program) params = params.set('program', program);
 
-    return this.http.get<RessourcesTableResponse>(`${this.apiUrl}/data`, { params })
+    return this.http.get<ResourcesTableResponse>(`${this.apiUrl}/data`, { params })
       .pipe(
         catchError(error => {
           if (error.status === 404) {
-            return throwError(() => new Error('Ressources non trouvees'));
+            return throwError(() => new Error('Resources not found'));
           }
-          return throwError(() => new Error('Erreur serveur'));
+          return throwError(() => new Error('Server error'));
         })
       );
   }
@@ -44,8 +44,8 @@ export class RessourcesService {
     return this.http.get<ScheduleConflict[]>(`${this.apiUrl}/conflicts`, { params });
   }
 
-  searchRessources(keyword: string): Observable<RessourceRow[]> {
+  searchResources(keyword: string): Observable<ResourceRow[]> {
     const params = new HttpParams().set('keyword', keyword);
-    return this.http.get<RessourceRow[]>(`${this.apiUrl}/search`, { params });
+    return this.http.get<ResourceRow[]>(`${this.apiUrl}/search`, { params });
   }
 }

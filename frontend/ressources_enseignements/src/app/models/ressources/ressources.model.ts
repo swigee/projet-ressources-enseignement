@@ -1,4 +1,4 @@
-export interface RessourceRow {
+export interface ResourceRow {
   id: number;
   moduleName: string;
   category?: string;
@@ -25,7 +25,7 @@ export interface ScheduleConflict {
   timeSlot: string;
 }
 
-export interface RessourcesTotals {
+export interface ResourceTotals {
   totalPlannedHours: number;
   totalActualHours: number;
   totalTDHours: number;
@@ -33,8 +33,8 @@ export interface RessourcesTotals {
   totalCMHours: number;
 }
 
-export interface RessourcesTableResponse {
-  ressources: RessourceRow[];
+export interface ResourcesTableResponse {
+  resources: ResourceRow[];
   availableTeachers: TeacherBadge[];
   conflicts: ScheduleConflict[];
 }

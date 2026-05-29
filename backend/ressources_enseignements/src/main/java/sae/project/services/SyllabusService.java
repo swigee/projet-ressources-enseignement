@@ -47,7 +47,7 @@ public class SyllabusService {
                     String code = columns[0].trim();
                     String title = columns[1].trim();
                     String description = columns[2].trim();
-                    String savoirs = columns[3].trim();
+                    String knowledge = columns[3].trim();
                     String ac = columns[4].trim();
                     String volume = columns[5].trim();
 
@@ -75,12 +75,12 @@ public class SyllabusService {
                     // Update ONLY National Program fields from CSV
                     resource.setTitle(title);
                     resource.setDescription(description);
-                    resource.setSavoirs(savoirs);
-                    resource.setApprentissagesCritiques(ac);
-                    resource.setVolumeOfficiel(volume);
+                    resource.setKnowledge(knowledge);
+                    resource.setCriticalLearning(ac);
+                    resource.setOfficialVolume(volume);
 
-                    // Note: We DO NOT touch 'personalDescription', 'personalSavoirs', etc.
-                    // We DO NOT touch 'formationList' or 'assignmentList'
+                    // Note: We DO NOT touch 'personalDescription', 'personalKnowledge', etc.
+                    // We DO NOT touch 'formations' or 'assignments'
                     // This preserves all existing database relations.
 
                     resourceRepository.save(resource);
@@ -133,8 +133,8 @@ public class SyllabusService {
         Resource resource = resourceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Resource not found"));
         resource.setPersonalDescription(dto.getPersonalDescription());
-        resource.setPersonalSavoirs(dto.getPersonalSavoirs());
-        resource.setPersonalApprentissages(dto.getPersonalApprentissages());
+        resource.setPersonalKnowledge(dto.getPersonalKnowledge());
+        resource.setPersonalLearning(dto.getPersonalLearning());
         resource.setPersonalVolume(dto.getPersonalVolume());
         resourceRepository.save(resource);
     }
@@ -145,12 +145,12 @@ public class SyllabusService {
                 .code(resource.getCategory())
                 .title(resource.getTitle())
                 .description(resource.getDescription())
-                .savoirs(resource.getSavoirs())
-                .apprentissagesCritiques(resource.getApprentissagesCritiques())
-                .volumeOfficiel(resource.getVolumeOfficiel())
+                .knowledge(resource.getKnowledge())
+                .criticalLearning(resource.getCriticalLearning())
+                .officialVolume(resource.getOfficialVolume())
                 .personalDescription(resource.getPersonalDescription())
-                .personalSavoirs(resource.getPersonalSavoirs())
-                .personalApprentissages(resource.getPersonalApprentissages())
+                .personalKnowledge(resource.getPersonalKnowledge())
+                .personalLearning(resource.getPersonalLearning())
                 .personalVolume(resource.getPersonalVolume())
                 .build();
     }

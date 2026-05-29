@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   TeacherAssignment,
-  AffectationRow,
+  AssignmentRow,
   AssignmentGrid,
   Teacher,
   AssignmentValidationResponse,
@@ -26,7 +26,7 @@ interface DragData {
   templateUrl: './teacher-assignment.html',
 })
 export class TeacherAssignmentComponent implements OnInit {
-  selectedFormation: string = 'Informatique';
+  selectedProgram: string = 'Informatique';
   selectedYear: string = '1';
   selectedClass: string = '';
   selectedSemester: string = '';
@@ -48,7 +48,7 @@ export class TeacherAssignmentComponent implements OnInit {
   }
 
   teachers: Teacher[] = [];
-  affectationGrid: AffectationRow[] = [];
+  assignmentGrid: AssignmentRow[] = [];
   statistics: any = null;
   availableGroups: string[] = [];
 
@@ -66,10 +66,9 @@ export class TeacherAssignmentComponent implements OnInit {
   }
 
   loadGroups(): void {
-    this.teacherService.getAvailableClasses(this.selectedYear, this.selectedFormation).subscribe({
+    this.teacherService.getAvailableClasses(this.selectedYear, this.selectedProgram).subscribe({
       next: (groups) => {
         this.availableGroups = groups;
-        // Reset selectedClass if it no longer exists in available groups
         if (this.selectedClass && !groups.includes(this.selectedClass)) {
           this.selectedClass = '';
         }
@@ -81,33 +80,30 @@ export class TeacherAssignmentComponent implements OnInit {
   loadData(): void {
     this.isLoading = true;
     this.teacherService.getAssignmentGrid(
-      this.selectedFormation,
+      this.selectedProgram,
       this.selectedYear,
       this.selectedClass,
       this.selectedSemester
     ).subscribe({
       next: (data: AssignmentGrid) => {
-        console.log('Données reçues du backend:', data);
-        console.log('Nombre de ressources:', data.affectationGrid?.length || 0);
-        console.log('Nombre d\'enseignants:', data.availableTeachers?.length || 0);
+        console.log('Data received from backend:', data);
+        console.log('Number of resources:', data.assignmentGrid?.length || 0);
+        console.log('Number of teachers:', data.availableTeachers?.length || 0);
 
         this.teachers = data.availableTeachers || [];
-        this.affectationGrid = data.affectationGrid || [];
+        this.assignmentGrid = data.assignmentGrid || [];
         this.statistics = data.statistics;
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Erreur lors du chargement des données:', error);
+        console.error('Error loading data:', error);
         this.isLoading = false;
-        this.affectationGrid = [];
-        alert('Erreur lors du chargement des données. Vérifiez la console pour plus de détails.');
+        this.assignmentGrid = [];
+        alert('Error loading data. Check the console for details.');
       }
     });
   }
 
-  /**
-   * Reload data when filters change
-   */
   onFilterChange(): void {
     this.loadGroups();
     this.loadData();
@@ -145,7 +141,7 @@ export class TeacherAssignmentComponent implements OnInit {
     }
   }
 
-  onDrop(event: DragEvent, ressourceId: number, lessonType: 'TD' | 'TP' | 'CM'): void {
+  onDrop(event: DragEvent, resourceId: number, lessonType: 'TD' | 'TP' | 'CM'): void {
     event.preventDefault();
     if (!event.dataTransfer) return;
 
@@ -155,7 +151,7 @@ export class TeacherAssignmentComponent implements OnInit {
 
       if (dragData.type !== 'teacher') return;
 
-      const module = this.affectationGrid.find(m => m.resourceId === ressourceId);
+      const module = this.assignmentGrid.find(m => m.resourceId === resourceId);
       if (!module) return;
 
       let teacherList: TeacherAssignment[];
@@ -209,25 +205,25 @@ export class TeacherAssignmentComponent implements OnInit {
       } else {
         const assignment: CreateAssignment = {
           userId: dragData.teacherId,
-          resourceId: ressourceId,
+          resourceId: resourceId,
           lessonType: lessonType,
           assignedTimes: hours
         };
 
         this.teacherService.createAssignment(assignment).subscribe({
           next: () => {
-            console.log('Affectation créée avec succès');
+            console.log('Assignment created successfully');
             this.loadData();
           },
           error: (error) => {
-            console.error('Erreur lors de la création:', error);
-            alert('Erreur lors de la création de l\'affectation: ' + (error.error?.message || error.message));
+            console.error('Error creating assignment:', error);
+            alert('Error creating assignment: ' + (error.error?.message || error.message));
           }
         });
       }
 
     } catch (error) {
-      console.error('Erreur lors du drop:', error);
+      console.error('Error on drop:', error);
     } finally {
       this.draggedTeacher = null;
     }
@@ -257,7 +253,7 @@ export class TeacherAssignmentComponent implements OnInit {
     this.teacherService.updateAssignment(teacher.assignmentId, dto).subscribe({
       next: () => this.loadData(),
       error: (error) => {
-        console.error('Erreur mise à jour:', error);
+        console.error('Update error:', error);
         alert('Erreur lors de la modification des heures.');
       }
     });
@@ -267,11 +263,11 @@ export class TeacherAssignmentComponent implements OnInit {
     if (confirm('Voulez-vous retirer cet enseignant de ce module ?')) {
       this.teacherService.deleteAssignment(assignmentId).subscribe({
         next: () => {
-          console.log('Affectation supprimée');
+          console.log('Assignment deleted');
           this.loadData();
         },
         error: (error) => {
-          console.error('Erreur lors de la suppression:', error);
+          console.error('Error deleting assignment:', error);
           alert('Erreur lors de la suppression');
         }
       });
@@ -324,7 +320,7 @@ export class TeacherAssignmentComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Erreur lors de la validation:', error);
+        console.error('Validation error:', error);
         alert('Erreur lors de la validation des affectations');
       }
     });
@@ -365,7 +361,7 @@ export class TeacherAssignmentComponent implements OnInit {
   assignFromModal(teacher: Teacher) {
     if (this.modalResourceId === null || !this.modalLessonType) return;
 
-    const module = this.affectationGrid.find(m => m.resourceId === this.modalResourceId);
+    const module = this.assignmentGrid.find(m => m.resourceId === this.modalResourceId);
     if (!module) return;
 
     let teacherList: TeacherAssignment[];
@@ -406,7 +402,7 @@ export class TeacherAssignmentComponent implements OnInit {
     this.teacherService.createAssignment(assignment).subscribe({
       next: () => { this.closeModal(); this.loadData(); },
       error: (error) => {
-        console.error('Erreur création affectation:', error);
+        console.error('Assignment creation error:', error);
         alert('Erreur lors de l\'affectation: ' + (error.error?.message || error.message));
       }
     });

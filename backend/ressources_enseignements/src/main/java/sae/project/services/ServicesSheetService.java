@@ -53,9 +53,9 @@ public class ServicesSheetService {
             }
 
             // Set year from formation list if not set
-            if (currentDto.getYear() == null && ressource.getFormationList() != null
-                    && !ressource.getFormationList().isEmpty()) {
-                currentDto.setYear(ressource.getFormationList().get(0).getYear());
+            if (currentDto.getYear() == null && ressource.getPrograms() != null
+                    && !ressource.getPrograms().isEmpty()) {
+                currentDto.setYear(ressource.getPrograms().get(0).getYear());
             }
 
             currentDto.setTotalHours(currentDto.getHoursCM() + currentDto.getHoursTD() + currentDto.getHoursTP());

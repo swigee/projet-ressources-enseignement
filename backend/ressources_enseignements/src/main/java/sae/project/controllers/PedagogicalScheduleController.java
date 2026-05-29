@@ -88,10 +88,10 @@ public class PedagogicalScheduleController {
             @Parameter(description = "Study year") @RequestParam(required = false) String year,
             @Parameter(description = "Class name") @RequestParam(required = false) String className,
             @Parameter(description = "Semester (1 or 2)") @RequestParam(required = false) Integer semester,
-            @Parameter(description = "Formation name") @RequestParam(required = false) String formation) {
+            @Parameter(description = "Formation name") @RequestParam(required = false) String program) {
         log.info("GET /api/pedagogical-schedule/ressources/filter?year={}&className={}&semester={}", year, className, semester);
         try {
-            List<ResourceScheduleDTO> ressources = pedagogicalScheduleService.getByYearAndClass(year, className, semester, formation);
+            List<ResourceScheduleDTO> ressources = pedagogicalScheduleService.getByYearAndClass(year, className, semester, program);
             return ResponseEntity.ok(ressources);
         } catch (Exception e) {
             log.error("Erreur lors du filtrage des ressources", e);
@@ -108,10 +108,10 @@ public class PedagogicalScheduleController {
             @Parameter(description = "Study year") @RequestParam(required = false) String year,
             @Parameter(description = "Class name") @RequestParam(required = false) String className,
             @Parameter(description = "Semester (1 or 2)") @RequestParam(required = false) Integer semester,
-            @Parameter(description = "Formation name") @RequestParam(required = false) String formation) {
+            @Parameter(description = "Formation name") @RequestParam(required = false) String program) {
         log.info("GET /api/pedagogical-schedule/schedule?year={}&className={}&semester={}", year, className, semester);
         try {
-            PedagogicalScheduleDTO schedule = pedagogicalScheduleService.getCompleteSchedule(year, className, semester, formation);
+            PedagogicalScheduleDTO schedule = pedagogicalScheduleService.getCompleteSchedule(year, className, semester, program);
             return ResponseEntity.ok(schedule);
         } catch (Exception e) {
             log.error("Erreur lors de la récupération du planning complet", e);

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package sae.project.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -15,10 +11,6 @@ import lombok.ToString;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- *
- * @author andry
- */
 @Entity
 @Table(name = "users")
 @NamedQueries({
@@ -39,6 +31,7 @@ import java.util.List;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -76,24 +69,19 @@ public class User implements Serializable {
     @Column(name = "type")
     private String type;
 
-    @ManyToMany(mappedBy = "usersList", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Formation> formationList;
+    @ManyToMany(mappedBy = "users", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Formation> programs;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roleList;
+    private List<Role> roles;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Assignment> assignmentList;
+    private List<Assignment> assignments;
 
-    /**
-     * Optional link to the contractor recruitment profile.
-     * Null for permanent staff members.
-     */
+    /** Optional link to the contractor recruitment profile. Null for permanent staff. */
     @OneToOne(mappedBy = "user")
     @JsonIgnore
     @ToString.Exclude
     private Vacataire contractorProfile;
-
-    // Lombok handles Getters/Setters/Constructors/toString/Data
 }

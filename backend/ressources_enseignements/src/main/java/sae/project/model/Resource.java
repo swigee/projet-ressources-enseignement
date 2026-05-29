@@ -52,22 +52,22 @@ public class Resource implements Serializable {
     private String category;
 
     @Column(name = "savoirs", columnDefinition = "TEXT")
-    private String savoirs;
+    private String knowledge;
 
     @Column(name = "apprentissages_critiques", columnDefinition = "TEXT")
-    private String apprentissagesCritiques;
+    private String criticalLearning;
 
     @Column(name = "volume_officiel", columnDefinition = "TEXT")
-    private String volumeOfficiel;
+    private String officialVolume;
 
     @Column(name = "personal_description", columnDefinition = "TEXT")
     private String personalDescription;
 
     @Column(name = "personal_savoirs", columnDefinition = "TEXT")
-    private String personalSavoirs;
+    private String personalKnowledge;
 
     @Column(name = "personal_apprentissages", columnDefinition = "TEXT")
-    private String personalApprentissages;
+    private String personalLearning;
 
     @Column(name = "personal_volume", columnDefinition = "TEXT")
     private String personalVolume;
@@ -99,20 +99,18 @@ public class Resource implements Serializable {
     @Column(name = "semester")
     private Integer semester;
 
-    
-    //TODO plus tard (revoir si ces deux proprietes servent a quelque chose)
-    @ManyToMany(mappedBy = "resourceList", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "resources", fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Formation> formationList;
+    private List<Formation> programs;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "resource_syllabus", joinColumns = @JoinColumn(name = "resource_id"), inverseJoinColumns = @JoinColumn(name = "syllabus_id"))
-    @JsonIgnoreProperties("resourceList")
-    private List<Syllabus> syllabusList;
+    @JsonIgnoreProperties("resources")
+    private List<Syllabus> syllabuses;
 
     @OneToMany(mappedBy = "resource", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnoreProperties("resource")
-    private List<Assignment> assignmentList;
+    private List<Assignment> assignments;
 
     @Transient
     public Map<String, WeekHoursDTO> getHoursPerWeek() {
@@ -165,10 +163,8 @@ public class Resource implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof Resource))
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof Resource)) return false;
         Resource that = (Resource) o;
         return id != null && id.equals(that.id);
     }
@@ -180,11 +176,6 @@ public class Resource implements Serializable {
 
     @Override
     public String toString() {
-        return "Resource{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", category='" + category + '\'' +
-                '}';
+        return "Resource{id=" + id + ", title='" + title + "', category='" + category + "'}";
     }
-
 }

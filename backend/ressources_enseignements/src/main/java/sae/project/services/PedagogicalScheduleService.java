@@ -65,10 +65,10 @@ public class PedagogicalScheduleService {
         return (s == null || s.isBlank()) ? null : s;
     }
 
-    public List<ResourceScheduleDTO> getByYearAndClass(String year, String className, Integer semester, String formation) {
+    public List<ResourceScheduleDTO> getByYearAndClass(String year, String className, Integer semester, String program) {
         log.info("Récupération des ressources pour l'année {} la classe {} et le semestre {}", year, className, semester);
         List<Resource> resources = pedagogicalScheduleRepository.findWithFilters(
-                nullIfBlank(year), nullIfBlank(className), nullIfBlank(formation), semester);
+                nullIfBlank(year), nullIfBlank(className), nullIfBlank(program), semester);
         return resources.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
@@ -77,10 +77,10 @@ public class PedagogicalScheduleService {
     /**
      * Récupérer le planning complet
      */
-    public PedagogicalScheduleDTO getCompleteSchedule(String year, String className, Integer semester, String formation) {
+    public PedagogicalScheduleDTO getCompleteSchedule(String year, String className, Integer semester, String program) {
         log.info("Récupération du planning complet pour {} - {} - semestre {}", year, className, semester);
 
-        List<ResourceScheduleDTO> ressources = getByYearAndClass(year, className, semester, formation);
+        List<ResourceScheduleDTO> ressources = getByYearAndClass(year, className, semester, program);
         ProjectScheduleDTO project = getProjectData();
         List<MonthDTO> weeks = getWeeksForYearAndSemester(year, semester);
         ScheduleStatisticsDTO statistics = calculateStatistics(ressources, project, weeks);
@@ -157,7 +157,7 @@ public class PedagogicalScheduleService {
 
         try {
             // Validation des ressources
-            for (UpdateHoursDTO ressourceDTO : validationRequest.getRessources()) {
+            for (UpdateHoursDTO ressourceDTO : validationRequest.getResources()) {
                 try {
                     validateAndUpdateRessource(ressourceDTO, errors);
                 } catch (Exception e) {

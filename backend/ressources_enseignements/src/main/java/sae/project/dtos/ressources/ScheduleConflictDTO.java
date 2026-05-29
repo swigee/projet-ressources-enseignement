@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-/**
- * DTO pour représenter un conflit d'emploi du temps
- */
+/** DTO representing a scheduling conflict for a teacher. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

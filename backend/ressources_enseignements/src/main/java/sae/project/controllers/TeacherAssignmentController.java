@@ -45,14 +45,14 @@ public class TeacherAssignmentController {
     @GetMapping("/grid")
     @Operation(summary = "Get the full assignment grid, optionally filtered by formation, year, class and semester")
     public ResponseEntity<AssignmentGridDTO> getAssignmentGrid(
-            @RequestParam(required = false) String formation,
+            @RequestParam(required = false) String program,
             @RequestParam(required = false) String year,
             @RequestParam(required = false) String className,
             @RequestParam(required = false) String semester) {
-        log.info("GET /api/teacher-assignment/grid?formation={}&year={}&className={}&semester={}",
-                formation, year, className, semester);
+        log.info("GET /api/teacher-assignment/grid?program={}&year={}&className={}&semester={}",
+                program, year, className, semester);
 
-        AssignmentGridDTO grid = assignmentService.getAssignmentGrid(formation, year, className, semester);
+        AssignmentGridDTO grid = assignmentService.getAssignmentGrid(program, year, className, semester);
         return ResponseEntity.ok(grid);
     }
 
@@ -100,14 +100,14 @@ public class TeacherAssignmentController {
         }
     }
 
-    @DeleteMapping("/assignments/teacher/{userId}/ressource/{ressourceId}")
+    @DeleteMapping("/assignments/teacher/{userId}/resource/{resourceId}")
     @Operation(summary = "Delete an assignment by teacher ID and resource ID")
-    public ResponseEntity<Void> deleteAssignmentByTeacherAndRessource(
+    public ResponseEntity<Void> deleteAssignmentByTeacherAndResource(
             @PathVariable Integer userId,
-            @PathVariable Integer ressourceId) {
-        log.info("DELETE /api/teacher-assignment/assignments/teacher/{}/ressource/{}", userId, ressourceId);
+            @PathVariable Integer resourceId) {
+        log.info("DELETE /api/teacher-assignment/assignments/teacher/{}/resource/{}", userId, resourceId);
         try {
-            assignmentService.deleteAssignmentByTeacherAndRessource(userId, ressourceId);
+            assignmentService.deleteAssignmentByTeacherAndResource(userId, resourceId);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             log.error("Error while deleting assignment", e);

@@ -9,6 +9,6 @@ export interface UserModel {
   email?: string;
   validationStatus?: string;
   roles?: RoleModel[];
-  formations?: any[];
+  programs?: any[];
   assignments?: any[];
 }

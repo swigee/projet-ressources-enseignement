@@ -29,16 +29,16 @@ public class UserController {
     @Operation(summary = "Get all users")
     public List<UserDTO> getAllUsers() {
         return userService.userList().stream().map(user -> {
-            List<Role> roles = user.getRoleList();
+            List<Role> roles = user.getRoles();
             List<Object> roleJsons = roles != null ? roles.stream().map(role -> (Object) Map.of(
                     "id", role.getId(),
                     "is_active", role.getIsActive(),
                     "name", role.getName()
             )).toList() : List.of();
-            List<String> formationJsons = user.getFormationList() != null ? user.getFormationList().stream()
+            List<String> formationJsons = user.getPrograms() != null ? user.getPrograms().stream()
                     .map(f -> f.getName() != null ? f.getName() : String.valueOf(f.getId()))
                     .toList() : List.of();
-            List<String> assignmentJsons = user.getAssignmentList() != null ? user.getAssignmentList().stream()
+            List<String> assignmentJsons = user.getAssignments() != null ? user.getAssignments().stream()
                     .map(a -> String.valueOf(a.getId()))
                     .toList() : List.of();
             return new UserDTO(

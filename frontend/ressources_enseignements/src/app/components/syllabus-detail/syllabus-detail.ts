@@ -21,12 +21,12 @@ interface Section {
   templateUrl: './syllabus-detail.html',
 })
 export class SyllabusDetailComponent implements OnInit, OnDestroy {
-  
+
   resourceId: number = 0;
   isLoading: boolean = true;
   isEditor: boolean = false;
   errorMessage: string = '';
-  
+
   resourceInfo = {
     title: '',
     code: '',
@@ -35,20 +35,20 @@ export class SyllabusDetailComponent implements OnInit, OnDestroy {
 
   // Sections from National Program
   nationalSections: Section[] = [];
-  
+
   // Live model for saving
   universityData: any = {
     personalDescription: '',
-    personalSavoirs: '',
-    personalApprentissages: '',
+    personalKnowledge: '',
+    personalLearning: '',
     personalVolume: ''
   };
 
   // Initial data used only for the first render to avoid cursor jumping
   initialUniversityData: any = {
     personalDescription: '',
-    personalSavoirs: '',
-    personalApprentissages: '',
+    personalKnowledge: '',
+    personalLearning: '',
     personalVolume: ''
   };
 
@@ -60,7 +60,7 @@ export class SyllabusDetailComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private router: Router,
     private pageTitle: PageTitle,
     private syllabusService: SyllabusService,
@@ -72,7 +72,6 @@ export class SyllabusDetailComponent implements OnInit, OnDestroy {
     this.isEditor = this.auth.hasRole(['ADMIN', 'TEACHER']);
     this.loadResource();
 
-    // Auto-save logic
     this.update$.pipe(
       debounceTime(1000),
       takeUntil(this.destroy$)
@@ -93,26 +92,24 @@ export class SyllabusDetailComponent implements OnInit, OnDestroy {
         this.resourceInfo = {
           title: data.title || '',
           code: data.code || '',
-          meta: `Semestre ${SyllabusService.getSemestreFromCode(data.code || '')} — Programme National BUT Informatique`
+          meta: `Semestre ${SyllabusService.getSemesterFromCode(data.code || '')} — Programme National BUT Informatique`
         };
 
         this.pageTitle.title.set(`Syllabus - ${data.code}`);
 
-        // Build national sections
         this.nationalSections = this.buildSections(data);
         this.nationalSections.forEach(s => this.activeSections.add(s.id));
-        
-        // Load university adaptations
+
         const personalData = {
           personalDescription: data.personalDescription || '',
-          personalSavoirs: data.personalSavoirs || '',
-          personalApprentissages: data.personalApprentissages || '',
+          personalKnowledge: data.personalKnowledge || '',
+          personalLearning: data.personalLearning || '',
           personalVolume: data.personalVolume || ''
         };
 
         this.universityData = { ...personalData };
         this.initialUniversityData = { ...personalData };
-        
+
         this.isLoading = false;
       },
       error: (err) => {
@@ -134,9 +131,7 @@ export class SyllabusDetailComponent implements OnInit, OnDestroy {
     const nationalSection = this.nationalSections.find(s => s.id === sectionId);
     if (nationalSection) {
       const content = this.formatContent(nationalSection.content);
-      // Manually update the DOM element to avoid cursor reset
       editorElement.innerHTML = content;
-      // Update the model
       this.universityData[sectionId] = content;
       this.saveStatus = 'saving';
       this.update$.next();
@@ -161,47 +156,46 @@ export class SyllabusDetailComponent implements OnInit, OnDestroy {
   private buildSections(data: SyllabusResource): Section[] {
     const sections: Section[] = [];
 
-    // Check if each field is adapted
     const isAdapted = (field: string) => !!(data as any)[field];
 
     if (data.description || isAdapted('personalDescription')) {
       const parts = (data.description || '').split(' | ');
       const content = parts.map(p => p.trim()).filter(p => p.length > 0).join('\n');
-      sections.push({ 
-        id: 'personalDescription', 
-        label: 'Descriptif', 
+      sections.push({
+        id: 'personalDescription',
+        label: 'Descriptif',
         content: content,
         isModified: isAdapted('personalDescription')
       });
     }
 
-    if (data.savoirs || isAdapted('personalSavoirs')) {
-      const parts = (data.savoirs || '').split(' | ');
+    if (data.knowledge || isAdapted('personalKnowledge')) {
+      const parts = (data.knowledge || '').split(' | ');
       const content = parts.map(p => p.trim()).filter(p => p.length > 0).join('\n');
-      sections.push({ 
-        id: 'personalSavoirs', 
-        label: 'Savoirs de référence', 
+      sections.push({
+        id: 'personalKnowledge',
+        label: 'Savoirs de référence',
         content: content,
-        isModified: isAdapted('personalSavoirs')
+        isModified: isAdapted('personalKnowledge')
       });
     }
 
-    if (data.apprentissagesCritiques || isAdapted('personalApprentissages')) {
-      const parts = (data.apprentissagesCritiques || '').split(' | ');
+    if (data.criticalLearning || isAdapted('personalLearning')) {
+      const parts = (data.criticalLearning || '').split(' | ');
       const content = parts.map(p => p.trim()).filter(p => p.length > 0).join('\n');
-      sections.push({ 
-        id: 'personalApprentissages', 
-        label: 'Apprentissages critiques ciblés', 
+      sections.push({
+        id: 'personalLearning',
+        label: 'Apprentissages critiques ciblés',
         content: content,
-        isModified: isAdapted('personalApprentissages')
+        isModified: isAdapted('personalLearning')
       });
     }
 
-    if (data.volumeOfficiel || isAdapted('personalVolume')) {
-      sections.push({ 
-        id: 'personalVolume', 
-        label: 'Volume horaire', 
-        content: data.volumeOfficiel || '',
+    if (data.officialVolume || isAdapted('personalVolume')) {
+      sections.push({
+        id: 'personalVolume',
+        label: 'Volume horaire',
+        content: data.officialVolume || '',
         isModified: isAdapted('personalVolume')
       });
     }

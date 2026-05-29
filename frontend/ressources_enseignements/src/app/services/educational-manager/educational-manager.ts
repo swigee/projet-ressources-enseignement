@@ -42,9 +42,9 @@ export class EducationalManagerService {
   }
 
   updateEducation(etu: any): Observable<any>{
-    const id = etu.id ?? etu.formation?.id;
+    const id = etu.id ?? etu.program?.id;
     if (!id) {
-      throw new Error('Education id is required to update formation');
+      throw new Error('Education id is required to update program');
     }
     return this.http.patch<any>(`${this.api}/${id}`, etu)
   }
@@ -61,21 +61,21 @@ export class EducationalManagerService {
     return this.http.post<Education>(`${this.api}/${id}/duplicate`, { newName });
   }
 
-  getDistinctFormationNames(): string[] {
+  getDistinctProgramNames(): string[] {
     const names = this.educationList().map(e => e.name);
     return [...new Set(names)].sort();
   }
 
-  loadDistinctFormationNames(): Observable<string[]> {
+  loadDistinctProgramNames(): Observable<string[]> {
     return this.http.get<Education[]>(`${this.api}/list`).pipe(
       map(educations => [...new Set(educations.map(e => e.name))].sort())
     );
   }
 
-  getDistinctClasses(year?: string, formation?: string): Observable<string[]> {
+  getDistinctClasses(year?: string, program?: string): Observable<string[]> {
     let params = new HttpParams();
     if (year) params = params.set('year', year);
-    if (formation) params = params.set('formation', formation);
+    if (program) params = params.set('program', program);
     return this.http.get<string[]>(`${this.api}/classes`, { params });
   }
 }

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package sae.project.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,11 +12,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Entité Formation représentant une formation avec année et classe
- * 
- * @author andry
- */
 @Entity
 @Table(name = "formation")
 @NamedQueries({
@@ -52,33 +43,27 @@ public class Formation implements Serializable {
     private String className;
 
     @Column(name = "parcours", length = 255)
-    private String parcours;
+    private String pathway;
 
     @Column(name = "description", length = 255)
     private String description;
-    
+
     @ManyToMany
     @JoinTable(name = "user_formation", joinColumns = @JoinColumn(name = "formation_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     @JsonIgnore
-    private List<User> usersList; // Keeping usersList naming for now to minimize getter refactoring, but type is
-                                  // User
+    private List<User> users;
 
     @ManyToMany
     @JoinTable(name = "formation_resource", joinColumns = @JoinColumn(name = "formation_id"), inverseJoinColumns = @JoinColumn(name = "resource_id"))
-    @JsonIgnoreProperties("formationList")
-    private List<Resource> resourceList;
+    @JsonIgnoreProperties("programs")
+    private List<Resource> resources;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "formation", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("formation")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "program", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("program")
     private List<Semester> semesters = new ArrayList<>();
-    
-    
-    /**
-     * Constructeur avec ID uniquement
-     */
+
     public Formation(Integer id) {
         this.id = id;
     }
-    
 }

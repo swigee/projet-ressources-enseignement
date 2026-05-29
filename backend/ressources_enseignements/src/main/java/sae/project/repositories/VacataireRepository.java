@@ -12,9 +12,9 @@ import java.util.Optional;
 @Repository
 public interface VacataireRepository extends JpaRepository<Vacataire, Integer> {
 
-    List<Vacataire> findByStatut(String statut);
+    List<Vacataire> findByStatus(String status);
 
-    @Query("SELECT v FROM Vacataire v WHERE LOWER(v.nom) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(v.prenom) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    @Query("SELECT v FROM Vacataire v WHERE LOWER(v.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(v.firstName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Vacataire> searchByName(@Param("keyword") String keyword);
 
     /** Find a contractor profile by its linked user account ID. */

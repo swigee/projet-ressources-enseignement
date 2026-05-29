@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import {AssignmentGrid,TeacherAssignment,Teacher,AssignmentStatistics,CreateAssignment,AssignmentValidationResponse,AffectationRow} from '../../models/teacher/teacher.model';
+import { AssignmentGrid, TeacherAssignment, Teacher, AssignmentStatistics, CreateAssignment, AssignmentValidationResponse, AssignmentRow } from '../../models/teacher/teacher.model';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,16 +22,16 @@ export class TeacherAssignmentService {
     return this.http.get<Teacher[]>(`${this.apiUrl}/teachers/search`, { params });
   }
 
-  getAvailableClasses(year?: string, formation?: string): Observable<string[]> {
+  getAvailableClasses(year?: string, program?: string): Observable<string[]> {
     let params = new HttpParams();
     if (year) params = params.set('year', year);
-    if (formation) params = params.set('formation', formation);
+    if (program) params = params.set('program', program);
     return this.http.get<string[]>(`${this.educationApiUrl}/classes`, { params });
   }
 
-  getAssignmentGrid(formation: string, year: string, className: string, semester?: string): Observable<AssignmentGrid> {
+  getAssignmentGrid(program: string, year: string, className: string, semester?: string): Observable<AssignmentGrid> {
     let params = new HttpParams();
-    if (formation) params = params.set('formation', formation);
+    if (program) params = params.set('program', program);
     if (year) params = params.set('year', year);
     if (className) params = params.set('className', className);
     if (semester) params = params.set('semester', semester);
@@ -50,8 +51,8 @@ export class TeacherAssignmentService {
     return this.http.delete<void>(`${this.apiUrl}/assignments/${id}`);
   }
 
-  deleteAssignmentByTeacherAndRessource(userId: number, ressourceId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/assignments/teacher/${userId}/ressource/${ressourceId}`);
+  deleteAssignmentByTeacherAndResource(userId: number, resourceId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/assignments/teacher/${userId}/resource/${resourceId}`);
   }
 
   validateAssignments(year: string, className: string): Observable<AssignmentValidationResponse> {

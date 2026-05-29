@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping("/api/pedagogical-schedule")
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @Slf4j
-@Tag(name = "Pedagogical Schedule", description = "API pour la gestion du planning pédagogique")
+@Tag(name = "Pedagogical Schedule", description = "API for managing the pedagogical schedule")
 public class PedagogicalScheduleController {
 
     @Autowired
@@ -33,7 +33,7 @@ public class PedagogicalScheduleController {
      * Récupérer toutes les ressources
      */
     @GetMapping("/ressources")
-    @Operation(summary = "Récupérer toutes les ressources")
+    @Operation(summary = "Get all resources")
     public ResponseEntity<List<Resource>> getAllRessources() {
         log.info("GET /api/pedagogical-schedule/ressources");
         try {
@@ -49,7 +49,7 @@ public class PedagogicalScheduleController {
      * Récupérer toutes les ressources en DTO
      */
     @GetMapping("/ressources/dto")
-    @Operation(summary = "Récupérer toutes les ressources en format DTO")
+    @Operation(summary = "Get all resources as DTO")
     public ResponseEntity<List<ResourceScheduleDTO>> getAllRessourcesDTO() {
         log.info("GET /api/pedagogical-schedule/ressources/dto");
         try {
@@ -65,9 +65,9 @@ public class PedagogicalScheduleController {
      * Récupérer une ressource par ID
      */
     @GetMapping("/ressources/{id}")
-    @Operation(summary = "Récupérer une ressource par ID")
+    @Operation(summary = "Get a resource by ID")
     public ResponseEntity<Resource> getRessourceById(
-            @Parameter(description = "ID de la ressource") @PathVariable Integer id) {
+            @Parameter(description = "Resource ID") @PathVariable Integer id) {
         log.info("GET /api/pedagogical-schedule/ressources/{}", id);
         try {
             return pedagogicalScheduleService.getById(id)
@@ -83,12 +83,12 @@ public class PedagogicalScheduleController {
      * Récupérer les ressources par année et classe
      */
     @GetMapping("/ressources/filter")
-    @Operation(summary = "Récupérer les ressources par année, classe et semestre")
+    @Operation(summary = "Get resources filtered by year, class and semester")
     public ResponseEntity<List<ResourceScheduleDTO>> getRessourcesByFilter(
-            @Parameter(description = "Année d'étude") @RequestParam(required = false) String year,
-            @Parameter(description = "Nom de la classe") @RequestParam(required = false) String className,
-            @Parameter(description = "Semestre (1 ou 2)") @RequestParam(required = false) Integer semester,
-            @Parameter(description = "Nom de la formation") @RequestParam(required = false) String formation) {
+            @Parameter(description = "Study year") @RequestParam(required = false) String year,
+            @Parameter(description = "Class name") @RequestParam(required = false) String className,
+            @Parameter(description = "Semester (1 or 2)") @RequestParam(required = false) Integer semester,
+            @Parameter(description = "Formation name") @RequestParam(required = false) String formation) {
         log.info("GET /api/pedagogical-schedule/ressources/filter?year={}&className={}&semester={}", year, className, semester);
         try {
             List<ResourceScheduleDTO> ressources = pedagogicalScheduleService.getByYearAndClass(year, className, semester, formation);
@@ -103,12 +103,12 @@ public class PedagogicalScheduleController {
      * Récupérer le planning complet
      */
     @GetMapping("/schedule")
-    @Operation(summary = "Récupérer le planning complet avec statistiques")
+    @Operation(summary = "Get the complete schedule with statistics")
     public ResponseEntity<PedagogicalScheduleDTO> getCompleteSchedule(
-            @Parameter(description = "Année d'étude") @RequestParam(required = false) String year,
-            @Parameter(description = "Nom de la classe") @RequestParam(required = false) String className,
-            @Parameter(description = "Semestre (1 ou 2)") @RequestParam(required = false) Integer semester,
-            @Parameter(description = "Nom de la formation") @RequestParam(required = false) String formation) {
+            @Parameter(description = "Study year") @RequestParam(required = false) String year,
+            @Parameter(description = "Class name") @RequestParam(required = false) String className,
+            @Parameter(description = "Semester (1 or 2)") @RequestParam(required = false) Integer semester,
+            @Parameter(description = "Formation name") @RequestParam(required = false) String formation) {
         log.info("GET /api/pedagogical-schedule/schedule?year={}&className={}&semester={}", year, className, semester);
         try {
             PedagogicalScheduleDTO schedule = pedagogicalScheduleService.getCompleteSchedule(year, className, semester, formation);
@@ -123,7 +123,7 @@ public class PedagogicalScheduleController {
      * Créer une nouvelle ressource
      */
     @PostMapping("/ressources")
-    @Operation(summary = "Créer une nouvelle ressource")
+    @Operation(summary = "Create a new resource")
     public ResponseEntity<Resource> createRessource(
             @Valid @RequestBody Resource ressource) {
         log.info("POST /api/pedagogical-schedule/ressources");
@@ -143,9 +143,9 @@ public class PedagogicalScheduleController {
      * Mettre à jour une ressource complète
      */
     @PutMapping("/ressources/{id}")
-    @Operation(summary = "Mettre à jour une ressource complète")
+    @Operation(summary = "Fully update a resource")
     public ResponseEntity<Resource> updateRessource(
-            @Parameter(description = "ID de la ressource") @PathVariable Integer id,
+            @Parameter(description = "Resource ID") @PathVariable Integer id,
             @Valid @RequestBody Resource ressource) {
         log.info("PUT /api/pedagogical-schedule/ressources/{}", id);
         try {
@@ -164,9 +164,9 @@ public class PedagogicalScheduleController {
      * Mettre à jour les heures d'une ressource
      */
     @PatchMapping("/ressources/{id}/hours")
-    @Operation(summary = "Mettre à jour les heures d'une ressource")
+    @Operation(summary = "Update the hours of a resource")
     public ResponseEntity<Resource> updateRessourceHours(
-            @Parameter(description = "ID de la ressource") @PathVariable Integer id,
+            @Parameter(description = "Resource ID") @PathVariable Integer id,
             @Valid @RequestBody UpdateHoursDTO updateDTO) {
         log.info("PATCH /api/pedagogical-schedule/ressources/{}/hours", id);
         try {
@@ -185,7 +185,7 @@ public class PedagogicalScheduleController {
      * Valider et sauvegarder un planning complet
      */
     @PostMapping("/schedule/validate")
-    @Operation(summary = "Valider et sauvegarder un planning complet")
+    @Operation(summary = "Validate and save a complete schedule")
     public ResponseEntity<ValidationResponseDTO> validateSchedule(
             @Valid @RequestBody ValidationRequestDTO validationRequest) {
         log.info("POST /api/pedagogical-schedule/schedule/validate");
@@ -212,9 +212,9 @@ public class PedagogicalScheduleController {
      * Supprimer une ressource
      */
     @DeleteMapping("/ressources/{id}")
-    @Operation(summary = "Supprimer une ressource")
+    @Operation(summary = "Delete a resource")
     public ResponseEntity<Void> deleteRessource(
-            @Parameter(description = "ID de la ressource") @PathVariable Integer id) {
+            @Parameter(description = "Resource ID") @PathVariable Integer id) {
         log.info("DELETE /api/pedagogical-schedule/ressources/{}", id);
         try {
             pedagogicalScheduleService.delete(id);
@@ -232,9 +232,9 @@ public class PedagogicalScheduleController {
      * Rechercher des ressources par mot-clé
      */
     @GetMapping("/ressources/search")
-    @Operation(summary = "Rechercher des ressources par mot-clé")
+    @Operation(summary = "Search resources by keyword")
     public ResponseEntity<List<ResourceScheduleDTO>> searchRessources(
-            @Parameter(description = "Mot-clé de recherche") @RequestParam String keyword) {
+            @Parameter(description = "Search keyword") @RequestParam String keyword) {
         log.info("GET /api/pedagogical-schedule/ressources/search?keyword={}", keyword);
         try {
             List<ResourceScheduleDTO> ressources = pedagogicalScheduleService.searchByKeyword(keyword);
@@ -249,7 +249,7 @@ public class PedagogicalScheduleController {
      * Health check endpoint
      */
     @GetMapping("/health")
-    @Operation(summary = "Vérifier l'état de l'API")
+    @Operation(summary = "Check API health")
     public ResponseEntity<String> healthCheck() {
         return ResponseEntity.ok("Pedagogical Schedule API is running");
     }
